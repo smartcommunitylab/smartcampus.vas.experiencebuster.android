@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Copyright 2012-2013 Trento RISE
+  
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+  
+         http://www.apache.org/licenses/LICENSE-2.0
+  
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either   express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+<resources>
+
+    <string name="empty" />
+    <string name="content_empty">No items.</string>
+    <string name="app_name">Experience Buster</string>
+
+    <string name="not_implemented">Coming soon!</string>
+    
+    <string name="mainmenu_grab">Grab experience</string>
+    <string name="mainmenu_diary">Diary</string>
+    <string name="mainmenu_collections">Folders</string>
+    <string name="mainmenu_search">Search</string>
+    
+    <string name="dialog_create">Create</string>
+    <string name="dialog_save">Save</string>
+    <string name="dialog_grab">Grab the experience with:</string>
+    <string name="dialog_collection_add">New folder</string>
+    <string name="dialog_collection_edit">Edit folder</string>
+    
+    <string name="app_failure_security">Failed to retrieve authentication data</string>
+    <string name="app_failure_setup">Failed to initialize appplication</string>
+    <string name="app_failure_operation">OOPS! An error occurred. Please check your connection or try again later.</string>
+    <string name="app_uid_label">SmartCampus</string>
+
+    <string name="title_grab_qrcode">Grab QR-code</string>
+    <string name="title_expform">Experience</string>
+    <string name="title_collections">Folders</string>
+    <string name="title_diary">Diary</string>
+    <string name="title_nearme">Near me now</string>
+    <string name="title_search">Search</string>
+    
+    <string name="ext_form_title_hint">Title…</string>
+    <string name="exp_form_tags_hint">Tags…</string>
+    <string name="exp_form_descr_hint">Description…</string>
+
+    <string name="expmenu_save">Save</string>
+    <string name="expmenu_done">Done</string>
+    <string name="expmenu_assign_collection">Assign folders</string>
+    <string name="expmenu_share">Share</string>
+    <string name="expmenu_export">Export</string>
+    <string name="expmenu_map">View on map</string>
+    <string name="expmenu_remove">Remove</string>
+    
+    <string name="expmenu_attach_gallery_photo">Photo from gallery</string>
+    <string name="expmenu_attach_camera_photo">Photo</string>
+    <string name="expmenu_attach_gallery_video">Video from gallery</string>
+    <string name="expmenu_attach_camera_video">Video</string>
+    <string name="expmenu_attach_qrcode">QR</string>
+    <string name="expmenu_attach_audio">Audio</string>
+    <string name="expmenu_attach_text">Text</string>
+    
+    <string name="msg_delete_confirm">Are you sure you want to delete this record?</string>
+    <string name="msg_location_undefined">Unable to detect current location.</string>
+    
+    <string name="alert_title_required">Specify title</string>
+    <string name="alert_folder_name_required">Specify folder name</string>
+    
+    <string name="error_collection_store">Failed to store folder</string>
+    <string name="error_exp_store">Failed to store experience</string>
+    <string name="error_exp_delete">Failed to delete experience</string>
+    
+    <string name="filters_now">Filter by time</string>
+    <string name="filters_near">Filter by location</string>
+    
+    <string name="exp_menu_header">Experience options</string>
+    
+    <string name="coll_menu_header">Folder options</string>
+    <string name="collmenu_edit">Edit folder</string>
+    <string name="collmenu_remove">Remove folder</string>
+    <string name="msg_delete_coll_confirm">Are you sure you want to delete this folder?</string>
+    
+    <string name="expcontentmenu_comment">Text</string>
+    <string name="expcontentmenu_remove">Remove</string>
+
+    <string name="exp_notes_hint">Text…</string>
+    <string name="exp_notes_title">Add text</string>
+
+    <string name="exp_position_hint">Address…</string>
+    <string name="exp_position_title">Set address</string>
+    
+</resources>

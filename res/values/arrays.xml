@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Copyright 2012-2013 Trento RISE
+  
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+  
+         http://www.apache.org/licenses/LICENSE-2.0
+  
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either   express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+<resources>
+
+    <array name="grabDialogArray">
+        <item>Photo</item>
+        <item>Video</item>
+        <item>Photo from gallery</item>
+        <item>Video from gallery</item>
+        <item>Text</item>
+        <item>Audio</item>
+        <item>QR code</item>
+        <item>Near me now</item>
+    </array>
+    <array name="grabDialogTypesArray">
+        <item>IMAGE_CAMERA</item>
+        <item>VIDEO_CAMERA</item>
+        <item>IMAGE_GALLERY</item>
+        <item>VIDEO_GALLERY</item>
+        <item>TEXT</item>
+        <item>AUDIO</item>
+        <item>QRCODE</item>
+        <item>NEARME</item>
+    </array>
+    <array name="grabDialogLabelsArray">
+        <item>Image</item>
+        <item>Video</item>
+        <item>Image</item>
+        <item>Video</item>
+        <item>Text</item>
+        <item>Audio</item>
+        <item>QR code</item>
+        <item>Near me now</item>
+    </array>
+    
+    <string-array name="searchArray">
+        <item>By tag</item>
+        <item>By date</item>
+        <item>By place</item>
+        <item>Shared</item>
+        <item>Not shared</item>
+        <item>Exported</item>
+    </string-array>
+    
+</resources>
