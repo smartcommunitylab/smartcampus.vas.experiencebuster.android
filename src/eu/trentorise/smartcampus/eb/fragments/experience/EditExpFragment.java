@@ -330,7 +330,7 @@ public class EditExpFragment extends SherlockFragment implements OnTagsSelectedL
 			break;
 		case R.id.expmenu_share:
 			ShareEntityObject obj = new ShareEntityObject(exp.getEntityId(), exp.getTitle(), Constants.ENTITY_TYPE_EXPERIENCE);
-			SharingHelper.follow(getActivity(), obj);
+			SharingHelper.share(getActivity(), obj);
 			break;
 		case R.id.expmenu_map:
 		case R.id.expmenu_export:
