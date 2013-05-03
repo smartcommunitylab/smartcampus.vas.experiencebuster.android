@@ -36,19 +36,23 @@ public class DeleteExperienceFragment extends SherlockDialogFragment {
 	@Override
 	public Dialog onCreateDialog(Bundle savedInstanceState) {
 		return new AlertDialog.Builder(getActivity())
-        .setMessage(R.string.msg_delete_confirm)
-        .setCancelable(false)
-        .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int id) {
-            	String experienceId = getArguments().getString(ARG_ID);
-                 EBHelper.deleteExperience(getActivity(), experienceId);
- 				RemoveCallback c = ((DialogCallbackContainer)getActivity()).getRemoveCallback();
- 				c.onRemoved(getArguments().getString(ARG_ID));
+				.setMessage(R.string.msg_delete_confirm)
+				.setCancelable(false)
+				.setPositiveButton(android.R.string.yes,
+						new DialogInterface.OnClickListener() {
+							public void onClick(DialogInterface dialog, int id) {
+								String experienceId = getArguments().getString(
+										ARG_ID);
+								EBHelper.deleteExperience(getActivity(),
+										experienceId, true);
+								RemoveCallback c = ((DialogCallbackContainer) getActivity())
+										.getRemoveCallback();
+								c.onRemoved(getArguments().getString(ARG_ID));
 
-//                 ((RemoveCallback)getFragmentManager().findFragmentById(getArguments().getInt(ARG_CONTAINER_ID))).onRemoved(experienceId);
-            }
-        })
-        .setNegativeButton(android.R.string.no, null).create();
+								// ((RemoveCallback)getFragmentManager().findFragmentById(getArguments().getInt(ARG_CONTAINER_ID))).onRemoved(experienceId);
+							}
+						}).setNegativeButton(android.R.string.no, null)
+				.create();
 	}
 
 	public static Bundle prepare(String id) {

@@ -27,7 +27,6 @@ import android.support.v4.app.FragmentTransaction;
 
 import com.actionbarsherlock.app.SherlockFragmentActivity;
 
-import eu.trentorise.smartcampus.eb.R;
 import eu.trentorise.smartcampus.ac.SCAccessProvider;
 import eu.trentorise.smartcampus.android.common.SCAsyncTask;
 import eu.trentorise.smartcampus.android.common.tagging.TaggingDialog.OnTagsSelectedListener;
@@ -39,12 +38,13 @@ import eu.trentorise.smartcampus.eb.fragments.NewCollectionDialogFragment.Collec
 import eu.trentorise.smartcampus.eb.fragments.experience.AssignCollectionFragment.AssignCollectionsCallback;
 import eu.trentorise.smartcampus.eb.fragments.experience.DeleteExperienceFragment.RemoveCallback;
 import eu.trentorise.smartcampus.eb.fragments.experience.DialogCallbackContainer;
-import eu.trentorise.smartcampus.eb.fragments.experience.EditPositionFragment.PositionHandler;
 import eu.trentorise.smartcampus.eb.fragments.experience.EditNoteFragment.NoteHandler;
+import eu.trentorise.smartcampus.eb.fragments.experience.EditPositionFragment.PositionHandler;
 import eu.trentorise.smartcampus.protocolcarrier.exceptions.SecurityException;
 import eu.trentorise.smartcampus.storage.sync.service.SyncStorageService;
 
-public class HomeActivity extends SherlockFragmentActivity implements DialogCallbackContainer {
+public class HomeActivity extends SherlockFragmentActivity implements
+		DialogCallbackContainer {
 
 	protected final int mainlayout = android.R.id.content;
 
@@ -56,7 +56,8 @@ public class HomeActivity extends SherlockFragmentActivity implements DialogCall
 	private void initDataManagement(Bundle savedInstanceState) {
 		try {
 			EBHelper.init(getApplicationContext());
-			String token = EBHelper.getAccessProvider().getAuthToken(this, null);
+			String token = EBHelper.getAccessProvider()
+					.getAuthToken(this, null);
 			if (token != null) {
 				initData(token);
 			}
@@ -67,7 +68,8 @@ public class HomeActivity extends SherlockFragmentActivity implements DialogCall
 
 	private boolean initData(String token) {
 		try {
-			new SCAsyncTask<Void, Void, Void>(this, new StartProcessor(this)).execute();
+			new SCAsyncTask<Void, Void, Void>(this, new StartProcessor(this))
+					.execute();
 		} catch (Exception e1) {
 			EBHelper.endAppFailure(this, R.string.app_failure_setup);
 			return false;
@@ -84,6 +86,13 @@ public class HomeActivity extends SherlockFragmentActivity implements DialogCall
 		if (savedInstanceState == null) {
 			setUpContent();
 		}
+
+		// ContentResolver.isSyncActive(EBHelper.SCAccount,
+		// "eu.trentorise.smartcampus.eb");
+		// ContentResolver.requestSync(EBHelper.SCAccount,
+		// "eu.trentorise.smartcampus.eb", new Bundle());
+
+		// EBHelper.synchronize();
 	}
 
 	private void setUpContent() {
@@ -98,7 +107,8 @@ public class HomeActivity extends SherlockFragmentActivity implements DialogCall
 
 	@Override
 	public void onBackPressed() {
-		Fragment currentFragment = getSupportFragmentManager().findFragmentById(android.R.id.content);
+		Fragment currentFragment = getSupportFragmentManager()
+				.findFragmentById(android.R.id.content);
 		// Checking if there is a fragment that it's listening for back button
 		if (currentFragment != null && currentFragment instanceof BackListener) {
 			((BackListener) currentFragment).onBack();
@@ -112,20 +122,23 @@ public class HomeActivity extends SherlockFragmentActivity implements DialogCall
 		super.onActivityResult(requestCode, resultCode, data);
 		if (requestCode == SCAccessProvider.SC_AUTH_ACTIVITY_REQUEST_CODE) {
 			if (resultCode == RESULT_OK) {
-				String token = data.getExtras().getString(AccountManager.KEY_AUTHTOKEN);
+				String token = data.getExtras().getString(
+						AccountManager.KEY_AUTHTOKEN);
 				if (token == null) {
 					EBHelper.endAppFailure(this, R.string.app_failure_security);
 				} else {
 					initData(token);
 				}
 			} else if (resultCode == RESULT_CANCELED) {
-				EBHelper.endAppFailure(this, eu.trentorise.smartcampus.ac.R.string.token_required);
+				EBHelper.endAppFailure(this,
+						eu.trentorise.smartcampus.ac.R.string.token_required);
 			}
 		}
 	}
 
 	@Override
-	public boolean onOptionsItemSelected(com.actionbarsherlock.view.MenuItem item) {
+	public boolean onOptionsItemSelected(
+			com.actionbarsherlock.view.MenuItem item) {
 		switch (item.getItemId()) {
 		case android.R.id.home:
 			onBackPressed();
@@ -142,7 +155,8 @@ public class HomeActivity extends SherlockFragmentActivity implements DialogCall
 		}
 
 		@Override
-		public Void performAction(Void... params) throws SecurityException, Exception {
+		public Void performAction(Void... params) throws SecurityException,
+				Exception {
 			EBHelper.start();
 			return null;
 		}
@@ -156,14 +170,16 @@ public class HomeActivity extends SherlockFragmentActivity implements DialogCall
 	private BroadcastReceiver mTokenInvalidReceiver = new BroadcastReceiver() {
 		@Override
 		public void onReceive(Context context, Intent intent) {
-			EBHelper.getAccessProvider().invalidateToken(HomeActivity.this, null);
+			EBHelper.getAccessProvider().invalidateToken(HomeActivity.this,
+					null);
 			initDataManagement(null);
 		}
 	};
 
 	@Override
 	protected void onResume() {
-		IntentFilter filter = new IntentFilter(SyncStorageService.ACTION_AUTHENTICATION_PROBLEM);
+		IntentFilter filter = new IntentFilter(
+				SyncStorageService.ACTION_AUTHENTICATION_PROBLEM);
 		registerReceiver(mTokenInvalidReceiver, filter);
 		super.onResume();
 	}
@@ -176,32 +192,38 @@ public class HomeActivity extends SherlockFragmentActivity implements DialogCall
 
 	@Override
 	public CollectionSavedHandler getCollectionSavedHandler() {
-		return (CollectionSavedHandler) getSupportFragmentManager().findFragmentById(android.R.id.content);
+		return (CollectionSavedHandler) getSupportFragmentManager()
+				.findFragmentById(android.R.id.content);
 	}
 
 	@Override
 	public AssignCollectionsCallback getAssignCollectionsCallback() {
-		return (AssignCollectionsCallback) getSupportFragmentManager().findFragmentById(android.R.id.content);
+		return (AssignCollectionsCallback) getSupportFragmentManager()
+				.findFragmentById(android.R.id.content);
 	}
 
 	@Override
 	public RemoveCallback getRemoveCallback() {
-		return (RemoveCallback) getSupportFragmentManager().findFragmentById(android.R.id.content);
+		return (RemoveCallback) getSupportFragmentManager().findFragmentById(
+				android.R.id.content);
 	}
 
 	@Override
 	public NoteHandler getNoteHandler() {
-		return (NoteHandler) getSupportFragmentManager().findFragmentById(android.R.id.content);
+		return (NoteHandler) getSupportFragmentManager().findFragmentById(
+				android.R.id.content);
 	}
 
 	@Override
 	public PositionHandler getPositionHandler() {
-		return (PositionHandler) getSupportFragmentManager().findFragmentById(android.R.id.content);
+		return (PositionHandler) getSupportFragmentManager().findFragmentById(
+				android.R.id.content);
 	}
 
 	@Override
 	public OnTagsSelectedListener getTagListener() {
-		return (OnTagsSelectedListener) getSupportFragmentManager().findFragmentById(android.R.id.content);
+		return (OnTagsSelectedListener) getSupportFragmentManager()
+				.findFragmentById(android.R.id.content);
 	}
 
 }

@@ -23,23 +23,22 @@ public class VideoContent implements GrabbedContent {
 	private static final long serialVersionUID = 7114848425178997996L;
 
 	private String uri;
-	
+
 	public VideoContent(String uri) {
 		super();
 		this.uri = uri;
 	}
 
-
 	@Override
 	public ContentType contentType() {
 		return ContentType.VIDEO;
 	}
-	
+
 	@Override
 	public Content toContent() {
 		Content c = new Content();
 		c.setLocalValue(uri);
-		c.setValue(uri);
+		// c.setValue(uri);
 		return c;
 	}
 

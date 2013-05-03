@@ -46,7 +46,6 @@ import com.actionbarsherlock.app.SherlockFragment;
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuItem;
 
-import eu.trentorise.smartcampus.eb.R;
 import eu.trentorise.smartcampus.android.common.SCAsyncTask;
 import eu.trentorise.smartcampus.android.common.sharing.ShareEntityObject;
 import eu.trentorise.smartcampus.android.common.sharing.SharingHelper;
@@ -55,6 +54,7 @@ import eu.trentorise.smartcampus.android.common.tagging.TaggingDialog.OnTagsSele
 import eu.trentorise.smartcampus.eb.CatchActivity;
 import eu.trentorise.smartcampus.eb.Constants;
 import eu.trentorise.smartcampus.eb.Constants.CATCH_TYPES;
+import eu.trentorise.smartcampus.eb.R;
 import eu.trentorise.smartcampus.eb.custom.AbstractAsyncTaskProcessor;
 import eu.trentorise.smartcampus.eb.custom.ExpContentAdapter;
 import eu.trentorise.smartcampus.eb.custom.Utils;
@@ -74,17 +74,25 @@ import eu.trentorise.smartcampus.eb.model.Experience;
 import eu.trentorise.smartcampus.protocolcarrier.exceptions.ConnectionException;
 import eu.trentorise.smartcampus.protocolcarrier.exceptions.SecurityException;
 
-public class EditExpFragment extends SherlockFragment implements OnTagsSelectedListener, OnEditListener, ResultHandler, NoteHandler, eu.trentorise.smartcampus.eb.fragments.experience.DeleteExperienceFragment.RemoveCallback, eu.trentorise.smartcampus.eb.fragments.experience.AssignCollectionFragment.AssignCollectionsCallback, CollectionSavedHandler, PositionHandler {
+public class EditExpFragment extends SherlockFragment
+		implements
+		OnTagsSelectedListener,
+		OnEditListener,
+		ResultHandler,
+		NoteHandler,
+		eu.trentorise.smartcampus.eb.fragments.experience.DeleteExperienceFragment.RemoveCallback,
+		eu.trentorise.smartcampus.eb.fragments.experience.AssignCollectionFragment.AssignCollectionsCallback,
+		CollectionSavedHandler, PositionHandler {
 
 	private TextEditSwitch mTitleSwitch, mDescrSwitch;
 	private Experience exp = null;
 	private Experience src = null;
-//	private Address address = null;
-	
+	// private Address address = null;
+
 	private boolean editMode = false;
-	
+
 	private CaptureHelper mHelper = null;
-	
+
 	private ExpContentAdapter adapter = null;
 
 	private View returnView;
@@ -92,57 +100,66 @@ public class EditExpFragment extends SherlockFragment implements OnTagsSelectedL
 	private static final String ARG_SRC = "src";
 	public static final String ARG_EXP = "exp";
 	public static final String ARG_VALUE = "value";
-	
+
 	public static Bundle prepareArgs(Experience e, GrabbedContent content) {
 		Bundle b = new Bundle();
-		if (e != null) b.putSerializable(ARG_EXP, e);
-		if (content != null) b.putSerializable(ARG_VALUE, content);
+		if (e != null)
+			b.putSerializable(ARG_EXP, e);
+		if (content != null)
+			b.putSerializable(ARG_VALUE, content);
 		return b;
 	}
-	
+
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		mHelper = new CaptureHelper(getSherlockActivity(), 10, this);
-		
-		if (savedInstanceState != null && savedInstanceState.containsKey(ARG_EXP)) {
-			exp = (Experience)savedInstanceState.getSerializable(ARG_EXP);
-			src = (Experience)savedInstanceState.getSerializable(ARG_SRC);
-		}
-		else if (getArguments() != null && getArguments().containsKey(ARG_EXP)) {
-			src = (Experience)getArguments().getSerializable(ARG_EXP);
+
+		if (savedInstanceState != null
+				&& savedInstanceState.containsKey(ARG_EXP)) {
+			exp = (Experience) savedInstanceState.getSerializable(ARG_EXP);
+			src = (Experience) savedInstanceState.getSerializable(ARG_SRC);
+		} else if (getArguments() != null
+				&& getArguments().containsKey(ARG_EXP)) {
+			src = (Experience) getArguments().getSerializable(ARG_EXP);
 			src.copyTo(exp = new Experience());
 		} else {
 			exp = new Experience();
 			src = exp;
 		}
-		
-		if (savedInstanceState == null && getArguments() != null && getArguments().containsKey(ARG_VALUE)) {
-			appendContent((GrabbedContent)getArguments().getSerializable(ARG_VALUE));
+
+		if (savedInstanceState == null && getArguments() != null
+				&& getArguments().containsKey(ARG_VALUE)) {
+			appendContent((GrabbedContent) getArguments().getSerializable(
+					ARG_VALUE));
 		}
-		
-		if (savedInstanceState != null && savedInstanceState.containsKey("editMode")) {
+
+		if (savedInstanceState != null
+				&& savedInstanceState.containsKey("editMode")) {
 			editMode = savedInstanceState.getBoolean("editMode");
 		}
 
-		if (exp.getContents() == null) exp.setContents(new ArrayList<Content>());
+		if (exp.getContents() == null)
+			exp.setContents(new ArrayList<Content>());
 		setHasOptionsMenu(true);
 	}
 
 	private void appendContent(GrabbedContent value) {
-		if (value.contentType() == ContentType.TEXT) return;
-		
+		if (value.contentType() == ContentType.TEXT)
+			return;
+
 		Content c = value.toContent();
 		c.setId(Utils.generateUID());
 		c.setType(value.contentType());
 		c.setTimestamp(System.currentTimeMillis());
-		
-		if (exp.getContents() ==null) exp.setContents(new ArrayList<Content>());
-		exp.getContents().add(0,c);
-		
+
+		if (exp.getContents() == null)
+			exp.setContents(new ArrayList<Content>());
+		exp.getContents().add(0, c);
+
 		exp.resetPreview();
 		src.resetPreview();
-		
+
 		if (adapter != null) {
 			adapter.notifyDataSetChanged();
 		}
@@ -156,8 +173,6 @@ public class EditExpFragment extends SherlockFragment implements OnTagsSelectedL
 		outState.putBoolean("editMode", editMode);
 	}
 
-	
-	
 	@Override
 	public void onPause() {
 		super.onPause();
@@ -169,40 +184,50 @@ public class EditExpFragment extends SherlockFragment implements OnTagsSelectedL
 	public void onResume() {
 		super.onResume();
 		getSherlockActivity().getSupportActionBar().setHomeButtonEnabled(true);
-		getSherlockActivity().getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-		getSherlockActivity().getSupportActionBar().setDisplayShowTitleEnabled(true);
-		getSherlockActivity().getSupportActionBar().setTitle(R.string.title_expform);
+		getSherlockActivity().getSupportActionBar().setDisplayHomeAsUpEnabled(
+				true);
+		getSherlockActivity().getSupportActionBar().setDisplayShowTitleEnabled(
+				true);
+		getSherlockActivity().getSupportActionBar().setTitle(
+				R.string.title_expform);
 	}
 
 	@Override
-	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+	public View onCreateView(LayoutInflater inflater, ViewGroup container,
+			Bundle savedInstanceState) {
 		returnView = inflater.inflate(R.layout.exp_form, container, false);
-		ListView list = (ListView)returnView.findViewById(R.id.exp_contents);
+		ListView list = (ListView) returnView.findViewById(R.id.exp_contents);
 		registerForContextMenu(list);
-		if (list.getFooterViewsCount() == 0){
-			View footer = getSherlockActivity().getLayoutInflater().inflate(R.layout.exp_form_footer, null);
+		if (list.getFooterViewsCount() == 0) {
+			View footer = getSherlockActivity().getLayoutInflater().inflate(
+					R.layout.exp_form_footer, null);
 			list.addFooterView(footer, null, false);
 		}
-		if (list.getHeaderViewsCount() == 0 ) {
-			View header = getSherlockActivity().getLayoutInflater().inflate(R.layout.exp_form_header, null);
+		if (list.getHeaderViewsCount() == 0) {
+			View header = getSherlockActivity().getLayoutInflater().inflate(
+					R.layout.exp_form_header, null);
 			list.addHeaderView(header, null, false);
-			mTitleSwitch = new TextEditSwitch(returnView, R.id.title_switcher, R.id.title_tv, R.id.title, this);
+			mTitleSwitch = new TextEditSwitch(returnView, R.id.title_switcher,
+					R.id.title_tv, R.id.title, this);
 			mTitleSwitch.setValue(exp.getTitle());
-			mDescrSwitch = new TextEditSwitch(returnView, R.id.descr_switcher, R.id.description_tv, R.id.description, this);
+			mDescrSwitch = new TextEditSwitch(returnView, R.id.descr_switcher,
+					R.id.description_tv, R.id.description, this);
 			mDescrSwitch.setValue(exp.getDescription());
 		}
-		adapter = new ExpContentAdapter(getSherlockActivity(), R.layout.exp_contents_row, exp.getContents());
+		adapter = new ExpContentAdapter(getSherlockActivity(),
+				R.layout.exp_contents_row, exp.getContents());
 		list.setAdapter(adapter);
 		list.setOnItemClickListener(new OnItemClickListener() {
 			@Override
-			public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+			public void onItemClick(AdapterView<?> parent, View view,
+					int position, long id) {
 				if (position <= exp.getContents().size() && position > 0) {
-					ContentRenderer.renderExternal(getActivity(),exp.getContents().get(position-1));
+					ContentRenderer.renderExternal(getActivity(), exp
+							.getContents().get(position - 1));
 				}
 			}
-			
+
 		});
-		
 
 		updateCollectionTV();
 		if (exp.getId() == null) {
@@ -211,53 +236,63 @@ public class EditExpFragment extends SherlockFragment implements OnTagsSelectedL
 			updateFooterTV(exp.getAddress(), exp.getCreationTime());
 		}
 		if (exp.getTags() != null) {
-			((TextView)returnView.findViewById(R.id.tags_tv)).setText(Concept.toSimpleString(exp.getTags()));
+			((TextView) returnView.findViewById(R.id.tags_tv)).setText(Concept
+					.toSimpleString(exp.getTags()));
 		}
-		
-		((TextView)returnView.findViewById(R.id.tags_tv)).setOnClickListener(new OnClickListener() {
-			@Override
-			public void onClick(View v) {
-			    TaggingDialogFragment taggingDialog = new TaggingDialogFragment();
-			    taggingDialog.setArguments(TaggingDialogFragment.prepare(Concept.convertToSS(exp.getTags())));
-				taggingDialog.show(getActivity().getSupportFragmentManager(), "tags");
-			}
-		});
-		
-		returnView.findViewById(R.id.place_box).setOnClickListener(new OnClickListener() {
-			@Override
-			public void onClick(View v) {
-				DialogFragment textFragment = new EditPositionFragment();
-			    textFragment.setArguments(EditPositionFragment.prepare(exp.getAddress() == null ? "" : exp.getAddress()));
-			    textFragment.show(getActivity().getSupportFragmentManager(), "exp_position");
-			}
-		});
-		
+
+		((TextView) returnView.findViewById(R.id.tags_tv))
+				.setOnClickListener(new OnClickListener() {
+					@Override
+					public void onClick(View v) {
+						TaggingDialogFragment taggingDialog = new TaggingDialogFragment();
+						taggingDialog.setArguments(TaggingDialogFragment
+								.prepare(Concept.convertToSS(exp.getTags())));
+						taggingDialog.show(getActivity()
+								.getSupportFragmentManager(), "tags");
+					}
+				});
+
+		returnView.findViewById(R.id.place_box).setOnClickListener(
+				new OnClickListener() {
+					@Override
+					public void onClick(View v) {
+						DialogFragment textFragment = new EditPositionFragment();
+						textFragment.setArguments(EditPositionFragment
+								.prepare(exp.getAddress() == null ? "" : exp
+										.getAddress()));
+						textFragment.show(getActivity()
+								.getSupportFragmentManager(), "exp_position");
+					}
+				});
+
 		return returnView;
 	}
-	
+
 	@Override
 	public void onStart() {
 		super.onStart();
 
-		
-		
 	}
 
 	private void updateFooterTV(String address, Long creationTime) {
 		if (creationTime != null) {
-			((TextView)returnView.findViewById(R.id.date_tv)).setText(Constants.DATE_FORMATTER.format(new Date(creationTime)));
+			((TextView) returnView.findViewById(R.id.date_tv))
+					.setText(Constants.DATE_FORMATTER.format(new Date(
+							creationTime)));
 		}
 		if (address != null) {
-			((TextView)returnView.findViewById(R.id.place_tv)).setText(address);
+			((TextView) returnView.findViewById(R.id.place_tv))
+					.setText(address);
 		}
 	}
 
 	private void updateCollectionTV() {
-		TextView tv = (TextView)returnView.findViewById(R.id.collections_tv);
-		if (exp.getCollectionIds()==null || exp.getCollectionIds().isEmpty()) {
+		TextView tv = (TextView) returnView.findViewById(R.id.collections_tv);
+		if (exp.getCollectionIds() == null || exp.getCollectionIds().isEmpty()) {
 			tv.setVisibility(View.GONE);
 		} else {
-			String txt = EBHelper.getUserPreference().collectionNames(exp.getCollectionIds());
+			String txt = EBHelper.getUserPreference().collectionNames(
+					exp.getCollectionIds());
 			if (txt == null || txt.length() == 0) {
 				tv.setVisibility(View.GONE);
 			} else {
@@ -266,12 +301,14 @@ public class EditExpFragment extends SherlockFragment implements OnTagsSelectedL
 			}
 		}
 	}
-	
+
 	@Override
 	public void onTagsSelected(Collection<SemanticSuggestion> suggestions) {
 		List<Concept> list = Concept.convertSS(suggestions);
-		if (list != null) exp.setTags(list);
-		((TextView)returnView.findViewById(R.id.tags_tv)).setText(Concept.toSimpleString(list));
+		if (list != null)
+			exp.setTags(list);
+		((TextView) returnView.findViewById(R.id.tags_tv)).setText(Concept
+				.toSimpleString(list));
 		switchToEdit();
 	}
 
@@ -280,7 +317,7 @@ public class EditExpFragment extends SherlockFragment implements OnTagsSelectedL
 		editMode = true;
 		getSherlockActivity().invalidateOptionsMenu();
 	}
-	
+
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
@@ -296,45 +333,58 @@ public class EditExpFragment extends SherlockFragment implements OnTagsSelectedL
 			}
 			break;
 		case R.id.expmenu_attach_audio:
-			onCaptureOption(new String[]{CATCH_TYPES.AUDIO.toString()}, null);
+			onCaptureOption(new String[] { CATCH_TYPES.AUDIO.toString() }, null);
 			break;
 		case R.id.expmenu_attach_camera_photo:
-			onCaptureOption(new String[]{CATCH_TYPES.IMAGE_CAMERA.toString()}, null);
+			onCaptureOption(
+					new String[] { CATCH_TYPES.IMAGE_CAMERA.toString() }, null);
 			break;
 		case R.id.expmenu_attach_camera_video:
-			onCaptureOption(new String[]{CATCH_TYPES.VIDEO_CAMERA.toString()}, null);
+			onCaptureOption(
+					new String[] { CATCH_TYPES.VIDEO_CAMERA.toString() }, null);
 			break;
 		case R.id.expmenu_attach_gallery_photo:
-			onCaptureOption(new String[]{CATCH_TYPES.IMAGE_GALLERY.toString()}, null);
+			onCaptureOption(
+					new String[] { CATCH_TYPES.IMAGE_GALLERY.toString() }, null);
 			break;
 		case R.id.expmenu_attach_gallery_video:
-			onCaptureOption(new String[]{CATCH_TYPES.VIDEO_GALLERY.toString()}, null);
+			onCaptureOption(
+					new String[] { CATCH_TYPES.VIDEO_GALLERY.toString() }, null);
 			break;
 		case R.id.expmenu_attach_qrcode:
-			onCaptureOption(new String[]{CATCH_TYPES.QRCODE.toString()}, null);
+			onCaptureOption(new String[] { CATCH_TYPES.QRCODE.toString() },
+					null);
 			break;
 		case R.id.expmenu_attach_text:
 			DialogFragment textFragment = new EditNoteFragment();
-		    textFragment.setArguments(EditNoteFragment.prepare("", exp.getContents().size()));
-		    textFragment.show(getActivity().getSupportFragmentManager(), "exp_content_note");
+			textFragment.setArguments(EditNoteFragment.prepare("", exp
+					.getContents().size()));
+			textFragment.show(getActivity().getSupportFragmentManager(),
+					"exp_content_note");
 			break;
 		case R.id.expmenu_remove:
 			DialogFragment newFragment = new DeleteExperienceFragment();
-		    newFragment.setArguments(DeleteExperienceFragment.prepare(exp.getId()));
-		    newFragment.show(getActivity().getSupportFragmentManager(), "exp_delete");
+			newFragment.setArguments(DeleteExperienceFragment.prepare(exp
+					.getId()));
+			newFragment.show(getActivity().getSupportFragmentManager(),
+					"exp_delete");
 			break;
 		case R.id.expmenu_assign_collection:
 			DialogFragment assignFragment = new AssignCollectionFragment();
-			assignFragment.setArguments(AssignCollectionFragment.prepare(exp.getId(), exp.getCollectionIds()));
-		    assignFragment.show(getActivity().getSupportFragmentManager(), "exp_assign_colls");
+			assignFragment.setArguments(AssignCollectionFragment.prepare(
+					exp.getId(), exp.getCollectionIds()));
+			assignFragment.show(getActivity().getSupportFragmentManager(),
+					"exp_assign_colls");
 			break;
 		case R.id.expmenu_share:
-			ShareEntityObject obj = new ShareEntityObject(exp.getEntityId(), exp.getTitle(), Constants.ENTITY_TYPE_EXPERIENCE);
+			ShareEntityObject obj = new ShareEntityObject(exp.getEntityId(),
+					exp.getTitle(), Constants.ENTITY_TYPE_EXPERIENCE);
 			SharingHelper.share(getActivity(), obj);
 			break;
 		case R.id.expmenu_map:
 		case R.id.expmenu_export:
-			Toast.makeText(getActivity(), R.string.not_implemented, Toast.LENGTH_SHORT).show();
+			Toast.makeText(getActivity(), R.string.not_implemented,
+					Toast.LENGTH_SHORT).show();
 			// TODO
 			break;
 		default:
@@ -351,14 +401,16 @@ public class EditExpFragment extends SherlockFragment implements OnTagsSelectedL
 	}
 
 	private void switchToEdit() {
-		if (editMode) return;
+		if (editMode)
+			return;
 		editMode = true;
 		getSherlockActivity().invalidateOptionsMenu();
 	}
 
 	private boolean validate(Experience e) {
 		if (e.getTitle() == null || e.getTitle().trim().length() == 0) {
-			Toast.makeText(getActivity(), R.string.alert_title_required, Toast.LENGTH_SHORT).show();
+			Toast.makeText(getActivity(), R.string.alert_title_required,
+					Toast.LENGTH_SHORT).show();
 			return false;
 		}
 		return true;
@@ -366,26 +418,32 @@ public class EditExpFragment extends SherlockFragment implements OnTagsSelectedL
 
 	@Override
 	public void onPrepareOptionsMenu(Menu menu) {
-		if (!this.equals(((DialogCallbackContainer)getActivity()).getNoteHandler())) {
+		if (!this.equals(((DialogCallbackContainer) getActivity())
+				.getNoteHandler())) {
 			return;
-		} 
+		}
 
 		menu.clear();
 		if (exp == null || exp.getId() == null) {
 			// new element menu
-			getSherlockActivity().getSupportMenuInflater().inflate(R.menu.exp_menu_new, menu);
-		}
-		else if (!editMode) {
+			getSherlockActivity().getSupportMenuInflater().inflate(
+					R.menu.exp_menu_new, menu);
+		} else if (!editMode) {
 			// view mode
-			getSherlockActivity().getSupportMenuInflater().inflate(R.menu.exp_menu, menu);
+			getSherlockActivity().getSupportMenuInflater().inflate(
+					R.menu.exp_menu, menu);
 			MenuItem item = menu.findItem(R.id.expmenu_share);
-			if (item != null) item.setEnabled(exp.getEntityId() > 0).setVisible(exp.getEntityId() > 0);
-		}
-		else {
+			if (item != null)
+				item.setEnabled(exp.getEntityId() > 0).setVisible(
+						exp.getEntityId() > 0);
+		} else {
 			// edit mode
-			getSherlockActivity().getSupportMenuInflater().inflate(R.menu.exp_menu_edit, menu);
+			getSherlockActivity().getSupportMenuInflater().inflate(
+					R.menu.exp_menu_edit, menu);
 			MenuItem item = menu.findItem(R.id.expmenu_share);
-			if (item != null) item.setEnabled(exp.getEntityId() > 0).setVisible(exp.getEntityId() > 0);
+			if (item != null)
+				item.setEnabled(exp.getEntityId() > 0).setVisible(
+						exp.getEntityId() > 0);
 		}
 	}
 
@@ -427,7 +485,7 @@ public class EditExpFragment extends SherlockFragment implements OnTagsSelectedL
 	protected void startCapture(String string) {
 		mHelper.startCapture(CATCH_TYPES.valueOf(string));
 	}
-	
+
 	private class LoadAddressTask extends AsyncTask<Void, Void, Address> {
 		@Override
 		protected Address doInBackground(Void... params) {
@@ -446,7 +504,8 @@ public class EditExpFragment extends SherlockFragment implements OnTagsSelectedL
 			if (result != null) {
 				String addrString = Utils.getShortAddressString(result);
 				exp.setAddress(addrString);
-				exp.setLocation(new double[]{result.getLatitude(),result.getLongitude()});
+				exp.setLocation(new double[] { result.getLatitude(),
+						result.getLongitude() });
 				updateFooterTV(addrString, System.currentTimeMillis());
 			}
 		}
@@ -455,56 +514,71 @@ public class EditExpFragment extends SherlockFragment implements OnTagsSelectedL
 	private class SaveTask extends SCAsyncTask<Void, Void, Experience> {
 
 		public SaveTask() {
-			super(getSherlockActivity(), 
-					new AbstractAsyncTaskProcessor<Void, Experience>(getSherlockActivity()) {
-				@Override
-				public Experience performAction(Void... params) throws SecurityException, ConnectionException, Exception {
-					exp.setUpdateTime(System.currentTimeMillis());
-					if (exp.getId() == null) {
-						Address a = Utils.getCurrentPlace(getSherlockActivity());
-						if (a == null && exp.getAddress() == null) return null;
-						if (exp.getAddress() == null) {
-							exp.setAddress(Utils.getShortAddressString(a));
+			super(getSherlockActivity(),
+					new AbstractAsyncTaskProcessor<Void, Experience>(
+							getSherlockActivity()) {
+						@Override
+						public Experience performAction(Void... params)
+								throws SecurityException, ConnectionException,
+								Exception {
+							exp.setUpdateTime(System.currentTimeMillis());
+							if (exp.getId() == null) {
+								Address a = Utils
+										.getCurrentPlace(getSherlockActivity());
+								if (a == null && exp.getAddress() == null)
+									return null;
+								if (exp.getAddress() == null) {
+									exp.setAddress(Utils
+											.getShortAddressString(a));
+								}
+								if (a != null) {
+									exp.setLocation(new double[] {
+											a.getLatitude(), a.getLongitude() });
+								}
+								exp.setCreationTime(exp.getUpdateTime());
+							}
+							return EBHelper.saveExperience(getActivity(), exp,
+									true);
 						}
-						if (a != null) {
-							exp.setLocation(new double[]{a.getLatitude(),a.getLongitude()});
-						}
-						exp.setCreationTime(exp.getUpdateTime());
-					}
-					return EBHelper.saveExperience(getActivity(), exp);
-				}
 
-				@Override
-				public void handleResult(Experience result) {
-					if (result != null) {
-						exp = result;
-						if (exp.getId() != null) switchToView();
-						updateFooterTV(exp.getAddress(),exp.getCreationTime());
-						exp.copyTo(src);
-					} else {
-						Toast.makeText(getSherlockActivity(), R.string.msg_location_undefined, Toast.LENGTH_SHORT).show();
-					}
-				}
-		
-			});
+						@Override
+						public void handleResult(Experience result) {
+							if (result != null) {
+								exp = result;
+								if (exp.getId() != null)
+									switchToView();
+								updateFooterTV(exp.getAddress(),
+										exp.getCreationTime());
+								exp.copyTo(src);
+							} else {
+								Toast.makeText(getSherlockActivity(),
+										R.string.msg_location_undefined,
+										Toast.LENGTH_SHORT).show();
+							}
+						}
+
+					});
 		}
-	}	
+	}
 
 	@Override
 	public void onDestroy() {
-		if (adapter != null) adapter.release();
+		if (adapter != null)
+			adapter.release();
 		super.onDestroy();
 	}
 
 	@Override
 	public boolean onContextItemSelected(android.view.MenuItem item) {
-		if (!this.equals(((DialogCallbackContainer)getActivity()).getNoteHandler())) {
+		if (!this.equals(((DialogCallbackContainer) getActivity())
+				.getNoteHandler())) {
 			return false;
-		} 
-		
-		AdapterContextMenuInfo info = (AdapterContextMenuInfo) item.getMenuInfo();
+		}
+
+		AdapterContextMenuInfo info = (AdapterContextMenuInfo) item
+				.getMenuInfo();
 		if (info.position <= exp.getContents().size() && info.position > 0) {
-			final Content content = exp.getContents().get(info.position-1);
+			final Content content = exp.getContents().get(info.position - 1);
 			switch (item.getItemId()) {
 			case R.id.expcontentmenu_remove:
 				switchToEdit();
@@ -513,9 +587,12 @@ public class EditExpFragment extends SherlockFragment implements OnTagsSelectedL
 				break;
 			case R.id.expcontentmenu_comment:
 				DialogFragment newFragment = new EditNoteFragment();
-				String text = content.getType() == ContentType.TEXT ? content.getValue() : content.getNote();
-			    newFragment.setArguments(EditNoteFragment.prepare(text, info.position-1));
-			    newFragment.show(getActivity().getSupportFragmentManager(), "exp_content_note");
+				String text = content.getType() == ContentType.TEXT ? content
+						.getValue() : content.getNote();
+				newFragment.setArguments(EditNoteFragment.prepare(text,
+						info.position - 1));
+				newFragment.show(getActivity().getSupportFragmentManager(),
+						"exp_content_note");
 				break;
 			default:
 				break;
@@ -525,9 +602,11 @@ public class EditExpFragment extends SherlockFragment implements OnTagsSelectedL
 	}
 
 	@Override
-	public void onCreateContextMenu(ContextMenu menu, View view, ContextMenuInfo menuInfo) {
-		android.view.MenuInflater inflater = getSherlockActivity().getMenuInflater();
-	    inflater.inflate(R.menu.exp_content_list_menu, menu);
+	public void onCreateContextMenu(ContextMenu menu, View view,
+			ContextMenuInfo menuInfo) {
+		android.view.MenuInflater inflater = getSherlockActivity()
+				.getMenuInflater();
+		inflater.inflate(R.menu.exp_content_list_menu, menu);
 	}
 
 	@Override
@@ -550,14 +629,15 @@ public class EditExpFragment extends SherlockFragment implements OnTagsSelectedL
 			c.setValue(note);
 			c.setLocalValue(note);
 			switchToEdit();
-			exp.getContents().add(0,c);
+			exp.getContents().add(0, c);
 			adapter.notifyDataSetChanged();
 		} else {
 			Content oldElement = exp.getContents().get(idx);
 			if (oldElement.getType() == ContentType.TEXT) {
 				// update content
 				String oldValue = oldElement.getValue();
-				if (oldValue != null && !oldValue.equals(note) || oldValue == null && note != null) {
+				if (oldValue != null && !oldValue.equals(note)
+						|| oldValue == null && note != null) {
 					switchToEdit();
 					oldElement.setValue(note);
 					oldElement.setLocalValue(note);
@@ -566,7 +646,8 @@ public class EditExpFragment extends SherlockFragment implements OnTagsSelectedL
 			} else {
 				// update note
 				String oldNote = oldElement.getNote();
-				if (oldNote != null && !oldNote.equals(note) || oldNote == null && note != null) {
+				if (oldNote != null && !oldNote.equals(note) || oldNote == null
+						&& note != null) {
 					switchToEdit();
 					oldElement.setNote(note);
 					adapter.notifyDataSetChanged();
@@ -598,5 +679,5 @@ public class EditExpFragment extends SherlockFragment implements OnTagsSelectedL
 		updateCollectionTV();
 		switchToEdit();
 	}
-	
+
 }

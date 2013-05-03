@@ -15,6 +15,9 @@
  ******************************************************************************/
 package eu.trentorise.smartcampus.eb.custom;
 
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.List;
 import java.util.Locale;
@@ -22,20 +25,25 @@ import java.util.UUID;
 
 import android.content.Context;
 import android.location.Address;
+import android.util.Log;
+import android.webkit.MimeTypeMap;
 
 import com.google.android.maps.GeoPoint;
 
 import eu.trentorise.smartcampus.android.common.SCGeocoder;
 import eu.trentorise.smartcampus.eb.custom.data.EBHelper;
+import eu.trentorise.smartcampus.eb.model.Resource;
 
 public class Utils {
+	private static final String TAG = "Utils";
 
 	public static String getShortAddressString(Address a) {
 		String res = a.getLocality();
-		if (res == null || res.length() == 0) return a.getAddressLine(0);
+		if (res == null || res.length() == 0)
+			return a.getAddressLine(0);
 		return res;
 	}
-	
+
 	public static Address getCurrentPlace(Context ctx) {
 		GeoPoint me = requestMyLocation(ctx);
 		if (me == null)
@@ -57,7 +65,8 @@ public class Utils {
 	private static Address findAddress(GeoPoint p, Context contexto) {
 		SCGeocoder geoCoder = new SCGeocoder(contexto, Locale.getDefault());
 		try {
-			List<Address> addresses = geoCoder.getFromLocationSC(p.getLatitudeE6() / 1E6, p.getLongitudeE6() / 1E6, true);
+			List<Address> addresses = geoCoder.getFromLocationSC(
+					p.getLatitudeE6() / 1E6, p.getLongitudeE6() / 1E6, true);
 			if (addresses == null || addresses.isEmpty())
 				return null;
 			return addresses.get(0);
@@ -69,5 +78,40 @@ public class Utils {
 
 	public static String generateUID() {
 		return UUID.randomUUID().toString();
+	}
+
+	public static Resource getResource(Context ctx, String uri) {
+		byte[] buffer = new byte[512];
+		String contentType = null;
+		File res = new File(uri);
+		FileInputStream fis;
+		ByteArrayOutputStream bout = new ByteArrayOutputStream();
+		String ext = MimeTypeMap.getFileExtensionFromUrl(uri);
+		String name = getFilename(uri, true);
+		Resource resource = null;
+		if (ext != null) {
+			contentType = MimeTypeMap.getSingleton().getMimeTypeFromExtension(
+					ext);
+		}
+		try {
+			fis = new FileInputStream(res);
+			int readed = -1;
+			while ((readed = fis.read(buffer, 0, buffer.length)) != -1) {
+				bout.write(buffer, 0, readed);
+			}
+			resource = new Resource(bout.toByteArray(), contentType, name);
+			Log.i(TAG, String.format("Loaded resource %s of type %s", name,
+					contentType));
+		} catch (IOException e) {
+			Log.i(TAG, String.format("Problem loading resource %s of type %s",
+					name, contentType));
+		}
+		return resource;
+	}
+
+	public static String getFilename(String uri, boolean extension) {
+		int start = uri.lastIndexOf("/") + 1;
+		int end = uri.lastIndexOf(".") - 1;
+		return uri.substring(start, (extension ? uri.length() : end));
 	}
 }

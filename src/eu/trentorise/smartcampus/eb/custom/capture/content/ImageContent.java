@@ -23,12 +23,11 @@ public class ImageContent implements GrabbedContent {
 	private static final long serialVersionUID = 7114848425178997996L;
 
 	private String uri;
-	
+
 	public ImageContent(String uri) {
 		super();
 		this.uri = uri;
 	}
-
 
 	@Override
 	public ContentType contentType() {
@@ -39,7 +38,7 @@ public class ImageContent implements GrabbedContent {
 	public Content toContent() {
 		Content c = new Content();
 		c.setLocalValue(uri);
-		c.setValue(uri);
+		// c.setValue(uri);
 		return c;
 	}
 

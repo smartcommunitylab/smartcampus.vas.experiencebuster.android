@@ -17,8 +17,7 @@ package eu.trentorise.smartcampus.eb.model;
 
 import java.io.Serializable;
 
-
-public class Content implements Serializable{
+public class Content implements Serializable {
 	private static final long serialVersionUID = 5647832073206951058L;
 
 	private String id;
@@ -29,9 +28,9 @@ public class Content implements Serializable{
 	private String entityType;
 	private long timestamp;
 	private String localValue;
-	
+
 	private transient Object cache;
-	
+
 	public String getId() {
 		return id;
 	}
@@ -126,5 +125,10 @@ public class Content implements Serializable{
 		c.setValue(value);
 		c.cache(cache);
 		return c;
+	}
+
+	public boolean isStorable() {
+		return type == ContentType.FILE || type == ContentType.AUDIO
+				|| type == ContentType.PHOTO || type == ContentType.VIDEO;
 	}
 }
