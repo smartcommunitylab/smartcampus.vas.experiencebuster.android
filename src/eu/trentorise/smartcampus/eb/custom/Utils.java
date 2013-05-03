@@ -114,4 +114,5 @@ public class Utils {
 		int end = uri.lastIndexOf(".") - 1;
 		return uri.substring(start, (extension ? uri.length() : end));
 	}
+
 }
