@@ -163,7 +163,7 @@ public class FileSyncStorage extends SyncStorageWithPaging {
 			String orderBy) throws DataException, StorageConfigurationException {
 		Collection<T> result = super.query(cls, selection, args, offset, limit,
 				orderBy);
-
+		loadRemoteFiles(cls, result);
 		return result;
 	}
 
@@ -194,8 +194,9 @@ public class FileSyncStorage extends SyncStorageWithPaging {
 	public <T extends BasicObject> Collection<T> query(Class<T> cls,
 			String selection, String[] args) throws DataException,
 			StorageConfigurationException {
-		// TODO Auto-generated method stub
-		return super.query(cls, selection, args);
+		Collection<T> result = super.query(cls, selection, args);
+		loadRemoteFiles(cls, result);
+		return result;
 	}
 
 	/*
