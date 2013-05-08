@@ -27,6 +27,9 @@ import android.accounts.Account;
 import android.app.Activity;
 import android.content.ContentResolver;
 import android.content.Context;
+import android.content.Intent;
+import android.content.SharedPreferences;
+import android.content.SharedPreferences.Editor;
 import android.os.Bundle;
 import android.os.RemoteException;
 import android.util.Log;
@@ -39,6 +42,7 @@ import eu.trentorise.smartcampus.android.common.Utils;
 import eu.trentorise.smartcampus.android.common.tagging.SemanticSuggestion;
 import eu.trentorise.smartcampus.android.common.tagging.SuggestionHelper;
 import eu.trentorise.smartcampus.eb.R;
+import eu.trentorise.smartcampus.eb.filestorage.FilestorageAccountActivity;
 import eu.trentorise.smartcampus.eb.model.ExpCollection;
 import eu.trentorise.smartcampus.eb.model.Experience;
 import eu.trentorise.smartcampus.eb.model.ExperienceFilter;
@@ -59,6 +63,11 @@ import eu.trentorise.smartcampus.storage.db.StorageConfiguration;
 
 public class EBHelper {
 
+	private static final String EB_CONFS = "filelog";
+
+	public static final String CONF_SYNCHRO = "EB_SYNCHRO";
+	public static final String CONF_USER_ACCOUNT = "EB_USER_ACCOUNT";
+
 	private static final boolean testing = true;
 
 	private static EBHelper instance = null;
@@ -66,14 +75,9 @@ public class EBHelper {
 	private static SCAccessProvider accessProvider = new AMSCAccessProvider();
 
 	public static Account SCAccount;
-	// = new Account(
-	// eu.trentorise.smartcampus.ac.Constants.ACCOUNT_NAME_DEFAULT,
-	// eu.trentorise.smartcampus.ac.Constants.ACCOUNT_TYPE_DEFAULT);
 
-	// private SyncManager mSyncManager;
 	private Context mContext;
 	private StorageConfiguration sc = null;
-	// private EBSyncStorage storage = null;
 	private FileSyncStorage storage = null;
 	private ProtocolCarrier mProtocolCarrier = null;
 
@@ -99,6 +103,37 @@ public class EBHelper {
 				bundle);
 	}
 
+	public static boolean saveConfiguration(String configuration, String value)
+			throws DataException {
+		SharedPreferences confs = getInstance().mContext.getSharedPreferences(
+				EB_CONFS, 0);
+
+		Editor editor = confs.edit();
+		editor.putString(CONF_USER_ACCOUNT, value);
+		return editor.commit();
+	}
+
+	public static String getConfiguration(String configuration)
+			throws DataException {
+		SharedPreferences confs = getInstance().mContext.getSharedPreferences(
+				EB_CONFS, 0);
+		return confs != null ? confs.getString(configuration, null) : null;
+	}
+
+	public static void askUserAccount(Activity a, int requestCode)
+			throws DataException {
+		Intent i = new Intent(getInstance().mContext,
+				FilestorageAccountActivity.class);
+		a.startActivityForResult(i, requestCode);
+	}
+
+	public static void askUserAccount(android.support.v4.app.Fragment f,
+			int requestCode) throws DataException {
+		Intent i = new Intent(getInstance().mContext,
+				FilestorageAccountActivity.class);
+		f.startActivityForResult(i, requestCode);
+	}
+
 	public static String getAuthToken() {
 		return getAccessProvider().readToken(instance.mContext, null);
 	}
@@ -120,12 +155,15 @@ public class EBHelper {
 		// this.mSyncManager = new SyncManager(mContext,
 		// SyncStorageService.class);
 		this.sc = new EBStorageConfiguration();
-		this.storage = new FileSyncStorage(mContext, Constants.APP_TOKEN,
-				Constants.SYNC_DB_NAME, 1, sc);
+		this.storage = new FileSyncStorage(
+				mContext,
+				eu.trentorise.smartcampus.eb.custom.data.Constants.APP_TOKEN,
+				eu.trentorise.smartcampus.eb.custom.data.Constants.SYNC_DB_NAME,
+				1, sc);
 		// this.storage = new EBSyncStorage(mContext, Constants.APP_TOKEN,
 		// Constants.SYNC_DB_NAME, 1, sc);
 		this.mProtocolCarrier = new ProtocolCarrier(mContext,
-				Constants.APP_TOKEN);
+				eu.trentorise.smartcampus.eb.custom.data.Constants.APP_TOKEN);
 
 		SCAccount = new Account(
 				eu.trentorise.smartcampus.ac.Constants.getAccountName(mContext),
@@ -253,7 +291,7 @@ public class EBHelper {
 			DataException {
 		return SuggestionHelper.getSuggestions(suggest, getInstance().mContext,
 				GlobalConfig.getAppUrl(getInstance().mContext), getAuthToken(),
-				Constants.APP_TOKEN);
+				eu.trentorise.smartcampus.eb.custom.data.Constants.APP_TOKEN);
 	}
 
 	public static List<Experience> getExperiences(int position, int size) {
@@ -345,7 +383,7 @@ public class EBHelper {
 			boolean filterLocations) throws Exception {
 		MessageRequest request = new MessageRequest(
 				GlobalConfig.getAppUrl(getInstance().mContext),
-				Constants.OBJECT_SERVICE);
+				eu.trentorise.smartcampus.eb.custom.data.Constants.OBJECT_SERVICE);
 		request.setMethod(Method.GET);
 		ObjectFilter filter = new ObjectFilter();
 
@@ -370,7 +408,9 @@ public class EBHelper {
 		request.setQuery(queryString);
 
 		MessageResponse response = getInstance().mProtocolCarrier.invokeSync(
-				request, Constants.APP_TOKEN, getAuthToken());
+				request,
+				eu.trentorise.smartcampus.eb.custom.data.Constants.APP_TOKEN,
+				getAuthToken());
 		String body = response.getBody();
 		if (body == null || body.trim().length() == 0) {
 			return Collections.emptyList();

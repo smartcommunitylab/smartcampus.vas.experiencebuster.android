@@ -22,6 +22,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -29,6 +30,7 @@ import android.location.Address;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
+import android.util.Log;
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
 import android.view.LayoutInflater;
@@ -73,6 +75,7 @@ import eu.trentorise.smartcampus.eb.model.ExpCollection;
 import eu.trentorise.smartcampus.eb.model.Experience;
 import eu.trentorise.smartcampus.protocolcarrier.exceptions.ConnectionException;
 import eu.trentorise.smartcampus.protocolcarrier.exceptions.SecurityException;
+import eu.trentorise.smartcampus.storage.DataException;
 
 public class EditExpFragment extends SherlockFragment
 		implements
@@ -100,6 +103,8 @@ public class EditExpFragment extends SherlockFragment
 	private static final String ARG_SRC = "src";
 	public static final String ARG_EXP = "exp";
 	public static final String ARG_VALUE = "value";
+
+	public static final int ACCOUNT_CREATION = 10000;
 
 	public static Bundle prepareArgs(Experience e, GrabbedContent content) {
 		Bundle b = new Bundle();
@@ -329,7 +334,16 @@ public class EditExpFragment extends SherlockFragment
 			exp.setTitle(mTitleSwitch.getValue());
 			exp.setDescription(mDescrSwitch.getValue());
 			if (validate(exp)) {
-				new SaveTask().execute();
+				try {
+					if (EBHelper.getConfiguration(EBHelper.CONF_USER_ACCOUNT) != null) {
+						new SaveTask().execute();
+					} else {
+						EBHelper.askUserAccount(this, ACCOUNT_CREATION);
+					}
+				} catch (DataException e) {
+					Log.e(EditExpFragment.class.getName(),
+							"Error creating filestorage account");
+				}
 			}
 			break;
 		case R.id.expmenu_attach_audio:
@@ -469,6 +483,21 @@ public class EditExpFragment extends SherlockFragment
 
 	@Override
 	public void onActivityResult(int requestCode, int resultCode, Intent data) {
+		if (requestCode == ACCOUNT_CREATION) {
+			if (resultCode == Activity.RESULT_OK) {
+				String accountId = data.getStringExtra("USER_ACCOUNT_ID");
+				try {
+					EBHelper.saveConfiguration(EBHelper.CONF_USER_ACCOUNT,
+							accountId);
+					new SaveTask().execute();
+				} catch (DataException e) {
+					Log.e(EditExpFragment.class.getName(),
+							"Error saving configuration: "
+									+ EBHelper.CONF_USER_ACCOUNT);
+				}
+			}
+		}
+
 		mHelper.onCaptureResult(requestCode, resultCode, data);
 	}
 

@@ -44,6 +44,7 @@
     <string name="title_diary">Diary</string>
     <string name="title_nearme">Near me now</string>
     <string name="title_search">Search</string>
+     <string name="title_activity_file">FilestorageActivity</string>
     
     <string name="ext_form_title_hint">Title…</string>
     <string name="exp_form_tags_hint">Tags…</string>

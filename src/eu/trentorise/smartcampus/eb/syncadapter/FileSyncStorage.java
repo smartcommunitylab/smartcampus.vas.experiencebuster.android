@@ -54,8 +54,6 @@ public class FileSyncStorage extends SyncStorageWithPaging {
 
 	private Filestorage filestorage;
 
-	private static final String USER_ACCOUNT_ID = "";
-
 	private static Map<String, BasicObject> expToDelete = new ConcurrentHashMap<String, BasicObject>();
 	private static Map<String, String> fileStoraging = new ConcurrentHashMap<String, String>();
 
@@ -223,19 +221,12 @@ public class FileSyncStorage extends SyncStorageWithPaging {
 			throws StorageConfigurationException, SecurityException,
 			ConnectionException, DataException, ProtocolException {
 		SyncData syncData = helper.getDataToSync(getSyncVersion());
-		// Intent intent = new Intent(mContext, FileSyncService.class);
-		// FileSyncData fileSyncData = new FileSyncData();
-		// fileSyncData.setDeleted(syncData.getDeleted());
-		// fileSyncData.setUpdated(syncData.getUpdated());
-		// fileSyncData.setVersion(syncData.getVersion());
-		// intent.putExtra("syncData", fileSyncData);
-		// mContext.startService(intent);
 		synchroFile(syncData, authToken);
-		// new FilestorageExecutor(syncData).execute();
 		return super.synchronize(authToken, host, service);
 	}
 
 	private boolean synchroFile(SyncData data, String authToken) {
+
 		if (data.getUpdated().get(
 				"eu.trentorise.smartcampus.eb.model.Experience") != null) {
 			for (Object o : data.getUpdated().get(
@@ -253,12 +244,17 @@ public class FileSyncStorage extends SyncStorageWithPaging {
 								Resource res = eu.trentorise.smartcampus.eb.custom.Utils
 										.getResource(mContext,
 												c.getLocalValue());
-								String rid = filestorage.storeResource(
-										res.getContent(), res.getContentType(),
-										res.getName(), authToken,
-										USER_ACCOUNT_ID);
-								fileStoraging.put(c.getLocalValue(), rid);
-								c.setValue(rid);
+								String userAccountId = EBHelper
+										.getConfiguration(EBHelper.CONF_USER_ACCOUNT);
+								if (userAccountId != null) {
+									String rid = filestorage.storeResource(
+											res.getContent(),
+											res.getContentType(),
+											res.getName(), authToken,
+											userAccountId);
+									fileStoraging.put(c.getLocalValue(), rid);
+									c.setValue(rid);
+								}
 							}
 
 							if ((c.getValue() == null || c.getValue().length() == 0)
@@ -288,8 +284,12 @@ public class FileSyncStorage extends SyncStorageWithPaging {
 							if (c.getValue() != null
 									&& c.getValue().length() > 0) {
 								try {
-									filestorage.deleteResource(authToken,
-											USER_ACCOUNT_ID, c.getValue());
+									String userAccountId = EBHelper
+											.getConfiguration(EBHelper.CONF_USER_ACCOUNT);
+									if (userAccountId != null) {
+										filestorage.deleteResource(authToken,
+												userAccountId, c.getValue());
+									}
 								} catch (Exception e) {
 									Log.e(getClass().getName(),
 											"Exception deleting file content");

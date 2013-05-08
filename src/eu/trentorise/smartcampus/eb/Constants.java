@@ -27,9 +27,11 @@ public class Constants {
 	public static final int FILE_SIZE_LIMIT = 1024 * 1024; // 1Mb
 
 	public static final String ENTITY_TYPE_EXPERIENCE = "experience";
-	
-	public static final SimpleDateFormat DATE_FORMATTER = new SimpleDateFormat("dd/MM/yyyy HH:mm", Locale.US);
-	public static final SimpleDateFormat DATE_FORMATTER_HEADER = new SimpleDateFormat("MMMM dd", Locale.US);
+
+	public static final SimpleDateFormat DATE_FORMATTER = new SimpleDateFormat(
+			"dd/MM/yyyy HH:mm", Locale.US);
+	public static final SimpleDateFormat DATE_FORMATTER_HEADER = new SimpleDateFormat(
+			"MMMM dd", Locale.US);
 
 	public static final String EB_APP_MEDIA_FOLDER = "experiencebuster";
 

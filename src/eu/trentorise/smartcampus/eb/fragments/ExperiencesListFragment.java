@@ -23,6 +23,7 @@ import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
+import android.util.Log;
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
 import android.view.LayoutInflater;
@@ -41,10 +42,12 @@ import eu.trentorise.smartcampus.eb.custom.data.EBHelper;
 import eu.trentorise.smartcampus.eb.fragments.experience.AssignCollectionFragment;
 import eu.trentorise.smartcampus.eb.fragments.experience.DeleteExperienceFragment;
 import eu.trentorise.smartcampus.eb.fragments.experience.DeleteExperienceFragment.RemoveCallback;
+import eu.trentorise.smartcampus.eb.fragments.experience.EditExpFragment;
 import eu.trentorise.smartcampus.eb.fragments.experience.ExperiencePager;
 import eu.trentorise.smartcampus.eb.model.ExpCollection;
 import eu.trentorise.smartcampus.eb.model.Experience;
 import eu.trentorise.smartcampus.eb.model.ExperienceFilter;
+import eu.trentorise.smartcampus.storage.DataException;
 
 public class ExperiencesListFragment extends SherlockListFragment
 		implements
@@ -59,6 +62,8 @@ public class ExperiencesListFragment extends SherlockListFragment
 
 	private List<Experience> experiencesList;
 	private ExperienceFilter filter;
+
+	private static final int ACCOUNT_CREATION = 10000;
 
 	@SuppressWarnings("unchecked")
 	@Override
@@ -193,6 +198,14 @@ public class ExperiencesListFragment extends SherlockListFragment
 
 	@Override
 	public void onCollectionsAssigned(String id, List<String> colls) {
+		try {
+			if (EBHelper.getConfiguration(EBHelper.CONF_USER_ACCOUNT) == null) {
+				EBHelper.askUserAccount(getActivity(), ACCOUNT_CREATION);
+			}
+		} catch (DataException e1) {
+			Log.e(ExperiencesListFragment.class.getName(),
+					"Error creating filestorage user account");
+		}
 		for (Experience e : experiencesList) {
 			if (e.getId().equals(id)) {
 				e.setCollectionIds(colls);
@@ -206,6 +219,20 @@ public class ExperiencesListFragment extends SherlockListFragment
 
 	@Override
 	public void onActivityResult(int reqCode, int resCode, Intent data) {
+		if (reqCode == ACCOUNT_CREATION) {
+			if (resCode == Activity.RESULT_OK) {
+				String accountId = data.getStringExtra("USER_ACCOUNT_ID");
+				try {
+					EBHelper.saveConfiguration(EBHelper.CONF_USER_ACCOUNT,
+							accountId);
+				} catch (DataException e) {
+					Log.e(EditExpFragment.class.getName(),
+							"Error saving configuration: "
+									+ EBHelper.CONF_USER_ACCOUNT);
+				}
+			}
+		}
+
 		if (REQUEST_CODE_PAGER == reqCode && Activity.RESULT_OK == resCode) {
 			@SuppressWarnings("unchecked")
 			ArrayList<Experience> list = (ArrayList<Experience>) data
