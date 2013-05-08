@@ -18,7 +18,10 @@ package eu.trentorise.smartcampus.eb.syncadapter;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -55,6 +58,7 @@ public class FileSyncStorage extends SyncStorageWithPaging {
 	private Filestorage filestorage;
 
 	private static Map<String, BasicObject> expToDelete = new ConcurrentHashMap<String, BasicObject>();
+	private static List<String> contentToDelete = new ArrayList<String>();
 	private static Map<String, String> fileStoraging = new ConcurrentHashMap<String, String>();
 
 	/**
@@ -106,6 +110,16 @@ public class FileSyncStorage extends SyncStorageWithPaging {
 		updateContent(input);
 		super.update(input, upsert, sync);
 	};
+
+	public void removeContent(Content c) {
+		if (c != null
+				&& (c.getValue() != null || fileStoraging.containsKey(c
+						.getLocalValue()))) {
+			String resourceId = c.getValue() != null ? c.getValue()
+					: fileStoraging.get(c.getLocalValue());
+			contentToDelete.add(resourceId);
+		}
+	}
 
 	private <T extends BasicObject> void updateContent(T input) {
 		if (input instanceof Experience) {
@@ -227,6 +241,7 @@ public class FileSyncStorage extends SyncStorageWithPaging {
 
 	private boolean synchroFile(SyncData data, String authToken) {
 
+		// save new resources
 		if (data.getUpdated().get(
 				"eu.trentorise.smartcampus.eb.model.Experience") != null) {
 			for (Object o : data.getUpdated().get(
@@ -272,6 +287,23 @@ public class FileSyncStorage extends SyncStorageWithPaging {
 			}
 		}
 
+		// delete removed contents
+		Iterator<String> iter = contentToDelete.iterator();
+		while (iter.hasNext()) {
+			try {
+				String userAccountId = EBHelper
+						.getConfiguration(EBHelper.CONF_USER_ACCOUNT);
+				if (userAccountId != null) {
+					filestorage.deleteResource(authToken, userAccountId,
+							iter.next());
+					iter.remove();
+				}
+			} catch (Exception e) {
+				Log.e(getClass().getName(), "Exception deleting file content");
+			}
+		}
+
+		// delete contents of deleted experiences
 		if (data.getDeleted().get(
 				"eu.trentorise.smartcampus.eb.model.Experience") != null) {
 			for (Object o : data.getDeleted().get(

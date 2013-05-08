@@ -611,7 +611,15 @@ public class EditExpFragment extends SherlockFragment
 			switch (item.getItemId()) {
 			case R.id.expcontentmenu_remove:
 				switchToEdit();
-				exp.getContents().remove(info.position - 1);
+				Content c = null;
+				try {
+					c = exp.getContents().remove(info.position - 1);
+					EBHelper.getSyncStorage().removeContent(c);
+				} catch (DataException e) {
+					Log.e(EditExpFragment.class.getName(),
+							"Error added content to deleted contents id: " + c != null ? c
+									.getId() : null);
+				}
 				adapter.notifyDataSetChanged();
 				break;
 			case R.id.expcontentmenu_comment:
