@@ -152,16 +152,12 @@ public class EBHelper {
 	protected EBHelper(Context mContext) {
 		super();
 		this.mContext = mContext;
-		// this.mSyncManager = new SyncManager(mContext,
-		// SyncStorageService.class);
 		this.sc = new EBStorageConfiguration();
 		this.storage = new FileSyncStorage(
 				mContext,
 				eu.trentorise.smartcampus.eb.custom.data.Constants.APP_TOKEN,
 				eu.trentorise.smartcampus.eb.custom.data.Constants.SYNC_DB_NAME,
 				1, sc);
-		// this.storage = new EBSyncStorage(mContext, Constants.APP_TOKEN,
-		// Constants.SYNC_DB_NAME, 1, sc);
 		this.mProtocolCarrier = new ProtocolCarrier(mContext,
 				eu.trentorise.smartcampus.eb.custom.data.Constants.APP_TOKEN);
 
@@ -218,11 +214,13 @@ public class EBHelper {
 
 			getInstance().loaded = true;
 		} else {
-			getInstance().loadData();
+			// getInstance().loadData();
 			// if (getPreferences().isSynchronizeAutomatically()) {
 			synchronize(true);
 			// }
 		}
+
+		synchronize(true);
 	}
 
 	private void loadData() throws DataException,
@@ -233,22 +231,6 @@ public class EBHelper {
 		}
 
 		loaded = true;
-	}
-
-	// public static void synchronize() throws RemoteException, DataException,
-	// StorageConfigurationException, SecurityException,
-	// ConnectionException, ProtocolException {
-	// getInstance().storage.synchronize(getAuthToken(),
-	// GlobalConfig.getAppUrl(getInstance().mContext),
-	// Constants.SYNC_SERVICE);
-	// }
-
-	public static void synchronizeInBG() throws RemoteException, DataException,
-			StorageConfigurationException, SecurityException,
-			ConnectionException, ProtocolException {
-		synchronize(true);
-		// getInstance().mSyncManager.synchronize(getAuthToken(),
-		// Constants.APP_TOKEN);
 	}
 
 	public static void endAppFailure(Activity activity, int id) {
