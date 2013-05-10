@@ -18,8 +18,10 @@ package eu.trentorise.smartcampus.eb.custom;
 import java.util.Date;
 import java.util.List;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
+import android.os.Build;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -32,31 +34,31 @@ import eu.trentorise.smartcampus.eb.custom.data.EBHelper;
 import eu.trentorise.smartcampus.eb.model.Content;
 import eu.trentorise.smartcampus.eb.model.Experience;
 
+@SuppressLint("NewApi")
 public class ExperiencesListAdapter extends ArrayAdapter<Experience> {
 
 	private Context context;
 	private int layoutResourceId;
 	private List<Experience> contentsList;
 
-	public ExperiencesListAdapter(Context context, int layoutResourceId, List<Experience> contentsList) {
+	public ExperiencesListAdapter(Context context, int layoutResourceId,
+			List<Experience> contentsList) {
 		super(context, layoutResourceId, contentsList);
 		this.context = context;
 		this.layoutResourceId = layoutResourceId;
 		this.contentsList = contentsList;
 	}
 
-	
-	
 	@Override
 	public View getView(int position, View convertView, ViewGroup parent) {
 		View row = convertView;
-		Holder holder = null;
+		ImgHolder holder = null;
 
 		if (row == null) {
 			LayoutInflater inflater = ((Activity) context).getLayoutInflater();
 			row = inflater.inflate(layoutResourceId, parent, false);
 
-			holder = new Holder();
+			holder = new ImgHolder();
 			holder.separator = (View) row.findViewById(R.id.separator);
 			holder.title = (TextView) row.findViewById(R.id.title);
 			holder.description = (TextView) row.findViewById(R.id.description);
@@ -64,10 +66,10 @@ public class ExperiencesListAdapter extends ArrayAdapter<Experience> {
 			holder.place = (TextView) row.findViewById(R.id.place);
 			holder.date = (TextView) row.findViewById(R.id.date);
 			holder.preview = (ImageView) row.findViewById(R.id.preview);
-			
+
 			row.setTag(holder);
 		} else {
-			holder = (Holder) row.getTag();
+			holder = (ImgHolder) row.getTag();
 		}
 
 		Experience experience = contentsList.get(position);
@@ -76,23 +78,28 @@ public class ExperiencesListAdapter extends ArrayAdapter<Experience> {
 			previousExperience = contentsList.get(position - 1);
 		}
 
-		if (previousExperience == null || ((long)(experience.getCreationTime()/(1000*60*60*24))) != ((long)(previousExperience.getCreationTime()/(1000*60*60*24)))) {
-			String headerDateString = formatDateForHeader(experience.getCreationTime()).toUpperCase();
-			((TextView)holder.separator.findViewById(R.id.separator_text)).setText(headerDateString);
+		if (previousExperience == null
+				|| ((long) (experience.getCreationTime() / (1000 * 60 * 60 * 24))) != ((long) (previousExperience
+						.getCreationTime() / (1000 * 60 * 60 * 24)))) {
+			String headerDateString = formatDateForHeader(
+					experience.getCreationTime()).toUpperCase();
+			((TextView) holder.separator.findViewById(R.id.separator_text))
+					.setText(headerDateString);
 			holder.separator.setVisibility(View.VISIBLE);
 		} else {
 			holder.separator.setVisibility(View.GONE);
 		}
 
 		holder.title.setText(experience.getTitle());
-		if (experience != null && experience.getDescription().length() > 0){
+		if (experience != null && experience.getDescription().length() > 0) {
 			holder.description.setText(experience.getDescription());
 		} else {
 			holder.description.setVisibility(View.GONE);
 		}
 
 		String collectionsString = "";
-		collectionsString = EBHelper.getUserPreference().collectionNames(experience.getCollectionIds());
+		collectionsString = EBHelper.getUserPreference().collectionNames(
+				experience.getCollectionIds());
 
 		// // set up for possible future "click on collection name to open it"
 		// // implementation
@@ -111,7 +118,7 @@ public class ExperiencesListAdapter extends ArrayAdapter<Experience> {
 		} else {
 			holder.collections.setVisibility(View.GONE);
 		}
-		
+
 		if (experience.preview() != null) {
 			holder.preview.setVisibility(View.VISIBLE);
 			holder.preview.setImageBitmap(experience.preview());
@@ -120,7 +127,16 @@ public class ExperiencesListAdapter extends ArrayAdapter<Experience> {
 			Content previewContent = experience.computePreview();
 			if (previewContent != null) {
 				holder.preview.setTag(previewContent.getId());
-				new ImageLoadTask(holder.preview, null).execute(previewContent);
+				// if device use android 3, use parallel async execution
+				if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.GINGERBREAD) {
+					new ImageLoadTask(holder.preview, null).executeOnExecutor(
+							android.os.AsyncTask.THREAD_POOL_EXECUTOR,
+							previewContent);
+				} else {// serial otherwise
+					new ImageLoadTask(holder.preview, null)
+							.execute(previewContent);
+				}
+
 			} else {
 				holder.preview.setVisibility(View.GONE);
 			}
@@ -132,7 +148,7 @@ public class ExperiencesListAdapter extends ArrayAdapter<Experience> {
 		return row;
 	}
 
-	private static class Holder {
+	public static class ImgHolder {
 		View separator;
 		TextView title;
 		TextView description;

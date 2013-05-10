@@ -17,10 +17,13 @@ package eu.trentorise.smartcampus.eb.custom.capture;
 
 import java.io.File;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.net.Uri;
+import android.os.AsyncTask;
+import android.os.Build;
 import android.text.Html;
 import android.text.util.Linkify;
 import android.view.Display;
@@ -38,35 +41,49 @@ import eu.trentorise.smartcampus.eb.custom.EmbeddedMediaPlayer;
 import eu.trentorise.smartcampus.eb.custom.ImageLoadTask;
 import eu.trentorise.smartcampus.eb.model.Content;
 
+@SuppressLint("NewApi")
 public class ContentRenderer {
 
 	private static LayoutParams wrap() {
-		return new LinearLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
-	}
-	private static LayoutParams match() {
-		return new LinearLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
+		return new LinearLayout.LayoutParams(LayoutParams.WRAP_CONTENT,
+				LayoutParams.WRAP_CONTENT);
 	}
 
-	public static ResourceHandler render(Content content, final ViewGroup view, int position) {
+	private static LayoutParams match() {
+		return new LinearLayout.LayoutParams(LayoutParams.MATCH_PARENT,
+				LayoutParams.WRAP_CONTENT);
+	}
+
+	public static ResourceHandler render(Content content, final ViewGroup view,
+			int position) {
 		switch (content.getType()) {
 		case PHOTO:
 			ImageView iv = new ImageView(view.getContext());
 			iv.setLayoutParams(wrap());
 			view.setLayoutParams(wrap());
-			((LinearLayout.LayoutParams)view.getLayoutParams()).gravity = Gravity.CENTER_HORIZONTAL;
-			Display d = ((Activity)view.getContext()).getWindowManager().getDefaultDisplay();
+			((LinearLayout.LayoutParams) view.getLayoutParams()).gravity = Gravity.CENTER_HORIZONTAL;
+			Display d = ((Activity) view.getContext()).getWindowManager()
+					.getDefaultDisplay();
 			int mpwidth = d.getWidth();
-			iv.getLayoutParams().width = (int)(0.8*mpwidth);
-			iv.getLayoutParams().height = (int)(iv.getLayoutParams().width/2);
+			iv.getLayoutParams().width = (int) (0.8 * mpwidth);
+			iv.getLayoutParams().height = (int) (iv.getLayoutParams().width / 2);
 			iv.setScaleType(ScaleType.CENTER_INSIDE);
 
 			Bitmap bitmap = null;
 			if (content.cached() != null) {
-				bitmap = (Bitmap)content.cached();
+				bitmap = (Bitmap) content.cached();
 				iv.setImageBitmap(bitmap);
 			} else {
 				iv.setTag(content.getId());
-				new ImageLoadTask(iv, R.drawable.ic_menu_report_image).execute(content);
+				// if device use android 3, use parallel async execution
+				if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.GINGERBREAD) {
+					new ImageLoadTask(iv, R.drawable.ic_menu_report_image)
+							.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR,
+									content);
+				} else {// serial otherwise
+					new ImageLoadTask(iv, R.drawable.ic_menu_report_image)
+							.execute(content);
+				}
 			}
 			view.addView(iv);
 			return null;
@@ -74,12 +91,14 @@ public class ContentRenderer {
 			TextView tv = new TextView(view.getContext());
 			view.setLayoutParams(match());
 			if (position % 2 == 1) {
-				tv.setTextColor(view.getContext().getResources().getColor(android.R.color.black));
+				tv.setTextColor(view.getContext().getResources()
+						.getColor(android.R.color.black));
 			} else {
-				tv.setTextColor(view.getContext().getResources().getColor(android.R.color.white));
+				tv.setTextColor(view.getContext().getResources()
+						.getColor(android.R.color.white));
 			}
 			tv.setLayoutParams(wrap());
-			((LinearLayout.LayoutParams)view.getLayoutParams()).gravity = Gravity.LEFT;
+			((LinearLayout.LayoutParams) view.getLayoutParams()).gravity = Gravity.LEFT;
 			tv.setAutoLinkMask(Linkify.ALL);
 			tv.setText(content.getValue());
 			view.addView(tv);
@@ -88,12 +107,14 @@ public class ContentRenderer {
 			TextView qv = new TextView(view.getContext());
 			view.setLayoutParams(match());
 			if (position % 2 == 1) {
-				qv.setTextColor(view.getContext().getResources().getColor(android.R.color.black));
+				qv.setTextColor(view.getContext().getResources()
+						.getColor(android.R.color.black));
 			} else {
-				qv.setTextColor(view.getContext().getResources().getColor(android.R.color.white));
+				qv.setTextColor(view.getContext().getResources()
+						.getColor(android.R.color.white));
 			}
 			qv.setLayoutParams(wrap());
-			((LinearLayout.LayoutParams)view.getLayoutParams()).gravity = Gravity.LEFT;
+			((LinearLayout.LayoutParams) view.getLayoutParams()).gravity = Gravity.LEFT;
 			qv.setAutoLinkMask(Linkify.ALL);
 			qv.setText(content.getValue());
 			view.addView(qv);
@@ -102,12 +123,14 @@ public class ContentRenderer {
 			TextView ov = new TextView(view.getContext());
 			view.setLayoutParams(match());
 			if (position % 2 == 1) {
-				ov.setTextColor(view.getContext().getResources().getColor(android.R.color.black));
+				ov.setTextColor(view.getContext().getResources()
+						.getColor(android.R.color.black));
 			} else {
-				ov.setTextColor(view.getContext().getResources().getColor(android.R.color.white));
+				ov.setTextColor(view.getContext().getResources()
+						.getColor(android.R.color.white));
 			}
 			ov.setLayoutParams(wrap());
-			((LinearLayout.LayoutParams)view.getLayoutParams()).gravity = Gravity.LEFT;
+			((LinearLayout.LayoutParams) view.getLayoutParams()).gravity = Gravity.LEFT;
 			ov.setAutoLinkMask(Linkify.ALL);
 			ov.setText(Html.fromHtml(content.getLocalValue()));
 			view.addView(ov);
@@ -116,20 +139,22 @@ public class ContentRenderer {
 			ImageView vv = new ImageView(view.getContext());
 			vv.setLayoutParams(wrap());
 			view.setLayoutParams(wrap());
-			((LinearLayout.LayoutParams)view.getLayoutParams()).gravity = 0x01;
-			d = ((Activity)view.getContext()).getWindowManager().getDefaultDisplay();
+			((LinearLayout.LayoutParams) view.getLayoutParams()).gravity = 0x01;
+			d = ((Activity) view.getContext()).getWindowManager()
+					.getDefaultDisplay();
 			mpwidth = d.getWidth();
-			vv.getLayoutParams().width = (int)(0.8*mpwidth);
-			vv.getLayoutParams().height = (int)(vv.getLayoutParams().width/2);
+			vv.getLayoutParams().width = (int) (0.8 * mpwidth);
+			vv.getLayoutParams().height = (int) (vv.getLayoutParams().width / 2);
 			vv.setScaleType(ScaleType.CENTER_INSIDE);
-			
+
 			Bitmap thumbnail = null;
 			if (content.cached() != null) {
-				thumbnail = (Bitmap)content.cached();
+				thumbnail = (Bitmap) content.cached();
 				vv.setImageBitmap(thumbnail);
 			} else {
 				vv.setTag(content.getId());
-				new ImageLoadTask(vv, R.drawable.ic_menu_report_image).execute(content);
+				new ImageLoadTask(vv, R.drawable.ic_menu_report_image)
+						.execute(content);
 			}
 
 			view.addView(vv);
@@ -140,11 +165,11 @@ public class ContentRenderer {
 		case AUDIO:
 			EmbeddedMediaPlayer mp = null;
 			view.setLayoutParams(match());
-			mp = new EmbeddedMediaPlayer(view, content.getLocalValue());			
+			mp = new EmbeddedMediaPlayer(view, content.getLocalValue());
 			View mv = mp.getView();
 			view.addView(mv);
 			content.cache(mp);
-			return mp; 
+			return mp;
 		default:
 			return null;
 		}
@@ -152,33 +177,35 @@ public class ContentRenderer {
 
 	public static void renderExternal(Activity ctx, Content content) {
 		switch (content.getType()) {
-		case PHOTO:
-		{
-			Intent intent = new Intent();  
-			intent.setAction(android.content.Intent.ACTION_VIEW); 
-			String path = content.getLocalValue();//MediaUtils.getMediaAbsolutePath(ctx, Uri.parse(content.getLocalValue()));
-			if (path == null) return;
-			File file = new File(path);  
-			intent.setDataAndType(Uri.fromFile(file), "image/*");  
-			ctx.startActivity(intent);  
+		case PHOTO: {
+			Intent intent = new Intent();
+			intent.setAction(android.content.Intent.ACTION_VIEW);
+			String path = content.getLocalValue();// MediaUtils.getMediaAbsolutePath(ctx,
+													// Uri.parse(content.getLocalValue()));
+			if (path == null)
+				return;
+			File file = new File(path);
+			intent.setDataAndType(Uri.fromFile(file), "image/*");
+			ctx.startActivity(intent);
 			break;
-		}	
-		case VIDEO:
-		{
-			Intent intent = new Intent();  
-			intent.setAction(android.content.Intent.ACTION_VIEW);  
-			String path = content.getLocalValue();//MediaUtils.getMediaAbsolutePath(ctx, Uri.parse(content.getLocalValue()));
-			if (path == null) return;
-			File file = new File(path);  
-			intent.setDataAndType(Uri.fromFile(file), "video/*");  
-			ctx.startActivity(intent);  
+		}
+		case VIDEO: {
+			Intent intent = new Intent();
+			intent.setAction(android.content.Intent.ACTION_VIEW);
+			String path = content.getLocalValue();// MediaUtils.getMediaAbsolutePath(ctx,
+													// Uri.parse(content.getLocalValue()));
+			if (path == null)
+				return;
+			File file = new File(path);
+			intent.setDataAndType(Uri.fromFile(file), "video/*");
+			ctx.startActivity(intent);
 			break;
-		}	
-		case OBJECT:
-		{
-			ViewHelper.viewInApp(ctx, content.getEntityType(), content.getEntityId(), null);
+		}
+		case OBJECT: {
+			ViewHelper.viewInApp(ctx, content.getEntityType(),
+					content.getEntityId(), null);
 			break;
-		}	
+		}
 		case FILE:
 			// TODO files to manage
 		}
