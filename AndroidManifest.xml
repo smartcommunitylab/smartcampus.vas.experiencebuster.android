@@ -86,10 +86,6 @@
                 android:resource="@xml/syncadapter" />
         </service>
 
-        <!-- File Sync Service used by Sync Service -->
-
-<!--         <service android:name=".syncadapter.FileSyncService"></service> -->
-
         <!-- fake content provider to permit sync -->
         
         <provider
