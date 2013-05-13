@@ -31,26 +31,12 @@ public class ImageCacheManager {
 	private static final int DEFAULT_MAX_SIZE = 50;
 	private static final int DEFAULT_CLEAN_ELEMENTS = 10;
 
-	// private int maxSize;
-	// private int cleanElementsNumber;
-
 	private static int counter = 0;
 	private static List<String> history = new ArrayList<String>();
 	private static Map<String, Bitmap> cache = new HashMap<String, Bitmap>();
 
 	private ImageCacheManager() {
 	}
-
-	// public ImageCacheManager() {
-	// maxSize = DEFAULT_MAX_SIZE;
-	// cleanElementsNumber = DEFAULT_CLEAN_ELEMENTS;
-	// }
-	//
-	// public ImageCacheManager(int maxSize, int cleanElementsNumber) {
-	// this.maxSize = maxSize > 0 ? maxSize : DEFAULT_MAX_SIZE;
-	// this.cleanElementsNumber = cleanElementsNumber > 0 ? cleanElementsNumber
-	// : DEFAULT_CLEAN_ELEMENTS;
-	// }
 
 	public static Bitmap get(String key) {
 		return cache.get(key);
