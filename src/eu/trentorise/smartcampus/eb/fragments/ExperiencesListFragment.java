@@ -97,9 +97,7 @@ public class ExperiencesListFragment extends SherlockListFragment
 			Bundle savedInstanceState) {
 		this.setListAdapter(new ExperiencesListAdapter(getSherlockActivity(),
 				R.layout.experience_row, experiencesList));
-		return inflater.inflate(R.layout.explist, null);// super.onCreateView(inflater,
-														// container,
-														// savedInstanceState);
+		return inflater.inflate(R.layout.explist, null);
 	}
 
 	@Override

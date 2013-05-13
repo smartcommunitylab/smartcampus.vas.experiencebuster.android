@@ -31,47 +31,54 @@ import android.support.v4.view.ViewPager.OnPageChangeListener;
 
 import com.actionbarsherlock.app.SherlockFragmentActivity;
 
-import eu.trentorise.smartcampus.eb.R;
 import eu.trentorise.smartcampus.android.common.tagging.TaggingDialog.OnTagsSelectedListener;
+import eu.trentorise.smartcampus.eb.R;
 import eu.trentorise.smartcampus.eb.fragments.NewCollectionDialogFragment.CollectionSavedHandler;
 import eu.trentorise.smartcampus.eb.fragments.experience.AssignCollectionFragment.AssignCollectionsCallback;
 import eu.trentorise.smartcampus.eb.fragments.experience.DeleteExperienceFragment.RemoveCallback;
-import eu.trentorise.smartcampus.eb.fragments.experience.EditPositionFragment.PositionHandler;
 import eu.trentorise.smartcampus.eb.fragments.experience.EditNoteFragment.NoteHandler;
+import eu.trentorise.smartcampus.eb.fragments.experience.EditPositionFragment.PositionHandler;
 import eu.trentorise.smartcampus.eb.model.Experience;
 
-public class ExperiencePager extends SherlockFragmentActivity implements DialogCallbackContainer {
+public class ExperiencePager extends SherlockFragmentActivity implements
+		DialogCallbackContainer {
 
 	private static final String ARG_POSITION = "position";
 	public static final String ARG_COLLECTION = "coll";
-	
+
 	private ArrayList<Experience> collection = null;
-//	int position = -1;
-	
+	// int position = -1;
+
 	private ViewPager mPager = null;
 	private ExperiencePagerAdapter mAdapter = null;
 
 	private String currentId = null;
-	
-	HashMap<String,WeakReference<EditExpFragment>> fragMap = new HashMap<String,WeakReference<EditExpFragment>>();
-	
-	public static Intent prepareIntent(Context ctx, Integer position, ArrayList<Experience> collection) {
-		
+
+	HashMap<String, WeakReference<EditExpFragment>> fragMap = new HashMap<String, WeakReference<EditExpFragment>>();
+
+	public static Intent prepareIntent(Context ctx, Integer position,
+			ArrayList<Experience> collection) {
+
 		Intent i = new Intent(ctx, ExperiencePager.class);
-		if (position != null) i.putExtra(ARG_POSITION, position);
-		if (collection != null) i.putExtra(ARG_COLLECTION, collection);
+		if (position != null)
+			i.putExtra(ARG_POSITION, position);
+		if (collection != null)
+			i.putExtra(ARG_COLLECTION, collection);
 		return i;
 	}
 
 	private EditExpFragment current(String id) {
-		if (fragMap.containsKey(id)) return fragMap.get(id).get();
+		if (fragMap.containsKey(id))
+			return fragMap.get(id).get();
 		return null;
 	}
 
 	@Override
 	public void onAttachFragment(Fragment f) {
 		if (f instanceof EditExpFragment) {
-			fragMap.put(((Experience)((EditExpFragment)f).getArguments().getSerializable(EditExpFragment.ARG_EXP)).getId(), new WeakReference<EditExpFragment>((EditExpFragment)f));
+			fragMap.put(((Experience) ((EditExpFragment) f).getArguments()
+					.getSerializable(EditExpFragment.ARG_EXP)).getId(),
+					new WeakReference<EditExpFragment>((EditExpFragment) f));
 		}
 	}
 
@@ -80,35 +87,35 @@ public class ExperiencePager extends SherlockFragmentActivity implements DialogC
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.exp_fragment_pager);
-		
-		if (savedInstanceState != null && savedInstanceState.containsKey(ARG_COLLECTION)) {
-			collection = (ArrayList<Experience>) savedInstanceState.getSerializable(ARG_COLLECTION);
-//			position = savedInstanceState.getInt(ARG_POSITION);
+
+		if (savedInstanceState != null
+				&& savedInstanceState.containsKey(ARG_COLLECTION)) {
+			collection = (ArrayList<Experience>) savedInstanceState
+					.getSerializable(ARG_COLLECTION);
 		} else if (getIntent() != null) {
-			collection = (ArrayList<Experience>) getIntent().getSerializableExtra(ARG_COLLECTION);
-//			position = getArguments().getInt(ARG_POSITION);
+			collection = (ArrayList<Experience>) getIntent()
+					.getSerializableExtra(ARG_COLLECTION);
 		} else {
 			collection = new ArrayList<Experience>();
-//			position = 0;
 		}
 		mAdapter = new ExperiencePagerAdapter(getSupportFragmentManager());
-		mPager = (ViewPager)findViewById(R.id.pager);
+		mPager = (ViewPager) findViewById(R.id.pager);
 		mPager.setAdapter(mAdapter);
 		int currentIdx = getIntent().getIntExtra(ARG_POSITION, 0);
 		mPager.setCurrentItem(currentIdx);
 		setCurrentIdFromIdx(currentIdx);
-		
+
 		mPager.setOnPageChangeListener(new OnPageChangeListener() {
-			
+
 			@Override
 			public void onPageSelected(int currentIdx) {
 				setCurrentIdFromIdx(currentIdx);
 			}
-			
+
 			@Override
 			public void onPageScrolled(int arg0, float arg1, int arg2) {
 			}
-			
+
 			@Override
 			public void onPageScrollStateChanged(int arg0) {
 			}
@@ -124,7 +131,7 @@ public class ExperiencePager extends SherlockFragmentActivity implements DialogC
 	@Override
 	public void onSaveInstanceState(Bundle savedInstanceState) {
 		super.onSaveInstanceState(savedInstanceState);
-//		savedInstanceState.putInt(ARG_POSITION, position);
+		// savedInstanceState.putInt(ARG_POSITION, position);
 		savedInstanceState.putSerializable(ARG_COLLECTION, collection);
 	}
 
@@ -136,7 +143,8 @@ public class ExperiencePager extends SherlockFragmentActivity implements DialogC
 
 	private void updateResult() {
 		if (collection != null) {
-			for (Iterator<Experience> iterator = collection.iterator(); iterator.hasNext();) {
+			for (Iterator<Experience> iterator = collection.iterator(); iterator
+					.hasNext();) {
 				Experience e = iterator.next();
 				if (e.markedDeleted()) {
 					iterator.remove();
@@ -146,7 +154,6 @@ public class ExperiencePager extends SherlockFragmentActivity implements DialogC
 		}
 		setResult(RESULT_OK, new Intent().putExtra(ARG_COLLECTION, collection));
 	}
-
 
 	@Override
 	public CollectionSavedHandler getCollectionSavedHandler() {
@@ -167,6 +174,7 @@ public class ExperiencePager extends SherlockFragmentActivity implements DialogC
 	public NoteHandler getNoteHandler() {
 		return current(currentId);
 	}
+
 	@Override
 	public PositionHandler getPositionHandler() {
 		return current(currentId);
@@ -177,8 +185,6 @@ public class ExperiencePager extends SherlockFragmentActivity implements DialogC
 		return current(currentId);
 	}
 
-
-
 	private class ExperiencePagerAdapter extends FragmentStatePagerAdapter {
 		public ExperiencePagerAdapter(FragmentManager arg0) {
 			super(arg0);
@@ -187,7 +193,8 @@ public class ExperiencePager extends SherlockFragmentActivity implements DialogC
 		@Override
 		public Fragment getItem(int position) {
 			EditExpFragment frag = new EditExpFragment();
-			frag.setArguments(EditExpFragment.prepareArgs(collection.get(position), null));
+			frag.setArguments(EditExpFragment.prepareArgs(
+					collection.get(position), null));
 			return frag;
 		}
 

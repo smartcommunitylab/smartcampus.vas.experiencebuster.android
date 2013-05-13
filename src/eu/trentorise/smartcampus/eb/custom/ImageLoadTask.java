@@ -40,12 +40,9 @@ import eu.trentorise.smartcampus.storage.model.Resource;
 public class ImageLoadTask extends AsyncTask<Content, Void, Bitmap> {
 
 	private final WeakReference<ImageView> imageViewReference;
-	private Integer resource;
 
 	private String tag;
 	private Filestorage filestorage;
-
-	// private ImgHolder holder;
 
 	private static Map<String, Boolean> loadingHistory = new HashMap<String, Boolean>();
 
@@ -59,13 +56,10 @@ public class ImageLoadTask extends AsyncTask<Content, Void, Bitmap> {
 					Constants.APP_NAME, Constants.APP_TOKEN,
 					GlobalConfig.getAppUrl(imageView.getContext()),
 					Constants.FILE_SERVICE);
-			// this.holder = holder;
 		} catch (ProtocolException e) {
 			Log.e(ImageLoadTask.class.getName(),
 					"Error istantiating filestorage class");
 		}
-
-		// this.holder = holder;
 
 	}
 
@@ -82,35 +76,41 @@ public class ImageLoadTask extends AsyncTask<Content, Void, Bitmap> {
 		try {
 			tag = params[0].getId();
 
-			File f = new File(params[0].getLocalValue());
+			// load from cache if it's present
+			img = ImageCacheManager.get(params[0].getId());
+			if (img == null) {
+				File f = new File(params[0].getLocalValue());
 
-			// if resource doesn't exist locally, load from remote and save
-			if (!f.exists() && !loadingHistory.containsKey(params[0].getId())) {
-				loadingHistory.put(params[0].getId(), true);
-				Resource resource = filestorage.getResource(
-						EBHelper.getAuthToken(), params[0].getValue());
-				FileOutputStream fout = new FileOutputStream(
-						params[0].getLocalValue());
-				fout.write(resource.getContent());
-				fout.close();
-				Log.i(ImageLoadTask.class.getName(),
-						"Image not present loaded from remote and saved: "
-								+ params[0].getLocalValue());
-			}
-			if (f.exists()) {
-				String absPath = f.getAbsolutePath();
-				if (absPath == null)
-					return null;
-
-				if (params[0].getType() == ContentType.PHOTO) {
-					BitmapFactory.Options options = new BitmapFactory.Options();
-					options.inSampleSize = 4;
-					img = MediaUtils.createBitmap(absPath, options);
-				} else if (params[0].getType() == ContentType.VIDEO) {
-					img = ThumbnailUtils.createVideoThumbnail(absPath,
-							MediaStore.Images.Thumbnails.MICRO_KIND);
+				// if resource doesn't exist locally, load from remote and save
+				if (!f.exists()
+						&& !loadingHistory.containsKey(params[0].getId())) {
+					loadingHistory.put(params[0].getId(), true);
+					Resource resource = filestorage.getResource(
+							EBHelper.getAuthToken(), params[0].getValue());
+					FileOutputStream fout = new FileOutputStream(
+							params[0].getLocalValue());
+					fout.write(resource.getContent());
+					fout.close();
+					Log.i(ImageLoadTask.class.getName(),
+							"Image not present loaded from remote and saved: "
+									+ params[0].getLocalValue());
 				}
-				params[0].cache(img);
+				if (f.exists()) {
+					String absPath = f.getAbsolutePath();
+					if (absPath == null)
+						return null;
+
+					if (params[0].getType() == ContentType.PHOTO) {
+						BitmapFactory.Options options = new BitmapFactory.Options();
+						options.inSampleSize = 4;
+						img = MediaUtils.createBitmap(absPath, options);
+					} else if (params[0].getType() == ContentType.VIDEO) {
+						img = ThumbnailUtils.createVideoThumbnail(absPath,
+								MediaStore.Images.Thumbnails.MICRO_KIND);
+					}
+					ImageCacheManager.insert(params[0].getId(), img);
+					params[0].cache(img);
+				}
 			}
 		} catch (Exception e) {
 			Log.e(this.getClass().getSimpleName(),
@@ -122,16 +122,12 @@ public class ImageLoadTask extends AsyncTask<Content, Void, Bitmap> {
 	@Override
 	protected void onPostExecute(Bitmap result) {
 		if (result != null) {
-			// if (holder == null) {
 			ImageView imgView = imageViewReference.get();
 			if (imgView == null
 					|| (tag != null && !tag.equals(imgView.getTag()))) {
 				return;
 			}
 			imgView.setImageBitmap(result);
-			// } else {
-			// holder.preview.setImageBitmap(result);
-			// }
 			loadingHistory.remove(tag);
 		}
 	}
