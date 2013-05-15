@@ -17,6 +17,7 @@ package eu.trentorise.smartcampus.eb.filestorage;
 
 import java.util.List;
 
+import android.R;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
@@ -56,8 +57,8 @@ public class FilestorageAccountActivity extends Activity {
 		
 		new AlertDialog.Builder(this)
 	    .setTitle("")
-	    .setMessage("To keep synchronized photos and videos in lifelog, you have to insert your Dropbox account. Do you interest to synchronize yout contents ?")
-	    .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+	    .setMessage(eu.trentorise.smartcampus.eb.R.string.msg_synchro_dialog)
+	    .setPositiveButton(eu.trentorise.smartcampus.eb.R.string.synchro_dialog_y, new DialogInterface.OnClickListener() {
 	        public void onClick(DialogInterface dialog, int which) { 
 	        	mToken = EBHelper.getAuthToken();
 	    		try {
@@ -72,7 +73,7 @@ public class FilestorageAccountActivity extends Activity {
 	    		new AppAccountTask().execute();
 	        }
 	     })
-	    .setNegativeButton("No", new DialogInterface.OnClickListener() {
+	    .setNegativeButton(eu.trentorise.smartcampus.eb.R.string.synchro_dialog_n, new DialogInterface.OnClickListener() {
 	        public void onClick(DialogInterface dialog, int which) { 
 	        	setResult(Activity.RESULT_CANCELED);
 	            finish();
