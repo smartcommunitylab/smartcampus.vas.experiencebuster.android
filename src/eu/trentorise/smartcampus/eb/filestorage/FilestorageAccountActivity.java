@@ -18,6 +18,8 @@ package eu.trentorise.smartcampus.eb.filestorage;
 import java.util.List;
 
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -35,6 +37,8 @@ import eu.trentorise.smartcampus.storage.model.UserAccount;
 public class FilestorageAccountActivity extends Activity {
 
 	private static final int AUTH_REQUESTCODE = 100;
+	
+	public static final String EXTRA_USER_ACCOUNT_ID = "USER_ACCOUNT_ID";
 
 	/** Logging tag */
 	private static final String TAG = "File";
@@ -49,17 +53,35 @@ public class FilestorageAccountActivity extends Activity {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		mToken = EBHelper.getAuthToken();
-		try {
-			mFilestorage = new Filestorage(this, Constants.APP_NAME,
-					Constants.APP_TOKEN,
-					GlobalConfig.getAppUrl(getApplicationContext()),
-					Constants.FILE_SERVICE);
-		} catch (ProtocolException e1) {
-			Log.e(TAG, "problem getting filestorage application url");
-		}
+		
+		new AlertDialog.Builder(this)
+	    .setTitle("")
+	    .setMessage("To keep synchronized photos and videos in lifelog, you have to insert your Dropbox account. Do you interest to synchronize yout contents ?")
+	    .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+	        public void onClick(DialogInterface dialog, int which) { 
+	        	mToken = EBHelper.getAuthToken();
+	    		try {
+	    			mFilestorage = new Filestorage(getApplicationContext(), Constants.APP_NAME,
+	    					Constants.APP_TOKEN,
+	    					GlobalConfig.getAppUrl(getApplicationContext()),
+	    					Constants.FILE_SERVICE);
+	    		} catch (ProtocolException e1) {
+	    			Log.e(TAG, "problem getting filestorage application url");
+	    		}
 
-		new AppAccountTask().execute();
+	    		new AppAccountTask().execute();
+	        }
+	     })
+	    .setNegativeButton("No", new DialogInterface.OnClickListener() {
+	        public void onClick(DialogInterface dialog, int which) { 
+	        	setResult(Activity.RESULT_CANCELED);
+	            finish();
+	        }
+	     })
+	     .show();
+		
+		
+		
 	}
 
 	@Override
@@ -72,21 +94,16 @@ public class FilestorageAccountActivity extends Activity {
 						.getParcelableExtra(Filestorage.EXTRA_OUTPUT_USERACCOUNT);
 
 				Intent result = new Intent();
-				result.putExtra("USER_ACCOUNT_ID", userAccount.getId());
+				result.putExtra(EXTRA_USER_ACCOUNT_ID, userAccount.getId());
 				setResult(Activity.RESULT_OK, result);
 				finish();
 
 				// user account cancelled
 			} else if (resultCode == Activity.RESULT_CANCELED) {
 				setResult(Activity.RESULT_CANCELED);
-				Toast.makeText(this, "CANCELLED", Toast.LENGTH_LONG).show();
-				// user account failed
-			} else {
-				Toast.makeText(this, "ERROR: " + resultCode, Toast.LENGTH_LONG)
-						.show();
-			}
+				finish();
+			} 
 		}
-		// super.onActivityResult(requestCode, resultCode, data);
 	}
 
 	class AppAccountTask extends AsyncTask<Void, Void, List<AppAccount>> {

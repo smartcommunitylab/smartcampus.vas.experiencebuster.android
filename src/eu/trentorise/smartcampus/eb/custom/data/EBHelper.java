@@ -97,10 +97,16 @@ public class EBHelper {
 	}
 
 	public static synchronized void synchronize(boolean synchronizeFile) {
-		Bundle bundle = new Bundle();
-		bundle.putBoolean("synchroFile", synchronizeFile);
-		ContentResolver.requestSync(SCAccount, "eu.trentorise.smartcampus.eb",
-				bundle);
+		try {
+			if(EBHelper.getConfiguration(CONF_SYNCHRO) != null && EBHelper.getConfiguration(CONF_SYNCHRO).equals("true")){
+			Bundle bundle = new Bundle();
+			bundle.putBoolean("synchroFile", synchronizeFile);
+			ContentResolver.requestSync(SCAccount, "eu.trentorise.smartcampus.eb",
+					bundle);}
+		} catch (DataException e) {
+			Log.e(EBHelper.class.getName(), "Error getting synchro configuration");
+		}
+		
 	}
 
 	public static boolean saveConfiguration(String configuration, String value)
@@ -109,7 +115,7 @@ public class EBHelper {
 				EB_CONFS, 0);
 
 		Editor editor = confs.edit();
-		editor.putString(CONF_USER_ACCOUNT, value);
+		editor.putString(configuration, value);
 		return editor.commit();
 	}
 

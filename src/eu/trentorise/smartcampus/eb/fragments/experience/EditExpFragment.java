@@ -22,6 +22,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
@@ -65,6 +66,7 @@ import eu.trentorise.smartcampus.eb.custom.capture.CaptureHelper.ResultHandler;
 import eu.trentorise.smartcampus.eb.custom.capture.ContentRenderer;
 import eu.trentorise.smartcampus.eb.custom.capture.GrabbedContent;
 import eu.trentorise.smartcampus.eb.custom.data.EBHelper;
+import eu.trentorise.smartcampus.eb.filestorage.FilestorageAccountActivity;
 import eu.trentorise.smartcampus.eb.fragments.NewCollectionDialogFragment.CollectionSavedHandler;
 import eu.trentorise.smartcampus.eb.fragments.experience.EditNoteFragment.NoteHandler;
 import eu.trentorise.smartcampus.eb.fragments.experience.EditPositionFragment.PositionHandler;
@@ -77,6 +79,7 @@ import eu.trentorise.smartcampus.protocolcarrier.exceptions.ConnectionException;
 import eu.trentorise.smartcampus.protocolcarrier.exceptions.SecurityException;
 import eu.trentorise.smartcampus.storage.DataException;
 
+@SuppressLint("NewApi")
 public class EditExpFragment extends SherlockFragment
 		implements
 		OnTagsSelectedListener,
@@ -90,7 +93,6 @@ public class EditExpFragment extends SherlockFragment
 	private TextEditSwitch mTitleSwitch, mDescrSwitch;
 	private Experience exp = null;
 	private Experience src = null;
-	// private Address address = null;
 
 	private boolean editMode = false;
 
@@ -335,11 +337,11 @@ public class EditExpFragment extends SherlockFragment
 			exp.setDescription(mDescrSwitch.getValue());
 			if (validate(exp)) {
 				try {
-					if (EBHelper.getConfiguration(EBHelper.CONF_USER_ACCOUNT) != null) {
-						new SaveTask().execute();
-					} else {
+					if(EBHelper.getConfiguration(EBHelper.CONF_SYNCHRO) == null || (EBHelper.getConfiguration(EBHelper.CONF_SYNCHRO).equals("true") && EBHelper.getConfiguration(EBHelper.CONF_USER_ACCOUNT)== null)){
 						EBHelper.askUserAccount(this, ACCOUNT_CREATION);
-					}
+					}else {
+						new SaveTask().execute();
+					} 
 				} catch (DataException e) {
 					Log.e(EditExpFragment.class.getName(),
 							"Error creating filestorage account");
@@ -485,8 +487,9 @@ public class EditExpFragment extends SherlockFragment
 	public void onActivityResult(int requestCode, int resultCode, Intent data) {
 		if (requestCode == ACCOUNT_CREATION) {
 			if (resultCode == Activity.RESULT_OK) {
-				String accountId = data.getStringExtra("USER_ACCOUNT_ID");
+				String accountId = data.getStringExtra(FilestorageAccountActivity.EXTRA_USER_ACCOUNT_ID);
 				try {
+					EBHelper.saveConfiguration(EBHelper.CONF_SYNCHRO, "true");
 					EBHelper.saveConfiguration(EBHelper.CONF_USER_ACCOUNT,
 							accountId);
 					new SaveTask().execute();
