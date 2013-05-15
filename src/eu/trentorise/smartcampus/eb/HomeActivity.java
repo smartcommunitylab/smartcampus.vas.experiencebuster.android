@@ -80,10 +80,10 @@ public class HomeActivity extends SherlockFragmentActivity implements
 			//check filestorage account
 			if(EBHelper.getConfiguration(EBHelper.CONF_SYNCHRO) == null || (EBHelper.getConfiguration(EBHelper.CONF_SYNCHRO).equals("true") && EBHelper.getConfiguration(EBHelper.CONF_USER_ACCOUNT)== null)){
 				EBHelper.askUserAccount(this, FILESTORAGE_ACCOUNT_REGISTRATION);
-			}
-			
+			}else{
 			new SCAsyncTask<Void, Void, Void>(this, new StartProcessor(this))
 					.execute();
+			}
 		} catch (Exception e1) {
 			EBHelper.endAppFailure(this, R.string.app_failure_setup);
 			return false;
@@ -147,6 +147,8 @@ public class HomeActivity extends SherlockFragmentActivity implements
 				try {
 					EBHelper.saveConfiguration(EBHelper.CONF_SYNCHRO, "true");
 					EBHelper.saveConfiguration(EBHelper.CONF_USER_ACCOUNT,accountId);
+					new SCAsyncTask<Void, Void, Void>(this, new StartProcessor(this))
+					.execute();
 				} catch (DataException e) {
 					Toast.makeText(getApplicationContext(), "Error saving filestorage account", Toast.LENGTH_SHORT).show();
 					Log.e(HomeActivity.class.getName(), "Error saving filestorage account");
