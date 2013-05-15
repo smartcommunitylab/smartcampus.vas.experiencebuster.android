@@ -78,7 +78,7 @@ public class FilestorageAccountActivity extends Activity {
 	        	setResult(Activity.RESULT_CANCELED);
 	            finish();
 	        }
-	     })
+	     }).setCancelable(false)
 	     .show();
 		
 		
