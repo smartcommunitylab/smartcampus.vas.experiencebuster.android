@@ -130,8 +130,9 @@ public class FilestorageAccountActivity extends Activity {
 						appAccount.getAppAccountName(), appAccount.getId(),
 						StorageType.DROPBOX, AUTH_REQUESTCODE);
 			} else {
-				Toast.makeText(FilestorageAccountActivity.this, "No Accounts!",
+				Toast.makeText(FilestorageAccountActivity.this, eu.trentorise.smartcampus.eb.R.string.msg_synchro_no_appaccount,
 						Toast.LENGTH_LONG).show();
+				finish();
 			}
 		}
 	}
