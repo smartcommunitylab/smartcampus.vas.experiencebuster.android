@@ -145,18 +145,6 @@ public class FileSyncStorage extends SyncStorageWithPaging {
 			String selection, String[] args, int offset, int limit)
 			throws DataException, StorageConfigurationException {
 		Collection<T> result = super.query(cls, selection, args, offset, limit);
-		// if (cls == Experience.class) {
-		// Collection<Experience> exps = (Collection<Experience>) result;
-		// for (Experience exp : exps) {
-		// for (Content c : exp.getContents()) {
-		// if (!new File(c.getLocalValue()).exists()
-		// && c.getValue() != null) {
-		// new FileloaderExecutor().execute(c.getValue(),
-		// c.getLocalValue());
-		// }
-		// }
-		// }
-		// }
 		loadRemoteFiles(cls, result);
 		return result;
 	}
@@ -175,7 +163,7 @@ public class FileSyncStorage extends SyncStorageWithPaging {
 			String orderBy) throws DataException, StorageConfigurationException {
 		Collection<T> result = super.query(cls, selection, args, offset, limit,
 				orderBy);
-		// loadRemoteFiles(cls, result);
+		 loadRemoteFiles(cls, result);
 		return result;
 	}
 
@@ -211,25 +199,6 @@ public class FileSyncStorage extends SyncStorageWithPaging {
 		return result;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * eu.trentorise.smartcampus.storage.sync.SyncStorage#synchronize(java.lang
-	 * .String, java.lang.String, java.lang.String)
-	 */
-	// @Override
-	// public SyncData synchronize(String authToken, String host, String
-	// service)
-	// throws SecurityException, ConnectionException, DataException,
-	// ProtocolException, StorageConfigurationException {
-	// SyncData syncData = helper.getDataToSync(getSyncVersion());
-	// Intent intent = new Intent(mContext, FileSyncService.class);
-	// intent.putExtra("syncData", new FileSyncData(syncData));
-	// mContext.startService(intent);
-	// synchroFile(syncData, authToken);
-	// return super.synchronize(authToken, host, service);
-	// }
 
 	public SyncData synchroFile(String authToken, String host, String service)
 			throws StorageConfigurationException, SecurityException,
@@ -347,27 +316,6 @@ public class FileSyncStorage extends SyncStorageWithPaging {
 		FileSyncStorage.expToDelete = expToDelete;
 	}
 
-	// class FilestorageExecutor extends AsyncTask<Void, Void, Void> {
-	//
-	// private SyncData data;
-	//
-	// public FilestorageExecutor(SyncData data) {
-	// this.data = data;
-	// }
-	//
-	// /*
-	// * (non-Javadoc)
-	// *
-	// * @see android.os.AsyncTask#doInBackground(Params[])
-	// */
-	// @Override
-	// protected Void doInBackground(Void... params) {
-	// synchroFile(data, EBHelper.getAuthToken());
-	// EBHelper.synchronize(false);
-	// return null;
-	// }
-	//
-	// }
 
 	class FileloaderExecutor extends AsyncTask<String, Void, Void> {
 
