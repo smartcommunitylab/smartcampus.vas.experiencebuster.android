@@ -222,9 +222,10 @@ public class FileSyncStorage extends SyncStorageWithPaging {
 						try {
 							// replace the file content is not necessary because
 							// lifelog doesn't support it
-							if ((c.getValue() == null || c.getValue().length() == 0)
+							// c.getLocalValue().equals(c.getValue()) -> fix for compatibility with old version
+							if (c.getLocalValue().equals(c.getValue()) ||((c.getValue() == null || c.getValue().length() == 0)
 									&& !fileStoraging.containsKey(c
-											.getLocalValue())) {
+											.getLocalValue()))) {
 								Resource res = eu.trentorise.smartcampus.eb.custom.Utils
 										.getResource(mContext,
 												c.getLocalValue());
