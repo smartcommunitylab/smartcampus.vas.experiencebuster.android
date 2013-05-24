@@ -173,8 +173,9 @@ public class FileSyncStorage extends SyncStorageWithPaging {
 			Collection<Experience> exps = (Collection<Experience>) result;
 			for (Experience exp : exps) {
 				for (Content c : exp.getContents()) {
+					//c.getValue().equals(c.getLocalValue() fix for compatibility with older versions
 					if (!new File(c.getLocalValue()).exists()
-							&& c.getValue() != null) {
+							&& c.getValue() != null && !c.getValue().equals(c.getLocalValue())) {
 						new FileloaderExecutor().execute(c.getValue(),
 								c.getLocalValue());
 					}
