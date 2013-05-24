@@ -49,6 +49,7 @@ import com.actionbarsherlock.app.SherlockFragment;
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuItem;
 
+import eu.trentorise.smartcampus.android.common.GlobalConfig;
 import eu.trentorise.smartcampus.android.common.SCAsyncTask;
 import eu.trentorise.smartcampus.android.common.sharing.ShareEntityObject;
 import eu.trentorise.smartcampus.android.common.sharing.SharingHelper;
@@ -78,6 +79,7 @@ import eu.trentorise.smartcampus.eb.model.Experience;
 import eu.trentorise.smartcampus.protocolcarrier.exceptions.ConnectionException;
 import eu.trentorise.smartcampus.protocolcarrier.exceptions.SecurityException;
 import eu.trentorise.smartcampus.storage.DataException;
+import eu.trentorise.smartcampus.storage.sync.SyncData;
 
 @SuppressLint("NewApi")
 public class EditExpFragment extends SherlockFragment
@@ -569,8 +571,21 @@ public class EditExpFragment extends SherlockFragment
 								}
 								exp.setCreationTime(exp.getUpdateTime());
 							}
-							return EBHelper.saveExperience(getActivity(), exp,
-									true);
+							
+							exp = EBHelper.saveExperience(getActivity(), exp,
+									false);
+							// find experience updated 
+							SyncData data = EBHelper.getSyncStorage().synchroFile(EBHelper.getAuthToken(),GlobalConfig.getAppUrl(getActivity().getApplicationContext()), eu.trentorise.smartcampus.eb.custom.data.Constants.SYNC_SERVICE);
+									if(data.getUpdated().get(Experience.class.getCanonicalName()) != null){
+										for(Object  o : data.getUpdated().get(Experience.class.getCanonicalName())){
+											Experience updatedExp = eu.trentorise.smartcampus.android.common.Utils
+													.convertObjectToData(Experience.class, o);
+											if(updatedExp.getId().equals(exp.getId())){
+												return updatedExp;
+											}
+										}
+									}
+							return exp;
 						}
 
 						@Override

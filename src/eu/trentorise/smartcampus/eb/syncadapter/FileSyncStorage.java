@@ -44,6 +44,7 @@ import eu.trentorise.smartcampus.storage.DataException;
 import eu.trentorise.smartcampus.storage.Filestorage;
 import eu.trentorise.smartcampus.storage.StorageConfigurationException;
 import eu.trentorise.smartcampus.storage.db.StorageConfiguration;
+import eu.trentorise.smartcampus.storage.model.Metadata;
 import eu.trentorise.smartcampus.storage.sync.SyncData;
 import eu.trentorise.smartcampus.storage.sync.SyncStorageWithPaging;
 
@@ -163,7 +164,7 @@ public class FileSyncStorage extends SyncStorageWithPaging {
 			String orderBy) throws DataException, StorageConfigurationException {
 		Collection<T> result = super.query(cls, selection, args, offset, limit,
 				orderBy);
-		 loadRemoteFiles(cls, result);
+		loadRemoteFiles(cls, result);
 		return result;
 	}
 
@@ -199,7 +200,8 @@ public class FileSyncStorage extends SyncStorageWithPaging {
 		return result;
 	}
 
-
+	
+	
 	public SyncData synchroFile(String authToken, String host, String service)
 			throws StorageConfigurationException, SecurityException,
 			ConnectionException, DataException, ProtocolException {
@@ -236,8 +238,20 @@ public class FileSyncStorage extends SyncStorageWithPaging {
 											res.getContentType(),
 											res.getName(), authToken,
 											userAccountId);
+									Metadata resourceInfo = filestorage
+											.getResourceMetadata(authToken, rid);
 									fileStoraging.put(c.getLocalValue(), rid);
 									c.setValue(rid);
+									try {
+										c.setEntityId(Long.valueOf(resourceInfo
+												.getEid()));
+									} catch (NumberFormatException e) {
+										Log.e(FileSyncStorage.class.getName(),
+												String.format(
+														"exp %s, entityId is not a number: %s",
+														rid,
+														resourceInfo.getEid()));
+									}
 								}
 							}
 
@@ -315,7 +329,6 @@ public class FileSyncStorage extends SyncStorageWithPaging {
 	public static void setExpToDelete(Map<String, BasicObject> expToDelete) {
 		FileSyncStorage.expToDelete = expToDelete;
 	}
-
 
 	class FileloaderExecutor extends AsyncTask<String, Void, Void> {
 
