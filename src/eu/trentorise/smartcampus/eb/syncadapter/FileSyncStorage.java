@@ -200,8 +200,6 @@ public class FileSyncStorage extends SyncStorageWithPaging {
 		return result;
 	}
 
-	
-	
 	public SyncData synchroFile(String authToken, String host, String service)
 			throws StorageConfigurationException, SecurityException,
 			ConnectionException, DataException, ProtocolException {
@@ -233,25 +231,14 @@ public class FileSyncStorage extends SyncStorageWithPaging {
 								String userAccountId = EBHelper
 										.getConfiguration(EBHelper.CONF_USER_ACCOUNT);
 								if (userAccountId != null) {
-									String rid = filestorage.storeResource(
+									Metadata meta = filestorage.storeResource(
 											res.getContent(),
 											res.getContentType(),
 											res.getName(), authToken,
-											userAccountId);
-									Metadata resourceInfo = filestorage
-											.getResourceMetadata(authToken, rid);
-									fileStoraging.put(c.getLocalValue(), rid);
-									c.setValue(rid);
-									try {
-										c.setEntityId(Long.valueOf(resourceInfo
-												.getEid()));
-									} catch (NumberFormatException e) {
-										Log.e(FileSyncStorage.class.getName(),
-												String.format(
-														"exp %s, entityId is not a number: %s",
-														rid,
-														resourceInfo.getEid()));
-									}
+											userAccountId, false);
+									fileStoraging.put(c.getLocalValue(),
+											meta.getRid());
+									c.setValue(meta.getRid());
 								}
 							}
 
@@ -343,7 +330,7 @@ public class FileSyncStorage extends SyncStorageWithPaging {
 			String path = params[1];
 			try {
 				eu.trentorise.smartcampus.storage.model.Resource r = filestorage
-						.getResource(EBHelper.getAuthToken(), id);
+						.getMyResource(EBHelper.getAuthToken(), id);
 				FileOutputStream fout = new FileOutputStream(path);
 				fout.write(r.getContent());
 				fout.close();

@@ -47,7 +47,6 @@ public class ExperiencePager extends SherlockFragmentActivity implements
 	public static final String ARG_COLLECTION = "coll";
 
 	private ArrayList<Experience> collection = null;
-	// int position = -1;
 
 	private ViewPager mPager = null;
 	private ExperiencePagerAdapter mAdapter = null;

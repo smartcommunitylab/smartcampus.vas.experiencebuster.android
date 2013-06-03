@@ -85,7 +85,7 @@ public class ImageLoadTask extends AsyncTask<Content, Void, Bitmap> {
 				if (!f.exists()
 						&& !loadingHistory.containsKey(params[0].getId())) {
 					loadingHistory.put(params[0].getId(), true);
-					Resource resource = filestorage.getResource(
+					Resource resource = filestorage.getMyResource(
 							EBHelper.getAuthToken(), params[0].getValue());
 					FileOutputStream fout = new FileOutputStream(
 							params[0].getLocalValue());

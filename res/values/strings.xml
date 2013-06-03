@@ -99,4 +99,5 @@
     <string name="synchro_dialog_y">yes</string>
     <string name="synchro_dialog_n">no</string>
     <string name="msg_synchro_no_appaccount">No application account is present. Synchronization cannot be active!</string>
+    <string name="exp_shared_error">Visualization of requested experience is not possible</string>
 </resources>

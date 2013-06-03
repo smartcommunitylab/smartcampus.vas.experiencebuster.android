@@ -339,11 +339,15 @@ public class EditExpFragment extends SherlockFragment
 			exp.setDescription(mDescrSwitch.getValue());
 			if (validate(exp)) {
 				try {
-					if(EBHelper.getConfiguration(EBHelper.CONF_SYNCHRO) == null || (EBHelper.getConfiguration(EBHelper.CONF_SYNCHRO).equals("true") && EBHelper.getConfiguration(EBHelper.CONF_USER_ACCOUNT)== null)){
+					if (EBHelper.getConfiguration(EBHelper.CONF_SYNCHRO) == null
+							|| (EBHelper
+									.getConfiguration(EBHelper.CONF_SYNCHRO)
+									.equals("true") && EBHelper
+									.getConfiguration(EBHelper.CONF_USER_ACCOUNT) == null)) {
 						EBHelper.askUserAccount(this, ACCOUNT_CREATION);
-					}else {
+					} else {
 						new SaveTask().execute();
-					} 
+					}
 				} catch (DataException e) {
 					Log.e(EditExpFragment.class.getName(),
 							"Error creating filestorage account");
@@ -489,7 +493,8 @@ public class EditExpFragment extends SherlockFragment
 	public void onActivityResult(int requestCode, int resultCode, Intent data) {
 		if (requestCode == ACCOUNT_CREATION) {
 			if (resultCode == Activity.RESULT_OK) {
-				String accountId = data.getStringExtra(FilestorageAccountActivity.EXTRA_USER_ACCOUNT_ID);
+				String accountId = data
+						.getStringExtra(FilestorageAccountActivity.EXTRA_USER_ACCOUNT_ID);
 				try {
 					EBHelper.saveConfiguration(EBHelper.CONF_SYNCHRO, "true");
 					EBHelper.saveConfiguration(EBHelper.CONF_USER_ACCOUNT,
@@ -571,20 +576,30 @@ public class EditExpFragment extends SherlockFragment
 								}
 								exp.setCreationTime(exp.getUpdateTime());
 							}
-							
+
 							exp = EBHelper.saveExperience(getActivity(), exp,
 									false);
-							// find experience updated 
-							SyncData data = EBHelper.getSyncStorage().synchroFile(EBHelper.getAuthToken(),GlobalConfig.getAppUrl(getActivity().getApplicationContext()), eu.trentorise.smartcampus.eb.custom.data.Constants.SYNC_SERVICE);
-									if(data.getUpdated().get(Experience.class.getCanonicalName()) != null){
-										for(Object  o : data.getUpdated().get(Experience.class.getCanonicalName())){
-											Experience updatedExp = eu.trentorise.smartcampus.android.common.Utils
-													.convertObjectToData(Experience.class, o);
-											if(updatedExp.getId().equals(exp.getId())){
-												return updatedExp;
-											}
-										}
+							// find experience updated
+							SyncData data = EBHelper
+									.getSyncStorage()
+									.synchroFile(
+											EBHelper.getAuthToken(),
+											GlobalConfig
+													.getAppUrl(getActivity()
+															.getApplicationContext()),
+											eu.trentorise.smartcampus.eb.custom.data.Constants.SYNC_SERVICE);
+							if (data.getUpdated().get(
+									Experience.class.getCanonicalName()) != null) {
+								for (Object o : data.getUpdated().get(
+										Experience.class.getCanonicalName())) {
+									Experience updatedExp = eu.trentorise.smartcampus.android.common.Utils
+											.convertObjectToData(
+													Experience.class, o);
+									if (updatedExp.getId().equals(exp.getId())) {
+										return updatedExp;
 									}
+								}
+							}
 							return exp;
 						}
 
