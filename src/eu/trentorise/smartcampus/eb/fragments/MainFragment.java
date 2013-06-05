@@ -15,6 +15,7 @@
  ******************************************************************************/
 package eu.trentorise.smartcampus.eb.fragments;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -28,6 +29,7 @@ import com.actionbarsherlock.view.MenuInflater;
 import com.actionbarsherlock.view.MenuItem;
 
 import eu.trentorise.smartcampus.eb.R;
+import eu.trentorise.smartcampus.eb.SettingsActivity;
 import eu.trentorise.smartcampus.eb.custom.MainAdapter;
 
 public class MainFragment extends SherlockFragment {
@@ -36,16 +38,18 @@ public class MainFragment extends SherlockFragment {
 
 	private int currentlyOpened = -1;
 	private MainAdapter mAdapter = null;
-	
+
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setHasOptionsMenu(true);
-		if (savedInstanceState != null) currentlyOpened = savedInstanceState.getInt("current", -1);
+		if (savedInstanceState != null)
+			currentlyOpened = savedInstanceState.getInt("current", -1);
 	}
 
 	@Override
-	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+	public View onCreateView(LayoutInflater inflater, ViewGroup container,
+			Bundle savedInstanceState) {
 		return inflater.inflate(R.layout.main, container, false);
 	}
 
@@ -54,23 +58,25 @@ public class MainFragment extends SherlockFragment {
 		super.onResume();
 		// Showing/hiding back button
 		getSherlockActivity().getSupportActionBar().setHomeButtonEnabled(false);
-		getSherlockActivity().getSupportActionBar().setDisplayHomeAsUpEnabled(false);
-		getSherlockActivity().getSupportActionBar().setDisplayShowTitleEnabled(true);
+		getSherlockActivity().getSupportActionBar().setDisplayHomeAsUpEnabled(
+				false);
+		getSherlockActivity().getSupportActionBar().setDisplayShowTitleEnabled(
+				true);
 		getSherlockActivity().getSupportActionBar().setTitle(R.string.app_name);
 	}
 
 	@Override
 	public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
 		menu.clear();
-		// inflater.inflate(R.menu.main_menu, menu);
+		inflater.inflate(R.menu.main_menu, menu);
 		super.onCreateOptionsMenu(menu, inflater);
 	}
 
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
-		// case R.id.mainmenu_settings:
-		// startActivity(new Intent(getActivity(), SettingsActivity.class));
+		case R.id.mainmenu_settings:
+			startActivity(new Intent(getActivity(), SettingsActivity.class));
 		default:
 			return super.onOptionsItemSelected(item);
 		}
@@ -80,15 +86,19 @@ public class MainFragment extends SherlockFragment {
 	public void onStart() {
 		super.onStart();
 		gridview = (GridView) getView().findViewById(R.id.gridview);
-		mAdapter = new MainAdapter(getSherlockActivity().getApplicationContext(), getSherlockActivity().getSupportFragmentManager());
+		mAdapter = new MainAdapter(getSherlockActivity()
+				.getApplicationContext(), getSherlockActivity()
+				.getSupportFragmentManager());
 		gridview.setAdapter(mAdapter);
-		if (currentlyOpened >= 0) mAdapter.setCurrentlyOpened(currentlyOpened);
+		if (currentlyOpened >= 0)
+			mAdapter.setCurrentlyOpened(currentlyOpened);
 	}
 
 	@Override
 	public void onPause() {
 		super.onPause();
-		Fragment opened = getSherlockActivity().getSupportFragmentManager().findFragmentById(android.R.id.content); 
+		Fragment opened = getSherlockActivity().getSupportFragmentManager()
+				.findFragmentById(android.R.id.content);
 		if (opened != null && !(opened instanceof MainFragment)) {
 			this.currentlyOpened = mAdapter.getCurrentlyOpened();
 		}
@@ -97,7 +107,7 @@ public class MainFragment extends SherlockFragment {
 	@Override
 	public void onSaveInstanceState(Bundle arg0) {
 		super.onSaveInstanceState(arg0);
-		arg0.putInt("current",currentlyOpened);
+		arg0.putInt("current", currentlyOpened);
 	}
-	
+
 }

@@ -197,7 +197,8 @@ public class ExperiencesListFragment extends SherlockListFragment
 	@Override
 	public void onCollectionsAssigned(String id, List<String> colls) {
 		try {
-			if (EBHelper.getConfiguration(EBHelper.CONF_USER_ACCOUNT) == null) {
+			if (EBHelper.getConfiguration(EBHelper.CONF_USER_ACCOUNT,
+					String.class) == null) {
 				EBHelper.askUserAccount(getActivity(), ACCOUNT_CREATION);
 			}
 		} catch (DataException e1) {
@@ -222,7 +223,7 @@ public class ExperiencesListFragment extends SherlockListFragment
 				String accountId = data.getStringExtra("USER_ACCOUNT_ID");
 				try {
 					EBHelper.saveConfiguration(EBHelper.CONF_USER_ACCOUNT,
-							accountId);
+							accountId, String.class);
 				} catch (DataException e) {
 					Log.e(EditExpFragment.class.getName(),
 							"Error saving configuration: "

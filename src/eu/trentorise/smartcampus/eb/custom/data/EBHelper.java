@@ -32,6 +32,7 @@ import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 import android.os.Bundle;
 import android.os.RemoteException;
+import android.preference.PreferenceManager;
 import android.util.Log;
 import android.widget.Toast;
 import eu.trentorise.smartcampus.ac.SCAccessProvider;
@@ -65,7 +66,8 @@ public class EBHelper {
 
 	private static final String EB_CONFS = "filelog";
 
-	public static final String CONF_SYNCHRO = "EB_SYNCHRO";
+	public static final String CONF_SYNCHRO = "pref_synchro_file";
+	public static final String CONF_FILE_SIZE = "pref_max_file_lenght";
 	public static final String CONF_USER_ACCOUNT = "EB_USER_ACCOUNT";
 
 	private static final boolean testing = true;
@@ -97,33 +99,58 @@ public class EBHelper {
 	}
 
 	public static synchronized void synchronize(boolean synchronizeFile) {
-		try {
-			if(EBHelper.getConfiguration(CONF_SYNCHRO) != null && EBHelper.getConfiguration(CONF_SYNCHRO).equals("true")){
+		if (isSynchronizationActive()) {
 			Bundle bundle = new Bundle();
 			bundle.putBoolean("synchroFile", synchronizeFile);
-			ContentResolver.requestSync(SCAccount, "eu.trentorise.smartcampus.eb",
-					bundle);}
-		} catch (DataException e) {
-			Log.e(EBHelper.class.getName(), "Error getting synchro configuration");
+			ContentResolver.requestSync(SCAccount,
+					"eu.trentorise.smartcampus.eb", bundle);
 		}
-		
+
 	}
 
-	public static boolean saveConfiguration(String configuration, String value)
-			throws DataException {
-		SharedPreferences confs = getInstance().mContext.getSharedPreferences(
-				EB_CONFS, 0);
+	public static boolean isSynchronizationActive() {
+		try {
+			return EBHelper.getConfiguration(CONF_SYNCHRO, Boolean.class);
+		} catch (Exception e) {
+			Log.e(EBHelper.class.getName(),
+					"Error getting synchro configuration. Synchronization is not active!");
+			return false;
+		}
+	}
+
+	public static <T> boolean saveConfiguration(String configuration,
+			Object value, Class<T> type) throws DataException {
+		// SharedPreferences confs =
+		// getInstance().mContext.getSharedPreferences(
+		// EB_CONFS, 0);
+		SharedPreferences confs = PreferenceManager
+				.getDefaultSharedPreferences(getInstance().mContext);
 
 		Editor editor = confs.edit();
-		editor.putString(configuration, value);
+		if (type == String.class) {
+			editor.putString(configuration, (String) value);
+		}
+		if (type == Boolean.class) {
+			editor.putBoolean(configuration, (Boolean) value);
+		}
 		return editor.commit();
 	}
 
-	public static String getConfiguration(String configuration)
+	public static <T> T getConfiguration(String configuration, Class<T> type)
 			throws DataException {
-		SharedPreferences confs = getInstance().mContext.getSharedPreferences(
-				EB_CONFS, 0);
-		return confs != null ? confs.getString(configuration, null) : null;
+		// SharedPreferences confs =
+		// getInstance().mContext.getSharedPreferences(
+		// EB_CONFS, 0);
+		SharedPreferences confs = PreferenceManager
+				.getDefaultSharedPreferences(getInstance().mContext);
+		Object o = null;
+		if (type == String.class) {
+			o = confs.getString(configuration, null);
+		}
+		if (type == Boolean.class) {
+			o = confs.getBoolean(configuration, false);
+		}
+		return (T) o;
 	}
 
 	public static void askUserAccount(Activity a, int requestCode)

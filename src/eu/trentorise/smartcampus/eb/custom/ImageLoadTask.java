@@ -82,8 +82,10 @@ public class ImageLoadTask extends AsyncTask<Content, Void, Bitmap> {
 				File f = new File(params[0].getLocalValue());
 
 				// if resource doesn't exist locally, load from remote and save
+				// if synchro is active
 				if (!f.exists()
-						&& !loadingHistory.containsKey(params[0].getId())) {
+						&& !loadingHistory.containsKey(params[0].getId())
+						&& EBHelper.isSynchronizationActive()) {
 					loadingHistory.put(params[0].getId(), true);
 					Resource resource = filestorage.getMyResource(
 							EBHelper.getAuthToken(), params[0].getValue());

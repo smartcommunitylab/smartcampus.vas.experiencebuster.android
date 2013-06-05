@@ -146,7 +146,9 @@ public class FileSyncStorage extends SyncStorageWithPaging {
 			String selection, String[] args, int offset, int limit)
 			throws DataException, StorageConfigurationException {
 		Collection<T> result = super.query(cls, selection, args, offset, limit);
-		loadRemoteFiles(cls, result);
+		if (EBHelper.isSynchronizationActive()) {
+			loadRemoteFiles(cls, result);
+		}
 		return result;
 	}
 
@@ -164,7 +166,9 @@ public class FileSyncStorage extends SyncStorageWithPaging {
 			String orderBy) throws DataException, StorageConfigurationException {
 		Collection<T> result = super.query(cls, selection, args, offset, limit,
 				orderBy);
-		loadRemoteFiles(cls, result);
+		if (EBHelper.isSynchronizationActive()) {
+			loadRemoteFiles(cls, result);
+		}
 		return result;
 	}
 
@@ -196,7 +200,9 @@ public class FileSyncStorage extends SyncStorageWithPaging {
 			String selection, String[] args) throws DataException,
 			StorageConfigurationException {
 		Collection<T> result = super.query(cls, selection, args);
-		loadRemoteFiles(cls, result);
+		if (EBHelper.isSynchronizationActive()) {
+			loadRemoteFiles(cls, result);
+		}
 		return result;
 	}
 
@@ -229,8 +235,11 @@ public class FileSyncStorage extends SyncStorageWithPaging {
 										.getResource(mContext,
 												c.getLocalValue());
 								String userAccountId = EBHelper
-										.getConfiguration(EBHelper.CONF_USER_ACCOUNT);
-								if (userAccountId != null) {
+										.getConfiguration(
+												EBHelper.CONF_USER_ACCOUNT,
+												String.class);
+								if (userAccountId != null
+										&& checkFileSizeConstraints(res)) {
 									Metadata meta = filestorage.storeResource(
 											res.getContent(),
 											res.getContentType(),
@@ -261,8 +270,8 @@ public class FileSyncStorage extends SyncStorageWithPaging {
 		Iterator<String> iter = contentToDelete.iterator();
 		while (iter.hasNext()) {
 			try {
-				String userAccountId = EBHelper
-						.getConfiguration(EBHelper.CONF_USER_ACCOUNT);
+				String userAccountId = EBHelper.getConfiguration(
+						EBHelper.CONF_USER_ACCOUNT, String.class);
 				if (userAccountId != null) {
 					filestorage.deleteResource(authToken, userAccountId,
 							iter.next());
@@ -287,7 +296,9 @@ public class FileSyncStorage extends SyncStorageWithPaging {
 									&& c.getValue().length() > 0) {
 								try {
 									String userAccountId = EBHelper
-											.getConfiguration(EBHelper.CONF_USER_ACCOUNT);
+											.getConfiguration(
+													EBHelper.CONF_USER_ACCOUNT,
+													String.class);
 									if (userAccountId != null) {
 										filestorage.deleteResource(authToken,
 												userAccountId, c.getValue());
@@ -307,6 +318,19 @@ public class FileSyncStorage extends SyncStorageWithPaging {
 		}
 
 		return true;
+	}
+
+	private boolean checkFileSizeConstraints(Resource resource) {
+		try {
+			// express in mb
+			float maxSize = Float.valueOf(EBHelper.getConfiguration(
+					EBHelper.CONF_FILE_SIZE, String.class));
+			// transform in bytes
+			maxSize = maxSize * 1048576;
+			return resource.getContent().length <= maxSize;
+		} catch (Exception e) {
+			return true;
+		}
 	}
 
 	public static Map<String, BasicObject> getExpToDelete() {

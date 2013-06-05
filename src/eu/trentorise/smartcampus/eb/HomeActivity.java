@@ -22,13 +22,13 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
-import android.renderscript.FileA3D;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.util.Log;
 import android.widget.Toast;
 
 import com.actionbarsherlock.app.SherlockFragmentActivity;
+import com.actionbarsherlock.view.Menu;
 
 import eu.trentorise.smartcampus.ac.SCAccessProvider;
 import eu.trentorise.smartcampus.android.common.SCAsyncTask;
@@ -51,9 +51,8 @@ import eu.trentorise.smartcampus.storage.sync.service.SyncStorageService;
 public class HomeActivity extends SherlockFragmentActivity implements
 		DialogCallbackContainer {
 
-	
 	private final static int FILESTORAGE_ACCOUNT_REGISTRATION = 10000;
-	
+
 	protected final int mainlayout = android.R.id.content;
 
 	@Override
@@ -76,13 +75,17 @@ public class HomeActivity extends SherlockFragmentActivity implements
 
 	private boolean initData(String token) {
 		try {
-			
-			//check filestorage account
-			if(EBHelper.getConfiguration(EBHelper.CONF_SYNCHRO) == null || (EBHelper.getConfiguration(EBHelper.CONF_SYNCHRO).equals("true") && EBHelper.getConfiguration(EBHelper.CONF_USER_ACCOUNT)== null)){
+
+			// check filestorage account
+			if (!EBHelper
+					.getConfiguration(EBHelper.CONF_SYNCHRO, Boolean.class)
+					|| (EBHelper.getConfiguration(EBHelper.CONF_SYNCHRO,
+							Boolean.class) && EBHelper.getConfiguration(
+							EBHelper.CONF_USER_ACCOUNT, String.class) == null)) {
 				EBHelper.askUserAccount(this, FILESTORAGE_ACCOUNT_REGISTRATION);
-			}else{
-			new SCAsyncTask<Void, Void, Void>(this, new StartProcessor(this))
-					.execute();
+			} else {
+				new SCAsyncTask<Void, Void, Void>(this,
+						new StartProcessor(this)).execute();
 			}
 		} catch (Exception e1) {
 			EBHelper.endAppFailure(this, R.string.app_failure_setup);
@@ -94,8 +97,8 @@ public class HomeActivity extends SherlockFragmentActivity implements
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		// supportInvalidateOptionsMenu();
 		getSupportActionBar().setDisplayShowTitleEnabled(false);
-
 		initDataManagement(savedInstanceState);
 		if (savedInstanceState == null) {
 			setUpContent();
@@ -141,26 +144,35 @@ public class HomeActivity extends SherlockFragmentActivity implements
 						eu.trentorise.smartcampus.ac.R.string.token_required);
 			}
 		}
-		if(requestCode == FILESTORAGE_ACCOUNT_REGISTRATION){
-			if(resultCode == Activity.RESULT_OK){
-				String accountId = data.getStringExtra(FilestorageAccountActivity.EXTRA_USER_ACCOUNT_ID);
+		if (requestCode == FILESTORAGE_ACCOUNT_REGISTRATION) {
+			if (resultCode == Activity.RESULT_OK) {
+				String accountId = data
+						.getStringExtra(FilestorageAccountActivity.EXTRA_USER_ACCOUNT_ID);
 				try {
-					EBHelper.saveConfiguration(EBHelper.CONF_SYNCHRO, "true");
-					EBHelper.saveConfiguration(EBHelper.CONF_USER_ACCOUNT,accountId);
-					new SCAsyncTask<Void, Void, Void>(this, new StartProcessor(this))
+					EBHelper.saveConfiguration(EBHelper.CONF_SYNCHRO, true,
+							Boolean.class);
+					EBHelper.saveConfiguration(EBHelper.CONF_USER_ACCOUNT,
+							accountId, String.class);
+
+				} catch (DataException e) {
+					Toast.makeText(getApplicationContext(),
+							"Error saving filestorage account",
+							Toast.LENGTH_SHORT).show();
+					Log.e(HomeActivity.class.getName(),
+							"Error saving filestorage account");
+				}
+			}
+			if (resultCode == Activity.RESULT_CANCELED) {
+				try {
+					EBHelper.saveConfiguration(EBHelper.CONF_SYNCHRO, false,
+							Boolean.class);
+				} catch (DataException e) {
+					Log.e(HomeActivity.class.getName(),
+							"Error saving filestorage account");
+				}
+			}
+			new SCAsyncTask<Void, Void, Void>(this, new StartProcessor(this))
 					.execute();
-				} catch (DataException e) {
-					Toast.makeText(getApplicationContext(), "Error saving filestorage account", Toast.LENGTH_SHORT).show();
-					Log.e(HomeActivity.class.getName(), "Error saving filestorage account");
-				}
-			}
-			if(resultCode == Activity.RESULT_CANCELED){
-				try {
-					EBHelper.saveConfiguration(EBHelper.CONF_SYNCHRO, "false");
-				} catch (DataException e) {
-					Log.e(HomeActivity.class.getName(), "Error saving filestorage account");
-				}
-			}
 		}
 	}
 
@@ -171,9 +183,18 @@ public class HomeActivity extends SherlockFragmentActivity implements
 		case android.R.id.home:
 			onBackPressed();
 			return true;
+		case R.id.mainmenu_settings:
+			startActivity(new Intent(this, SettingsActivity.class));
 		default:
 			return super.onOptionsItemSelected(item);
 		}
+
+	}
+
+	@Override
+	public boolean onCreateOptionsMenu(Menu menu) {
+		getSupportMenuInflater().inflate(R.menu.main_menu, menu);
+		return true;
 	}
 
 	private class StartProcessor extends AbstractAsyncTaskProcessor<Void, Void> {
