@@ -49,6 +49,7 @@ import eu.trentorise.smartcampus.eb.model.Experience;
 import eu.trentorise.smartcampus.eb.model.ExperienceFilter;
 import eu.trentorise.smartcampus.eb.model.NearMeObject;
 import eu.trentorise.smartcampus.eb.model.ObjectFilter;
+import eu.trentorise.smartcampus.eb.model.Resource;
 import eu.trentorise.smartcampus.eb.model.UserPreference;
 import eu.trentorise.smartcampus.eb.syncadapter.FileSyncStorage;
 import eu.trentorise.smartcampus.protocolcarrier.ProtocolCarrier;
@@ -151,6 +152,32 @@ public class EBHelper {
 			o = confs.getBoolean(configuration, false);
 		}
 		return (T) o;
+	}
+
+	public static boolean checkFileSizeConstraints(Resource resource) {
+		try {
+			// express in mb
+			float maxSize = Float.valueOf(getConfiguration(CONF_FILE_SIZE,
+					String.class));
+			// transform in bytes
+			maxSize = maxSize * 1048576;
+			return resource.getContent().length <= maxSize;
+		} catch (Exception e) {
+			return true;
+		}
+	}
+
+	public static boolean checkFileSizeConstraints(long resourceSize) {
+		try {
+			// express in mb
+			float maxSize = Float.valueOf(getConfiguration(CONF_FILE_SIZE,
+					String.class));
+			// transform in bytes
+			maxSize = maxSize * 1048576;
+			return resourceSize <= maxSize;
+		} catch (Exception e) {
+			return true;
+		}
 	}
 
 	public static void askUserAccount(Activity a, int requestCode)

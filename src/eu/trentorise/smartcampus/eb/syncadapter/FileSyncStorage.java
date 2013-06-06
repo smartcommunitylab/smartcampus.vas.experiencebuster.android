@@ -15,20 +15,13 @@
  ******************************************************************************/
 package eu.trentorise.smartcampus.eb.syncadapter;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-import org.apache.http.client.ClientProtocolException;
-
 import android.content.Context;
-import android.os.AsyncTask;
 import android.util.Log;
 import eu.trentorise.smartcampus.android.common.GlobalConfig;
 import eu.trentorise.smartcampus.eb.custom.data.Constants;
@@ -134,77 +127,6 @@ public class FileSyncStorage extends SyncStorageWithPaging {
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * eu.trentorise.smartcampus.storage.sync.SyncStorageWithPaging#query(java
-	 * .lang.Class, java.lang.String, java.lang.String[], int, int)
-	 */
-	@Override
-	public <T extends BasicObject> Collection<T> query(Class<T> cls,
-			String selection, String[] args, int offset, int limit)
-			throws DataException, StorageConfigurationException {
-		Collection<T> result = super.query(cls, selection, args, offset, limit);
-		if (EBHelper.isSynchronizationActive()) {
-			loadRemoteFiles(cls, result);
-		}
-		return result;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * eu.trentorise.smartcampus.storage.sync.SyncStorageWithPaging#query(java
-	 * .lang.Class, java.lang.String, java.lang.String[], int, int,
-	 * java.lang.String)
-	 */
-	@Override
-	public <T extends BasicObject> Collection<T> query(Class<T> cls,
-			String selection, String[] args, int offset, int limit,
-			String orderBy) throws DataException, StorageConfigurationException {
-		Collection<T> result = super.query(cls, selection, args, offset, limit,
-				orderBy);
-		if (EBHelper.isSynchronizationActive()) {
-			loadRemoteFiles(cls, result);
-		}
-		return result;
-	}
-
-	private <T extends BasicObject> void loadRemoteFiles(Class<T> cls,
-			Collection<T> result) {
-		if (cls == Experience.class) {
-			Collection<Experience> exps = (Collection<Experience>) result;
-			for (Experience exp : exps) {
-				for (Content c : exp.getContents()) {
-					if (!new File(c.getLocalValue()).exists()
-							&& c.getValue() != null) {
-						new FileloaderExecutor().execute(c.getValue(),
-								c.getLocalValue());
-					}
-				}
-			}
-		}
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * eu.trentorise.smartcampus.storage.sync.SyncStorage#query(java.lang.Class,
-	 * java.lang.String, java.lang.String[])
-	 */
-	@Override
-	public <T extends BasicObject> Collection<T> query(Class<T> cls,
-			String selection, String[] args) throws DataException,
-			StorageConfigurationException {
-		Collection<T> result = super.query(cls, selection, args);
-		if (EBHelper.isSynchronizationActive()) {
-			loadRemoteFiles(cls, result);
-		}
-		return result;
-	}
 
 	public SyncData synchroFile(String authToken, String host, String service)
 			throws StorageConfigurationException, SecurityException,
@@ -239,7 +161,8 @@ public class FileSyncStorage extends SyncStorageWithPaging {
 												EBHelper.CONF_USER_ACCOUNT,
 												String.class);
 								if (userAccountId != null
-										&& checkFileSizeConstraints(res)) {
+										&& EBHelper
+												.checkFileSizeConstraints(res)) {
 									Metadata meta = filestorage.storeResource(
 											res.getContent(),
 											res.getContentType(),
@@ -320,56 +243,12 @@ public class FileSyncStorage extends SyncStorageWithPaging {
 		return true;
 	}
 
-	private boolean checkFileSizeConstraints(Resource resource) {
-		try {
-			// express in mb
-			float maxSize = Float.valueOf(EBHelper.getConfiguration(
-					EBHelper.CONF_FILE_SIZE, String.class));
-			// transform in bytes
-			maxSize = maxSize * 1048576;
-			return resource.getContent().length <= maxSize;
-		} catch (Exception e) {
-			return true;
-		}
-	}
-
 	public static Map<String, BasicObject> getExpToDelete() {
 		return expToDelete;
 	}
 
 	public static void setExpToDelete(Map<String, BasicObject> expToDelete) {
 		FileSyncStorage.expToDelete = expToDelete;
-	}
-
-	class FileloaderExecutor extends AsyncTask<String, Void, Void> {
-
-		/*
-		 * (non-Javadoc)
-		 * 
-		 * @see android.os.AsyncTask#doInBackground(Params[])
-		 */
-		@Override
-		protected Void doInBackground(String... params) {
-			String id = params[0];
-			String path = params[1];
-			try {
-				eu.trentorise.smartcampus.storage.model.Resource r = filestorage
-						.getMyResource(EBHelper.getAuthToken(), id);
-				FileOutputStream fout = new FileOutputStream(path);
-				fout.write(r.getContent());
-				fout.close();
-				Log.i(FileSyncStorage.class.getName(), "Load from remote "
-						+ path);
-			} catch (ClientProtocolException e) {
-			} catch (ProtocolException e) {
-			} catch (ConnectionException e) {
-			} catch (SecurityException e) {
-			} catch (IOException e) {
-				Log.e(getClass().getName(), e.getMessage());
-			}
-			return null;
-		}
-
 	}
 
 }

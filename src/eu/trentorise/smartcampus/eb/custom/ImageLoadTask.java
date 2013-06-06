@@ -35,6 +35,7 @@ import eu.trentorise.smartcampus.eb.model.Content;
 import eu.trentorise.smartcampus.eb.model.ContentType;
 import eu.trentorise.smartcampus.protocolcarrier.exceptions.ProtocolException;
 import eu.trentorise.smartcampus.storage.Filestorage;
+import eu.trentorise.smartcampus.storage.model.Metadata;
 import eu.trentorise.smartcampus.storage.model.Resource;
 
 public class ImageLoadTask extends AsyncTask<Content, Void, Bitmap> {
@@ -85,17 +86,31 @@ public class ImageLoadTask extends AsyncTask<Content, Void, Bitmap> {
 				// if synchro is active
 				if (!f.exists()
 						&& !loadingHistory.containsKey(params[0].getId())
-						&& EBHelper.isSynchronizationActive()) {
+						&& EBHelper.isSynchronizationActive()
+						&& params[0].isUploaded()) {
 					loadingHistory.put(params[0].getId(), true);
-					Resource resource = filestorage.getMyResource(
+					Metadata meta = filestorage.getResourceMetadata(
 							EBHelper.getAuthToken(), params[0].getValue());
-					FileOutputStream fout = new FileOutputStream(
-							params[0].getLocalValue());
-					fout.write(resource.getContent());
-					fout.close();
-					Log.i(ImageLoadTask.class.getName(),
-							"Image not present loaded from remote and saved: "
-									+ params[0].getLocalValue());
+					if (EBHelper.checkFileSizeConstraints(meta.getSize())) {
+						Resource resource = filestorage.getMyResource(
+								EBHelper.getAuthToken(), params[0].getValue());
+						FileOutputStream fout = new FileOutputStream(
+								params[0].getLocalValue());
+						fout.write(resource.getContent());
+						fout.close();
+						Log.i(ImageLoadTask.class.getName(),
+								"Image not present loaded from remote and saved: "
+										+ params[0].getLocalValue());
+					} else {
+						Log.i(ImageLoadTask.class.getName(),
+								String.format(
+										"Image %s size is bigger than max file configuration : %s > %s",
+										params[0].getLocalValue(), meta
+												.getSize(),
+										EBHelper.getConfiguration(
+												EBHelper.CONF_FILE_SIZE,
+												String.class)));
+					}
 				}
 				if (f.exists()) {
 					String absPath = f.getAbsolutePath();
@@ -123,15 +138,12 @@ public class ImageLoadTask extends AsyncTask<Content, Void, Bitmap> {
 
 	@Override
 	protected void onPostExecute(Bitmap result) {
-		if (result != null) {
-			ImageView imgView = imageViewReference.get();
-			if (imgView == null
-					|| (tag != null && !tag.equals(imgView.getTag()))) {
-				return;
-			}
-			imgView.setImageBitmap(result);
-			loadingHistory.remove(tag);
+		ImageView imgView = imageViewReference.get();
+		if (imgView == null || (tag != null && !tag.equals(imgView.getTag()))) {
+			return;
 		}
+		imgView.setImageBitmap(result);
+		loadingHistory.remove(tag);
 	}
 
 }

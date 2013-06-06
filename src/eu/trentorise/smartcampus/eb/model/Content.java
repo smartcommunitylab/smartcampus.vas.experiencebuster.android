@@ -131,4 +131,8 @@ public class Content implements Serializable {
 		return type == ContentType.FILE || type == ContentType.AUDIO
 				|| type == ContentType.PHOTO || type == ContentType.VIDEO;
 	}
+
+	public boolean isUploaded() {
+		return localValue != null && value != null && !localValue.equals(value);
+	}
 }
