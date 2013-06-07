@@ -560,7 +560,8 @@ public class EditExpFragment extends SherlockFragment
 								throws SecurityException, ConnectionException,
 								Exception {
 							exp.setUpdateTime(System.currentTimeMillis());
-							if (exp.getId() == null) {
+							String expId = exp.getId();
+							if (expId == null) {
 								Address a = Utils
 										.getCurrentPlace(getSherlockActivity());
 								if (a == null && exp.getAddress() == null)
@@ -576,32 +577,38 @@ public class EditExpFragment extends SherlockFragment
 								exp.setCreationTime(exp.getUpdateTime());
 							}
 
-							exp = EBHelper.saveExperience(getActivity(), exp,
-									false);
-							// find experience updated
-							if (EBHelper.isSynchronizationActive()) {
-								SyncData data = EBHelper
-										.getSyncStorage()
-										.synchroFile(
-												EBHelper.getAuthToken(),
-												GlobalConfig
-														.getAppUrl(getActivity()
-																.getApplicationContext()),
-												eu.trentorise.smartcampus.eb.custom.data.Constants.SYNC_SERVICE);
-								if (data.getUpdated().get(
-										Experience.class.getCanonicalName()) != null) {
-									for (Object o : data.getUpdated()
+							if (expId == null) {
+								exp = EBHelper.saveExperience(getActivity(),
+										exp, false);
+								// find experience updated
+								if (EBHelper.isSynchronizationActive()) {
+									SyncData data = EBHelper
+											.getSyncStorage()
+											.synchroFile(
+													EBHelper.getAuthToken(),
+													GlobalConfig
+															.getAppUrl(getActivity()
+																	.getApplicationContext()),
+													eu.trentorise.smartcampus.eb.custom.data.Constants.SYNC_SERVICE);
+									if (data.getUpdated()
 											.get(Experience.class
-													.getCanonicalName())) {
-										Experience updatedExp = eu.trentorise.smartcampus.android.common.Utils
-												.convertObjectToData(
-														Experience.class, o);
-										if (updatedExp.getId().equals(
-												exp.getId())) {
-											return updatedExp;
+													.getCanonicalName()) != null) {
+										for (Object o : data.getUpdated().get(
+												Experience.class
+														.getCanonicalName())) {
+											Experience updatedExp = eu.trentorise.smartcampus.android.common.Utils
+													.convertObjectToData(
+															Experience.class, o);
+											if (updatedExp.getId().equals(
+													exp.getId())) {
+												return updatedExp;
+											}
 										}
 									}
 								}
+							} else {
+								exp = EBHelper.saveExperience(getActivity(),
+										exp, true);
 							}
 							return exp;
 						}
