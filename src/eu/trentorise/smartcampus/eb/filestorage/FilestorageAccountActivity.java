@@ -17,7 +17,6 @@ package eu.trentorise.smartcampus.eb.filestorage;
 
 import java.util.List;
 
-import android.R;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
@@ -38,8 +37,10 @@ import eu.trentorise.smartcampus.storage.model.UserAccount;
 public class FilestorageAccountActivity extends Activity {
 
 	private static final int AUTH_REQUESTCODE = 100;
-	
+
 	public static final String EXTRA_USER_ACCOUNT_ID = "USER_ACCOUNT_ID";
+
+	public static final String EXTRA_SHOW_DIALOG = "SHOW_DIALOG";
 
 	/** Logging tag */
 	private static final String TAG = "File";
@@ -47,42 +48,54 @@ public class FilestorageAccountActivity extends Activity {
 	private UserAccount userAccount = null;
 
 	/** Access token for the application user */
-	private String mToken = null;
+	// private String mToken = null;
 	/** Filestorage connector reference */
-	private Filestorage mFilestorage = null;
+	// private Filestorage mFilestorage = null;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		
-		new AlertDialog.Builder(this)
-	    .setTitle("")
-	    .setMessage(eu.trentorise.smartcampus.eb.R.string.msg_synchro_dialog)
-	    .setPositiveButton(eu.trentorise.smartcampus.eb.R.string.synchro_dialog_y, new DialogInterface.OnClickListener() {
-	        public void onClick(DialogInterface dialog, int which) { 
-	        	mToken = EBHelper.getAuthToken();
-	    		try {
-	    			mFilestorage = new Filestorage(getApplicationContext(), Constants.APP_NAME,
-	    					Constants.APP_TOKEN,
-	    					GlobalConfig.getAppUrl(getApplicationContext()),
-	    					Constants.FILE_SERVICE);
-	    		} catch (ProtocolException e1) {
-	    			Log.e(TAG, "problem getting filestorage application url");
-	    		}
+		Intent i = getIntent();
+		if (i.getBooleanExtra(EXTRA_SHOW_DIALOG, true)) {
+			new AlertDialog.Builder(this)
+					.setTitle("")
+					.setMessage(
+							eu.trentorise.smartcampus.eb.R.string.msg_synchro_dialog)
+					.setPositiveButton(
+							eu.trentorise.smartcampus.eb.R.string.synchro_dialog_y,
+							new DialogInterface.OnClickListener() {
+								public void onClick(DialogInterface dialog,
+										int which) {
+									// mToken = EBHelper.getAuthToken();
+									// try {
+									// mFilestorage = new
+									// Filestorage(getApplicationContext(),
+									// Constants.APP_NAME,
+									// Constants.APP_TOKEN,
+									// GlobalConfig.getAppUrl(getApplicationContext()),
+									// Constants.FILE_SERVICE);
+									// } catch (ProtocolException e1) {
+									// Log.e(TAG,
+									// "problem getting filestorage application url");
+									// }
+									//
+									new AppAccountTask().execute();
 
-	    		new AppAccountTask().execute();
-	        }
-	     })
-	    .setNegativeButton(eu.trentorise.smartcampus.eb.R.string.synchro_dialog_n, new DialogInterface.OnClickListener() {
-	        public void onClick(DialogInterface dialog, int which) { 
-	        	setResult(Activity.RESULT_CANCELED);
-	            finish();
-	        }
-	     }).setCancelable(false)
-	     .show();
-		
-		
-		
+								}
+							})
+					.setNegativeButton(
+							eu.trentorise.smartcampus.eb.R.string.synchro_dialog_n,
+							new DialogInterface.OnClickListener() {
+								public void onClick(DialogInterface dialog,
+										int which) {
+									setResult(Activity.RESULT_CANCELED);
+									finish();
+								}
+							}).setCancelable(false).show();
+		} else {
+			new AppAccountTask().execute();
+		}
+
 	}
 
 	@Override
@@ -103,17 +116,30 @@ public class FilestorageAccountActivity extends Activity {
 			} else if (resultCode == Activity.RESULT_CANCELED) {
 				setResult(Activity.RESULT_CANCELED);
 				finish();
-			} 
+			}
 		}
 	}
 
 	class AppAccountTask extends AsyncTask<Void, Void, List<AppAccount>> {
 
+		private Filestorage mFilestorage;
+
+		public AppAccountTask() {
+			try {
+				mFilestorage = new Filestorage(getApplicationContext(),
+						Constants.APP_NAME, Constants.APP_TOKEN,
+						GlobalConfig.getAppUrl(getApplicationContext()),
+						Constants.FILE_SERVICE);
+			} catch (ProtocolException e1) {
+				Log.e(TAG, "problem getting filestorage application url");
+			}
+		}
+
 		@Override
 		protected List<AppAccount> doInBackground(Void... params) {
 			try {
 				// read app accounts
-				return mFilestorage.getAppAccounts(mToken);
+				return mFilestorage.getAppAccounts(EBHelper.getAuthToken());
 			} catch (Exception e) {
 				e.printStackTrace();
 				return null;
@@ -126,11 +152,14 @@ public class FilestorageAccountActivity extends Activity {
 			if (result != null && result.size() > 0) {
 				AppAccount appAccount = result.get(0);
 				mFilestorage.startAuthActivityForResult(
-						FilestorageAccountActivity.this, mToken,
+						FilestorageAccountActivity.this,
+						EBHelper.getAuthToken(),
 						appAccount.getAppAccountName(), appAccount.getId(),
 						StorageType.DROPBOX, AUTH_REQUESTCODE);
 			} else {
-				Toast.makeText(FilestorageAccountActivity.this, eu.trentorise.smartcampus.eb.R.string.msg_synchro_no_appaccount,
+				Toast.makeText(
+						FilestorageAccountActivity.this,
+						eu.trentorise.smartcampus.eb.R.string.msg_synchro_no_appaccount,
 						Toast.LENGTH_LONG).show();
 				finish();
 			}

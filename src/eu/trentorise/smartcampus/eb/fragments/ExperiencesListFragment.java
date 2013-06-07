@@ -199,7 +199,7 @@ public class ExperiencesListFragment extends SherlockListFragment
 		try {
 			if (EBHelper.getConfiguration(EBHelper.CONF_USER_ACCOUNT,
 					String.class) == null) {
-				EBHelper.askUserAccount(getActivity(), ACCOUNT_CREATION);
+				EBHelper.askUserAccount(getActivity(), ACCOUNT_CREATION, true);
 			}
 		} catch (DataException e1) {
 			Log.e(ExperiencesListFragment.class.getName(),

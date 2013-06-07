@@ -149,7 +149,7 @@ public class EBHelper {
 			o = confs.getString(configuration, null);
 		}
 		if (type == Boolean.class) {
-			o = confs.getBoolean(configuration, false);
+			o = confs.getBoolean(configuration, true);
 		}
 		return (T) o;
 	}
@@ -180,17 +180,19 @@ public class EBHelper {
 		}
 	}
 
-	public static void askUserAccount(Activity a, int requestCode)
-			throws DataException {
+	public static void askUserAccount(Activity a, int requestCode,
+			boolean showDialog) throws DataException {
 		Intent i = new Intent(getInstance().mContext,
 				FilestorageAccountActivity.class);
+		i.putExtra(FilestorageAccountActivity.EXTRA_SHOW_DIALOG, showDialog);
 		a.startActivityForResult(i, requestCode);
 	}
 
 	public static void askUserAccount(android.support.v4.app.Fragment f,
-			int requestCode) throws DataException {
+			int requestCode, boolean showDialog) throws DataException {
 		Intent i = new Intent(getInstance().mContext,
 				FilestorageAccountActivity.class);
+		i.putExtra(FilestorageAccountActivity.EXTRA_SHOW_DIALOG, showDialog);
 		f.startActivityForResult(i, requestCode);
 	}
 

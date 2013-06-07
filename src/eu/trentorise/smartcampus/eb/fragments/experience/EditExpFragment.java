@@ -339,10 +339,11 @@ public class EditExpFragment extends SherlockFragment
 			exp.setDescription(mDescrSwitch.getValue());
 			if (validate(exp)) {
 				try {
-					if ((EBHelper.getConfiguration(EBHelper.CONF_SYNCHRO,
-							Boolean.class) && EBHelper.getConfiguration(
-							EBHelper.CONF_USER_ACCOUNT, String.class) == null)) {
-						EBHelper.askUserAccount(this, ACCOUNT_CREATION);
+					if (EBHelper.getConfiguration(EBHelper.CONF_SYNCHRO,
+							Boolean.class)
+							&& EBHelper.getConfiguration(
+									EBHelper.CONF_USER_ACCOUNT, String.class) == null) {
+						EBHelper.askUserAccount(this, ACCOUNT_CREATION, false);
 					} else {
 						new SaveTask().execute();
 					}
@@ -490,21 +491,24 @@ public class EditExpFragment extends SherlockFragment
 	@Override
 	public void onActivityResult(int requestCode, int resultCode, Intent data) {
 		if (requestCode == ACCOUNT_CREATION) {
-			if (resultCode == Activity.RESULT_OK) {
-				String accountId = data
-						.getStringExtra(FilestorageAccountActivity.EXTRA_USER_ACCOUNT_ID);
-				try {
+			try {
+				if (resultCode == Activity.RESULT_OK) {
+					String accountId = data
+							.getStringExtra(FilestorageAccountActivity.EXTRA_USER_ACCOUNT_ID);
 					EBHelper.saveConfiguration(EBHelper.CONF_SYNCHRO, true,
 							Boolean.class);
 					EBHelper.saveConfiguration(EBHelper.CONF_USER_ACCOUNT,
 							accountId, String.class);
-					new SaveTask().execute();
-				} catch (DataException e) {
-					Log.e(EditExpFragment.class.getName(),
-							"Error saving configuration: "
-									+ EBHelper.CONF_USER_ACCOUNT);
+				} else {
+					EBHelper.saveConfiguration(EBHelper.CONF_SYNCHRO, false,
+							Boolean.class);
 				}
+			} catch (DataException e) {
+				Log.e(EditExpFragment.class.getName(),
+						"Error saving configuration: "
+								+ EBHelper.CONF_USER_ACCOUNT);
 			}
+			new SaveTask().execute();
 		}
 
 		mHelper.onCaptureResult(requestCode, resultCode, data);

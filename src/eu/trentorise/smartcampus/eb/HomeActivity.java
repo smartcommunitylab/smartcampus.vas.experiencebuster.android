@@ -77,12 +77,10 @@ public class HomeActivity extends SherlockFragmentActivity implements
 		try {
 
 			// check filestorage account
-			if (!EBHelper
-					.getConfiguration(EBHelper.CONF_SYNCHRO, Boolean.class)
-					|| (EBHelper.getConfiguration(EBHelper.CONF_SYNCHRO,
-							Boolean.class) && EBHelper.getConfiguration(
-							EBHelper.CONF_USER_ACCOUNT, String.class) == null)) {
-				EBHelper.askUserAccount(this, FILESTORAGE_ACCOUNT_REGISTRATION);
+			if (EBHelper.getConfiguration(EBHelper.CONF_SYNCHRO, Boolean.class)
+					&& EBHelper.getConfiguration(EBHelper.CONF_USER_ACCOUNT,
+							String.class) == null) {
+				EBHelper.askUserAccount(this, FILESTORAGE_ACCOUNT_REGISTRATION, true);
 			} else {
 				new SCAsyncTask<Void, Void, Void>(this,
 						new StartProcessor(this)).execute();
