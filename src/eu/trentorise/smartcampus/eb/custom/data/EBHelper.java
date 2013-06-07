@@ -62,6 +62,7 @@ import eu.trentorise.smartcampus.protocolcarrier.exceptions.SecurityException;
 import eu.trentorise.smartcampus.storage.DataException;
 import eu.trentorise.smartcampus.storage.StorageConfigurationException;
 import eu.trentorise.smartcampus.storage.db.StorageConfiguration;
+import eu.trentorise.smartcampus.storage.remote.RemoteStorage;
 
 public class EBHelper {
 
@@ -74,6 +75,7 @@ public class EBHelper {
 	private static final boolean testing = true;
 
 	private static EBHelper instance = null;
+	private static RemoteStorage remoteStorage;
 
 	private static SCAccessProvider accessProvider = new AMSCAccessProvider();
 
@@ -99,6 +101,25 @@ public class EBHelper {
 		return getInstance().storage;
 	}
 
+	private static RemoteStorage getRemote(Context mContext, String token)
+			throws ProtocolException, DataException {
+		if (remoteStorage == null) {
+			remoteStorage = new RemoteStorage(mContext, Constants.APP_TOKEN);
+		}
+		remoteStorage.setConfig(token,
+				GlobalConfig.getAppUrl(getInstance().mContext),
+				Constants.SERVICE);
+		return remoteStorage;
+	}
+
+	public static Collection<UserPreference> readUserPreference()
+			throws DataException, ConnectionException, ProtocolException,
+			SecurityException {
+		return getRemote(instance.mContext, getAuthToken()).getObjects(
+				UserPreference.class);
+
+	}
+
 	public static synchronized void synchronize(boolean synchronizeFile) {
 		if (isSynchronizationActive()) {
 			Bundle bundle = new Bundle();
@@ -121,9 +142,6 @@ public class EBHelper {
 
 	public static <T> boolean saveConfiguration(String configuration,
 			Object value, Class<T> type) throws DataException {
-		// SharedPreferences confs =
-		// getInstance().mContext.getSharedPreferences(
-		// EB_CONFS, 0);
 		SharedPreferences confs = PreferenceManager
 				.getDefaultSharedPreferences(getInstance().mContext);
 
@@ -139,9 +157,6 @@ public class EBHelper {
 
 	public static <T> T getConfiguration(String configuration, Class<T> type)
 			throws DataException {
-		// SharedPreferences confs =
-		// getInstance().mContext.getSharedPreferences(
-		// EB_CONFS, 0);
 		SharedPreferences confs = PreferenceManager
 				.getDefaultSharedPreferences(getInstance().mContext);
 		Object o = null;
@@ -241,58 +256,21 @@ public class EBHelper {
 	public static void start() throws RemoteException, DataException,
 			StorageConfigurationException, ConnectionException,
 			ProtocolException, SecurityException {
-		if (testing) {
-			// UserPreference
-			Collection<UserPreference> userPreferencesCollection = getInstance().storage
-					.getObjects(UserPreference.class);
-			if (userPreferencesCollection.isEmpty()) {
-				UserPreference userPreference = new UserPreference();
-				userPreference.setSocialUserId(1L);
-				getInstance().preference = getInstance().storage
-						.create(userPreference);
-			} else {
-				getInstance().preference = userPreferencesCollection.iterator()
-						.next();
-			}
-
-			// // some Experiences
-			// Collection<Experience> experiencesCollection =
-			// getInstance().getstorage.getObjects(Experience.class);
-			// if (experiencesCollection.isEmpty()) {
-			// UserPreference userPreference = new UserPreference();
-			// userPreference.setSocialUserId(1L);
-			// List<ExpCollection> collections = Arrays.asList(new
-			// ExpCollection[] {
-			// new ExpCollection("id1", "name 1"), new ExpCollection("id2",
-			// "name 2"),
-			// new ExpCollection("id3", "name 3") });
-			// userPreference.setCollections(collections);
-			// getInstance().preference =
-			// getInstance().storage.create(userPreference);
-			// } else {
-			// getInstance().preference =
-			// experiencesCollection.iterator().next();
-			// }
-
-			getInstance().loaded = true;
-		} else {
-			// getInstance().loadData();
-			// if (getPreferences().isSynchronizeAutomatically()) {
-			synchronize(true);
-			// }
+		// UserPreference
+		Collection<UserPreference> userPreferencesCollection = getInstance().storage
+				.getObjects(UserPreference.class);
+		if (userPreferencesCollection.isEmpty()) {
+			userPreferencesCollection = readUserPreference();
 		}
-
+		// if not in remotestorage to
+		if (userPreferencesCollection.isEmpty()) {
+			UserPreference userPreference = new UserPreference();
+			userPreference.setSocialUserId(1L);
+			getInstance().preference = getInstance().storage
+					.create(userPreference);
+		}
+		getInstance().preference = userPreferencesCollection.iterator().next();
 		synchronize(true);
-	}
-
-	private void loadData() throws DataException,
-			StorageConfigurationException, ConnectionException,
-			ProtocolException, SecurityException, RemoteException {
-		if (loaded) {
-			return;
-		}
-
-		loaded = true;
 	}
 
 	public static void endAppFailure(Activity activity, int id) {
