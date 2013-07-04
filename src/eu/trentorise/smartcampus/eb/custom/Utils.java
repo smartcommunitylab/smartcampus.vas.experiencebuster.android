@@ -66,7 +66,7 @@ public class Utils {
 		SCGeocoder geoCoder = new SCGeocoder(contexto, Locale.getDefault());
 		try {
 			List<Address> addresses = geoCoder.getFromLocationSC(
-					p.getLatitudeE6() / 1E6, p.getLongitudeE6() / 1E6, true);
+					p.getLatitudeE6() / 1E6, p.getLongitudeE6() / 1E6, true, null);
 			if (addresses == null || addresses.isEmpty())
 				return null;
 			return addresses.get(0);

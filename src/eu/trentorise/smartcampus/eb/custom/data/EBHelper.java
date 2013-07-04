@@ -76,7 +76,7 @@ public class EBHelper {
 
 	private static EBHelper instance = null;
 	private static RemoteStorage remoteStorage;
-
+	private static String userAccountId ="51d52d28975a9980586863bf";
 	private static SCAccessProvider accessProvider = new AMSCAccessProvider();
 
 	public static Account SCAccount;
@@ -94,6 +94,15 @@ public class EBHelper {
 	public static void init(Context mContext) {
 		if (instance == null) {
 			instance = new EBHelper(mContext);
+		}
+		//init synchro and accountid
+		try {
+			saveConfiguration(CONF_SYNCHRO, true, Boolean.class);
+			saveConfiguration(CONF_USER_ACCOUNT, userAccountId, String.class);
+
+		} catch (DataException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
 	}
 
@@ -237,10 +246,11 @@ public class EBHelper {
 				1, sc);
 		this.mProtocolCarrier = new ProtocolCarrier(mContext,
 				eu.trentorise.smartcampus.eb.custom.data.Constants.APP_TOKEN);
-
+	
 		SCAccount = new Account(
 				eu.trentorise.smartcampus.ac.Constants.getAccountName(mContext),
 				eu.trentorise.smartcampus.ac.Constants.getAccountType(mContext));
+
 
 		// LocationManager locationManager = (LocationManager)
 		// mContext.getSystemService(Context.LOCATION_SERVICE);
