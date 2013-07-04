@@ -23,13 +23,14 @@ import android.support.v4.app.FragmentTransaction;
 
 import com.actionbarsherlock.app.SherlockFragmentActivity;
 
-import eu.trentorise.smartcampus.eb.R;
 import eu.trentorise.smartcampus.ac.SCAccessProvider;
+import eu.trentorise.smartcampus.android.common.Utils;
 import eu.trentorise.smartcampus.android.common.tagging.TaggingDialog.OnTagsSelectedListener;
 import eu.trentorise.smartcampus.eb.Constants.CATCH_TYPES;
 import eu.trentorise.smartcampus.eb.custom.capture.CaptureHelper;
 import eu.trentorise.smartcampus.eb.custom.capture.CaptureHelper.ResultHandler;
 import eu.trentorise.smartcampus.eb.custom.capture.GrabbedContent;
+import eu.trentorise.smartcampus.eb.custom.capture.content.ObjectContent;
 import eu.trentorise.smartcampus.eb.custom.data.EBHelper;
 import eu.trentorise.smartcampus.eb.fragments.NearMeNowFragment;
 import eu.trentorise.smartcampus.eb.fragments.NewCollectionDialogFragment.CollectionSavedHandler;
@@ -37,8 +38,10 @@ import eu.trentorise.smartcampus.eb.fragments.experience.AssignCollectionFragmen
 import eu.trentorise.smartcampus.eb.fragments.experience.DeleteExperienceFragment.RemoveCallback;
 import eu.trentorise.smartcampus.eb.fragments.experience.DialogCallbackContainer;
 import eu.trentorise.smartcampus.eb.fragments.experience.EditExpFragment;
-import eu.trentorise.smartcampus.eb.fragments.experience.EditPositionFragment.PositionHandler;
+import eu.trentorise.smartcampus.eb.fragments.experience.EditExpMuseFragment;
 import eu.trentorise.smartcampus.eb.fragments.experience.EditNoteFragment.NoteHandler;
+import eu.trentorise.smartcampus.eb.fragments.experience.EditPositionFragment.PositionHandler;
+import eu.trentorise.smartcampus.eb.model.NearMeObject;
 
 public class CatchActivity extends SherlockFragmentActivity implements ResultHandler, DialogCallbackContainer {
 
@@ -52,7 +55,7 @@ public class CatchActivity extends SherlockFragmentActivity implements ResultHan
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		getSupportActionBar().setDisplayShowTitleEnabled(false);
-		
+
 		if (savedInstanceState != null && savedInstanceState.containsKey("initialized")) {
 			initialized = savedInstanceState.getBoolean("initialized");
 		}
@@ -73,13 +76,13 @@ public class CatchActivity extends SherlockFragmentActivity implements ResultHan
 		EBHelper.getLocationHelper().start();
 		super.onResume();
 	}
-	
+
 	@Override
 	protected void onPause() {
 		EBHelper.getLocationHelper().stop();
 		super.onPause();
 	}
-	
+
 	private void startCapture() {
 		EBHelper.getLocationHelper().start();
 
@@ -120,6 +123,20 @@ public class CatchActivity extends SherlockFragmentActivity implements ResultHan
 	}
 
 	private boolean initData(String token) {
+		if (getIntent().getAction().equals("eu.trentorise.smartcampus.EDIT")) {
+			String json = getIntent().getStringExtra("NearMeObject");
+			if (json != null && json.trim().length() > 0) {
+				NearMeObject nearMeObject = Utils.convertJSONToObject(json, NearMeObject.class);
+				Bundle bundle = EditExpFragment.prepareArgs(null, new ObjectContent(nearMeObject));
+
+				FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+				Fragment frag = new EditExpMuseFragment();
+				frag.setArguments(bundle);
+				ft.replace(android.R.id.content, frag).commitAllowingStateLoss();
+				return true;
+			}
+		}
+
 		try {
 			startCapture();
 			initialized = true;
@@ -167,32 +184,62 @@ public class CatchActivity extends SherlockFragmentActivity implements ResultHan
 
 	@Override
 	public CollectionSavedHandler getCollectionSavedHandler() {
-		return (EditExpFragment) getSupportFragmentManager().findFragmentById(android.R.id.content);
+		Fragment fragment = getSupportFragmentManager().findFragmentById(android.R.id.content);
+		if (fragment instanceof EditExpMuseFragment) {
+			return (EditExpMuseFragment) fragment;
+		} else {
+			return (EditExpFragment) fragment;
+		}
 	}
 
 	@Override
 	public AssignCollectionsCallback getAssignCollectionsCallback() {
-		return (EditExpFragment) getSupportFragmentManager().findFragmentById(android.R.id.content);
+		Fragment fragment = getSupportFragmentManager().findFragmentById(android.R.id.content);
+		if (fragment instanceof EditExpMuseFragment) {
+			return (EditExpMuseFragment) fragment;
+		} else {
+			return (EditExpFragment) fragment;
+		}
 	}
 
 	@Override
 	public RemoveCallback getRemoveCallback() {
-		return (EditExpFragment) getSupportFragmentManager().findFragmentById(android.R.id.content);
+		Fragment fragment = getSupportFragmentManager().findFragmentById(android.R.id.content);
+		if (fragment instanceof EditExpMuseFragment) {
+			return (EditExpMuseFragment) fragment;
+		} else {
+			return (EditExpFragment) fragment;
+		}
 	}
 
 	@Override
 	public NoteHandler getNoteHandler() {
-		return (EditExpFragment) getSupportFragmentManager().findFragmentById(android.R.id.content);
+		Fragment fragment = getSupportFragmentManager().findFragmentById(android.R.id.content);
+		if (fragment instanceof EditExpMuseFragment) {
+			return (EditExpMuseFragment) fragment;
+		} else {
+			return (EditExpFragment) fragment;
+		}
 	}
 
 	@Override
 	public PositionHandler getPositionHandler() {
-		return (EditExpFragment) getSupportFragmentManager().findFragmentById(android.R.id.content);
+		Fragment fragment = getSupportFragmentManager().findFragmentById(android.R.id.content);
+		if (fragment instanceof EditExpMuseFragment) {
+			return (EditExpMuseFragment) fragment;
+		} else {
+			return (EditExpFragment) fragment;
+		}
 	}
 
 	@Override
 	public OnTagsSelectedListener getTagListener() {
-		return (EditExpFragment) getSupportFragmentManager().findFragmentById(android.R.id.content);
+		Fragment fragment = getSupportFragmentManager().findFragmentById(android.R.id.content);
+		if (fragment instanceof EditExpMuseFragment) {
+			return (EditExpMuseFragment) fragment;
+		} else {
+			return (EditExpFragment) fragment;
+		}
 	}
 
 }

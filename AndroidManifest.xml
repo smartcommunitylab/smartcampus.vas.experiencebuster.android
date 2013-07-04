@@ -52,7 +52,12 @@
         
         <activity
             android:name=".CatchActivity"
-            android:configChanges="keyboardHidden|orientation" />
+            android:configChanges="keyboardHidden|orientation">
+            <intent-filter>
+                <action android:name="eu.trentorise.smartcampus.EDIT" />
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
         <activity android:name=".QRCodeActivity" />
         <activity
             android:name="eu.trentorise.smartcampus.eb.HomeActivity"
@@ -61,12 +66,10 @@
             android:launchMode="singleTop" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
             <intent-filter>
                 <action android:name="eu.trentorise.smartcampus.START" />
-
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
