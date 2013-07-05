@@ -280,7 +280,7 @@ public class CaptureHelper {
 	        }
 	    }
 	    // Create a media file name
-	    String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
+	    String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmssSSS").format(new Date());
 	    File mediaFile = new File(mediaStorageDir.getPath() + File.separator + "M_" + timeStamp + "."+ext);
 	    return mediaFile;
 	}

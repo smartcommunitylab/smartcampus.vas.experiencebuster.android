@@ -46,10 +46,9 @@ import eu.trentorise.smartcampus.eb.model.NearMeObject;
 public class CatchActivity extends SherlockFragmentActivity implements ResultHandler, DialogCallbackContainer {
 
 	public static final String ARG_TYPE = "type";
-
 	private CaptureHelper mHelper = null;
-
 	private Boolean initialized = false;
+	private Boolean isMuse = false;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -172,8 +171,14 @@ public class CatchActivity extends SherlockFragmentActivity implements ResultHan
 	@Override
 	public void onResult(GrabbedContent value) {
 		FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-		Fragment frag = new EditExpFragment();
-		frag.setArguments(EditExpFragment.prepareArgs(null, value));
+		Fragment frag = null;
+		if (isMuse) {
+			frag = new EditExpMuseFragment();
+			frag.setArguments(EditExpMuseFragment.prepareArgs(null, value));
+		} else {
+			frag = new EditExpFragment();
+			frag.setArguments(EditExpFragment.prepareArgs(null, value));
+		}
 		ft.replace(android.R.id.content, frag, "grabbed").commitAllowingStateLoss();
 	}
 
@@ -186,6 +191,7 @@ public class CatchActivity extends SherlockFragmentActivity implements ResultHan
 	public CollectionSavedHandler getCollectionSavedHandler() {
 		Fragment fragment = getSupportFragmentManager().findFragmentById(android.R.id.content);
 		if (fragment instanceof EditExpMuseFragment) {
+			isMuse = true;
 			return (EditExpMuseFragment) fragment;
 		} else {
 			return (EditExpFragment) fragment;
@@ -196,6 +202,7 @@ public class CatchActivity extends SherlockFragmentActivity implements ResultHan
 	public AssignCollectionsCallback getAssignCollectionsCallback() {
 		Fragment fragment = getSupportFragmentManager().findFragmentById(android.R.id.content);
 		if (fragment instanceof EditExpMuseFragment) {
+			isMuse = true;
 			return (EditExpMuseFragment) fragment;
 		} else {
 			return (EditExpFragment) fragment;
@@ -206,6 +213,7 @@ public class CatchActivity extends SherlockFragmentActivity implements ResultHan
 	public RemoveCallback getRemoveCallback() {
 		Fragment fragment = getSupportFragmentManager().findFragmentById(android.R.id.content);
 		if (fragment instanceof EditExpMuseFragment) {
+			isMuse = true;
 			return (EditExpMuseFragment) fragment;
 		} else {
 			return (EditExpFragment) fragment;
@@ -216,6 +224,7 @@ public class CatchActivity extends SherlockFragmentActivity implements ResultHan
 	public NoteHandler getNoteHandler() {
 		Fragment fragment = getSupportFragmentManager().findFragmentById(android.R.id.content);
 		if (fragment instanceof EditExpMuseFragment) {
+			isMuse = true;
 			return (EditExpMuseFragment) fragment;
 		} else {
 			return (EditExpFragment) fragment;
@@ -226,6 +235,7 @@ public class CatchActivity extends SherlockFragmentActivity implements ResultHan
 	public PositionHandler getPositionHandler() {
 		Fragment fragment = getSupportFragmentManager().findFragmentById(android.R.id.content);
 		if (fragment instanceof EditExpMuseFragment) {
+			isMuse = true;
 			return (EditExpMuseFragment) fragment;
 		} else {
 			return (EditExpFragment) fragment;
@@ -236,6 +246,7 @@ public class CatchActivity extends SherlockFragmentActivity implements ResultHan
 	public OnTagsSelectedListener getTagListener() {
 		Fragment fragment = getSupportFragmentManager().findFragmentById(android.R.id.content);
 		if (fragment instanceof EditExpMuseFragment) {
+			isMuse = true;
 			return (EditExpMuseFragment) fragment;
 		} else {
 			return (EditExpFragment) fragment;
