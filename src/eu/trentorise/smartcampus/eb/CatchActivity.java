@@ -43,7 +43,8 @@ import eu.trentorise.smartcampus.eb.fragments.experience.EditNoteFragment.NoteHa
 import eu.trentorise.smartcampus.eb.fragments.experience.EditPositionFragment.PositionHandler;
 import eu.trentorise.smartcampus.eb.model.NearMeObject;
 
-public class CatchActivity extends SherlockFragmentActivity implements ResultHandler, DialogCallbackContainer {
+public class CatchActivity extends SherlockFragmentActivity implements
+		ResultHandler, DialogCallbackContainer {
 
 	public static final String ARG_TYPE = "type";
 	private CaptureHelper mHelper = null;
@@ -55,7 +56,8 @@ public class CatchActivity extends SherlockFragmentActivity implements ResultHan
 		super.onCreate(savedInstanceState);
 		getSupportActionBar().setDisplayShowTitleEnabled(false);
 
-		if (savedInstanceState != null && savedInstanceState.containsKey("initialized")) {
+		if (savedInstanceState != null
+				&& savedInstanceState.containsKey("initialized")) {
 			initialized = savedInstanceState.getBoolean("initialized");
 		}
 		if (!initialized) {
@@ -94,13 +96,17 @@ public class CatchActivity extends SherlockFragmentActivity implements ResultHan
 		}
 		if (type != null) {
 			if (CATCH_TYPES.TEXT.equals(type)) {
-				FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+				FragmentTransaction ft = getSupportFragmentManager()
+						.beginTransaction();
 				Fragment frag = new EditExpFragment();
-				ft.replace(android.R.id.content, frag).commitAllowingStateLoss();
+				ft.replace(android.R.id.content, frag)
+						.commitAllowingStateLoss();
 			} else if (CATCH_TYPES.NEARME.equals(type)) {
-				FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+				FragmentTransaction ft = getSupportFragmentManager()
+						.beginTransaction();
 				Fragment frag = new NearMeNowFragment();
-				ft.replace(android.R.id.content, frag).commitAllowingStateLoss();
+				ft.replace(android.R.id.content, frag)
+						.commitAllowingStateLoss();
 			} else {
 				mHelper.startCapture(type);
 			}
@@ -112,7 +118,8 @@ public class CatchActivity extends SherlockFragmentActivity implements ResultHan
 	private void initDataManagement(Bundle savedInstanceState) {
 		try {
 			EBHelper.init(getApplicationContext());
-			String token = EBHelper.getAccessProvider().getAuthToken(this, null);
+			String token = EBHelper.getAccessProvider()
+					.getAuthToken(this, null);
 			if (token != null) {
 				initData(token);
 			}
@@ -122,16 +129,22 @@ public class CatchActivity extends SherlockFragmentActivity implements ResultHan
 	}
 
 	private boolean initData(String token) {
-		if (getIntent().getAction().equals("eu.trentorise.smartcampus.EDIT")) {
+		if (getIntent().getAction() != null
+				&& getIntent().getAction().equals(
+						"eu.trentorise.smartcampus.EDIT")) {
 			String json = getIntent().getStringExtra("NearMeObject");
 			if (json != null && json.trim().length() > 0) {
-				NearMeObject nearMeObject = Utils.convertJSONToObject(json, NearMeObject.class);
-				Bundle bundle = EditExpFragment.prepareArgs(null, new ObjectContent(nearMeObject));
+				NearMeObject nearMeObject = Utils.convertJSONToObject(json,
+						NearMeObject.class);
+				Bundle bundle = EditExpFragment.prepareArgs(null,
+						new ObjectContent(nearMeObject));
 
-				FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+				FragmentTransaction ft = getSupportFragmentManager()
+						.beginTransaction();
 				Fragment frag = new EditExpMuseFragment();
 				frag.setArguments(bundle);
-				ft.replace(android.R.id.content, frag).commitAllowingStateLoss();
+				ft.replace(android.R.id.content, frag)
+						.commitAllowingStateLoss();
 				return true;
 			}
 		}
@@ -155,14 +168,16 @@ public class CatchActivity extends SherlockFragmentActivity implements ResultHan
 		mHelper.onCaptureResult(requestCode, resultCode, data);
 		if (requestCode == SCAccessProvider.SC_AUTH_ACTIVITY_REQUEST_CODE) {
 			if (resultCode == RESULT_OK) {
-				String token = data.getExtras().getString(AccountManager.KEY_AUTHTOKEN);
+				String token = data.getExtras().getString(
+						AccountManager.KEY_AUTHTOKEN);
 				if (token == null) {
 					EBHelper.endAppFailure(this, R.string.app_failure_security);
 				} else {
 					initData(token);
 				}
 			} else if (resultCode == RESULT_CANCELED) {
-				EBHelper.endAppFailure(this, eu.trentorise.smartcampus.ac.R.string.token_required);
+				EBHelper.endAppFailure(this,
+						eu.trentorise.smartcampus.ac.R.string.token_required);
 			}
 		}
 		super.onActivityResult(requestCode, resultCode, data);
@@ -179,7 +194,8 @@ public class CatchActivity extends SherlockFragmentActivity implements ResultHan
 			frag = new EditExpFragment();
 			frag.setArguments(EditExpFragment.prepareArgs(null, value));
 		}
-		ft.replace(android.R.id.content, frag, "grabbed").commitAllowingStateLoss();
+		ft.replace(android.R.id.content, frag, "grabbed")
+				.commitAllowingStateLoss();
 	}
 
 	@Override
@@ -189,7 +205,8 @@ public class CatchActivity extends SherlockFragmentActivity implements ResultHan
 
 	@Override
 	public CollectionSavedHandler getCollectionSavedHandler() {
-		Fragment fragment = getSupportFragmentManager().findFragmentById(android.R.id.content);
+		Fragment fragment = getSupportFragmentManager().findFragmentById(
+				android.R.id.content);
 		if (fragment instanceof EditExpMuseFragment) {
 			isMuse = true;
 			return (EditExpMuseFragment) fragment;
@@ -200,7 +217,8 @@ public class CatchActivity extends SherlockFragmentActivity implements ResultHan
 
 	@Override
 	public AssignCollectionsCallback getAssignCollectionsCallback() {
-		Fragment fragment = getSupportFragmentManager().findFragmentById(android.R.id.content);
+		Fragment fragment = getSupportFragmentManager().findFragmentById(
+				android.R.id.content);
 		if (fragment instanceof EditExpMuseFragment) {
 			isMuse = true;
 			return (EditExpMuseFragment) fragment;
@@ -211,7 +229,8 @@ public class CatchActivity extends SherlockFragmentActivity implements ResultHan
 
 	@Override
 	public RemoveCallback getRemoveCallback() {
-		Fragment fragment = getSupportFragmentManager().findFragmentById(android.R.id.content);
+		Fragment fragment = getSupportFragmentManager().findFragmentById(
+				android.R.id.content);
 		if (fragment instanceof EditExpMuseFragment) {
 			isMuse = true;
 			return (EditExpMuseFragment) fragment;
@@ -222,7 +241,8 @@ public class CatchActivity extends SherlockFragmentActivity implements ResultHan
 
 	@Override
 	public NoteHandler getNoteHandler() {
-		Fragment fragment = getSupportFragmentManager().findFragmentById(android.R.id.content);
+		Fragment fragment = getSupportFragmentManager().findFragmentById(
+				android.R.id.content);
 		if (fragment instanceof EditExpMuseFragment) {
 			isMuse = true;
 			return (EditExpMuseFragment) fragment;
@@ -233,7 +253,8 @@ public class CatchActivity extends SherlockFragmentActivity implements ResultHan
 
 	@Override
 	public PositionHandler getPositionHandler() {
-		Fragment fragment = getSupportFragmentManager().findFragmentById(android.R.id.content);
+		Fragment fragment = getSupportFragmentManager().findFragmentById(
+				android.R.id.content);
 		if (fragment instanceof EditExpMuseFragment) {
 			isMuse = true;
 			return (EditExpMuseFragment) fragment;
@@ -244,7 +265,8 @@ public class CatchActivity extends SherlockFragmentActivity implements ResultHan
 
 	@Override
 	public OnTagsSelectedListener getTagListener() {
-		Fragment fragment = getSupportFragmentManager().findFragmentById(android.R.id.content);
+		Fragment fragment = getSupportFragmentManager().findFragmentById(
+				android.R.id.content);
 		if (fragment instanceof EditExpMuseFragment) {
 			isMuse = true;
 			return (EditExpMuseFragment) fragment;
