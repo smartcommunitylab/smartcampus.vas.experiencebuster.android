@@ -33,10 +33,7 @@ public class ViewerActivity extends Activity {
 		setContentView(R.layout.exp_shared);
 
 		Intent data = getIntent();
-		String expId = data
-				.getStringExtra(getApplicationContext()
-						.getString(
-								eu.trentorise.smartcampus.android.common.R.string.view_intent_arg_object_id));
+		String expId = data.getStringExtra(getApplicationContext().getString(R.string.view_intent_arg_object_id));
 
 		new Loader(getApplicationContext(), this).execute(expId);
 	}
@@ -54,11 +51,9 @@ public class ViewerActivity extends Activity {
 		@Override
 		protected Experience doInBackground(String... params) {
 			String expId = params[0];
-			RemoteStorage remoteStorage = new RemoteStorage(
-					getApplicationContext(), Constants.APP_TOKEN);
+			RemoteStorage remoteStorage = new RemoteStorage(getApplicationContext(), Constants.APP_TOKEN);
 			try {
-				remoteStorage.setConfig(EBHelper.getAuthToken(),
-						GlobalConfig.getAppUrl(getApplicationContext()),
+				remoteStorage.setConfig(EBHelper.getAuthToken(), GlobalConfig.getAppUrl(getApplicationContext()),
 						Constants.SERVICE);
 				if (expId != null) {
 					return remoteStorage.getObjectById(expId, Experience.class);
@@ -88,31 +83,26 @@ public class ViewerActivity extends Activity {
 
 			if (result != null) {
 				if (result.getTitle() != null) {
-					((TextView) findViewById(R.id.title_tv_shared))
-							.setText(result.getTitle());
+					((TextView) findViewById(R.id.title_tv_shared)).setText(result.getTitle());
 				}
 
 				if (result.getDescription() != null) {
-					((TextView) findViewById(R.id.description_tv_shared))
-							.setText(result.getDescription());
+					((TextView) findViewById(R.id.description_tv_shared)).setText(result.getDescription());
 				}
 
 				if (result.getTags() != null)
-					((TextView) findViewById(R.id.tags_tv_shared))
-							.setText(Concept.toSimpleString(result.getTags()));
+					((TextView) findViewById(R.id.tags_tv_shared)).setText(Concept.toSimpleString(result.getTags()));
 
 				if (result.getCreationTime() > 0) {
 					((TextView) findViewById(R.id.date_tv_shared))
-							.setText(eu.trentorise.smartcampus.eb.Constants.DATE_FORMATTER
-									.format(new Date(result.getCreationTime())));
+							.setText(eu.trentorise.smartcampus.eb.Constants.DATE_FORMATTER.format(new Date(result
+									.getCreationTime())));
 				}
 				if (result.getAddress() != null) {
-					((TextView) findViewById(R.id.place_tv_shared))
-							.setText(result.getAddress());
+					((TextView) findViewById(R.id.place_tv_shared)).setText(result.getAddress());
 				}
 
-				ExpContentAdapter content = new ExpContentAdapter(act,
-						R.layout.exp_contents_row, result.getContents());
+				ExpContentAdapter content = new ExpContentAdapter(act, R.layout.exp_contents_row, result.getContents());
 				list.setAdapter(content);
 			} else {
 				setContentView(R.layout.exp_shared_error);

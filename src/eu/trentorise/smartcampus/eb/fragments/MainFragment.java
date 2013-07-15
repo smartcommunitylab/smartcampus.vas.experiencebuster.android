@@ -74,12 +74,11 @@ public class MainFragment extends SherlockFragment {
 
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
-		switch (item.getItemId()) {
-		case R.id.mainmenu_settings:
+		if (item.getItemId() == R.id.mainmenu_settings) {
 			startActivity(new Intent(getActivity(), SettingsActivity.class));
-		default:
+		} 
 			return super.onOptionsItemSelected(item);
-		}
+		
 	}
 
 	@Override

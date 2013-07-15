@@ -29,6 +29,7 @@ import android.content.SyncResult;
 import android.os.Bundle;
 import android.util.Log;
 import eu.trentorise.smartcampus.android.common.GlobalConfig;
+import eu.trentorise.smartcampus.eb.R;
 import eu.trentorise.smartcampus.eb.custom.data.EBHelper;
 import eu.trentorise.smartcampus.protocolcarrier.exceptions.SecurityException;
 
@@ -90,12 +91,12 @@ public class EBSyncAdapter extends AbstractThreadedSyncAdapter {
 		NotificationManager mNotificationManager = (NotificationManager) mContext
 				.getSystemService(Context.NOTIFICATION_SERVICE);
 
-		int icon = eu.trentorise.smartcampus.ac.R.drawable.stat_notify_error;
+		int icon = R.drawable.stat_notify_error;
 		CharSequence tickerText = mContext
-				.getString(eu.trentorise.smartcampus.ac.R.string.token_expired);
+				.getString(R.string.token_expired);
 		long when = System.currentTimeMillis();
 		CharSequence contentText = mContext
-				.getString(eu.trentorise.smartcampus.ac.R.string.token_required);
+				.getString(R.string.token_required);
 		PendingIntent contentIntent = PendingIntent.getActivity(mContext, 0, i,
 				0);
 

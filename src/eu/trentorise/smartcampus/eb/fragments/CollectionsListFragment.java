@@ -103,13 +103,12 @@ public class CollectionsListFragment extends SherlockListFragment implements Col
 
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
-		switch (item.getItemId()) {
-		case R.id.collection_add:
+		if (item.getItemId() == R.id.collection_add) {
 			DialogFragment newCollFragment = new NewCollectionDialogFragment();
 			newCollFragment.setArguments(NewCollectionDialogFragment.prepare(null));
-		    newCollFragment.show(getActivity().getSupportFragmentManager(), "exp_coll");
+			newCollFragment.show(getActivity().getSupportFragmentManager(), "exp_coll");
 			return true;
-		default:
+		} else {
 			return super.onOptionsItemSelected(item);
 		}
 	}
@@ -148,9 +147,7 @@ public class CollectionsListFragment extends SherlockListFragment implements Col
 	public boolean onContextItemSelected(android.view.MenuItem item) {
 		final AdapterContextMenuInfo info = (AdapterContextMenuInfo) item.getMenuInfo();
 		final ExpCollection coll = EBHelper.getUserPreference().getCollections().get(info.position);
-		switch (item.getItemId()) {
-		case R.id.collmenu_remove:
-		{
+		if (item.getItemId() == R.id.collmenu_remove) {
 			new AlertDialog.Builder(getActivity())
 	        .setMessage(R.string.msg_delete_coll_confirm)
 	        .setCancelable(false)
@@ -168,15 +165,10 @@ public class CollectionsListFragment extends SherlockListFragment implements Col
 	        })
 	        .setNegativeButton(android.R.string.no, null)
 	        .show();
-			break;
-		}
-		case R.id.collmenu_edit:
-		{
+		} else if (item.getItemId() == R.id.collmenu_edit) {
 			DialogFragment editCollFragment = new NewCollectionDialogFragment();
 			editCollFragment.setArguments(NewCollectionDialogFragment.prepare(coll));
-		    editCollFragment.show(getActivity().getSupportFragmentManager(), "exp_coll");
-			break;
-		}
+			editCollFragment.show(getActivity().getSupportFragmentManager(), "exp_coll");
 		}		
 		return super.onContextItemSelected(item);
 	}

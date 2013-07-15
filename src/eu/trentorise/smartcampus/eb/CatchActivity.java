@@ -177,7 +177,7 @@ public class CatchActivity extends SherlockFragmentActivity implements
 				}
 			} else if (resultCode == RESULT_CANCELED) {
 				EBHelper.endAppFailure(this,
-						eu.trentorise.smartcampus.ac.R.string.token_required);
+						R.string.token_required);
 			}
 		}
 		super.onActivityResult(requestCode, resultCode, data);

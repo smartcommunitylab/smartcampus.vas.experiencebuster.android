@@ -48,10 +48,10 @@
         <uses-library android:name="com.google.android.maps" />
 
          <activity
-            android:name=".SettingsActivity"/>
+            android:name="eu.trentorise.smartcampus.eb.SettingsActivity"/>
         
         <activity
-            android:name=".CatchActivity"
+            android:name="eu.trentorise.smartcampus.eb.CatchActivity"
             android:configChanges="keyboardHidden|orientation">
             <intent-filter>
                 <action android:name="eu.trentorise.smartcampus.EDIT" />

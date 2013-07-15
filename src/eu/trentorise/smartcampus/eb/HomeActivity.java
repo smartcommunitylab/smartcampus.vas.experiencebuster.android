@@ -137,7 +137,7 @@ public class HomeActivity extends SherlockFragmentActivity implements DialogCall
 					initData(token);
 				}
 			} else if (resultCode == RESULT_CANCELED) {
-				EBHelper.endAppFailure(this, eu.trentorise.smartcampus.ac.R.string.token_required);
+				EBHelper.endAppFailure(this, R.string.token_required);
 			}
 		}
 		if (requestCode == FILESTORAGE_ACCOUNT_REGISTRATION) {
@@ -148,7 +148,8 @@ public class HomeActivity extends SherlockFragmentActivity implements DialogCall
 					EBHelper.saveConfiguration(EBHelper.CONF_USER_ACCOUNT, accountId, String.class);
 
 				} catch (DataException e) {
-					Toast.makeText(getApplicationContext(), "Error saving filestorage account", Toast.LENGTH_SHORT).show();
+					Toast.makeText(getApplicationContext(), "Error saving filestorage account", Toast.LENGTH_SHORT)
+							.show();
 					Log.e(HomeActivity.class.getName(), "Error saving filestorage account");
 				}
 			}
@@ -165,16 +166,13 @@ public class HomeActivity extends SherlockFragmentActivity implements DialogCall
 
 	@Override
 	public boolean onOptionsItemSelected(com.actionbarsherlock.view.MenuItem item) {
-		switch (item.getItemId()) {
-		case android.R.id.home:
+		if (item.getItemId() == android.R.id.home) {
 			onBackPressed();
 			return true;
-		case R.id.mainmenu_settings:
+		} else if (item.getItemId() == R.id.mainmenu_settings) {
 			startActivity(new Intent(this, SettingsActivity.class));
-		default:
-			return super.onOptionsItemSelected(item);
 		}
-
+		return super.onOptionsItemSelected(item);
 	}
 
 	@Override

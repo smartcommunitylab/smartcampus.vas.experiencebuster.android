@@ -275,12 +275,9 @@ public class EditExpMuseFragment extends SherlockFragment implements OnTagsSelec
 
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
-		switch (item.getItemId()) {
-		case android.R.id.home:
+		if (item.getItemId() == android.R.id.home) {
 			getActivity().onBackPressed();
-			break;
-		case R.id.expmenu_done:
-		case R.id.expmenu_save:
+		} else if (item.getItemId() == R.id.expmenu_done || item.getItemId() == R.id.expmenu_save) {
 			exp.setTitle(mTitleSwitch.getValue());
 			exp.setDescription(mDescrSwitch.getValue());
 			if (validate(exp)) {
@@ -295,51 +292,36 @@ public class EditExpMuseFragment extends SherlockFragment implements OnTagsSelec
 					Log.e(EditExpMuseFragment.class.getName(), "Error creating filestorage account");
 				}
 			}
-			break;
-		case R.id.expmenu_attach_audio:
+		} else if (item.getItemId() == R.id.expmenu_attach_audio) {
 			onCaptureOption(new String[] { CATCH_TYPES.AUDIO.toString() }, null);
-			break;
-		case R.id.expmenu_attach_camera_photo:
+		} else if (item.getItemId() == R.id.expmenu_attach_camera_photo) {
 			onCaptureOption(new String[] { CATCH_TYPES.IMAGE_CAMERA.toString() }, null);
-			break;
-		case R.id.expmenu_attach_camera_video:
+		} else if (item.getItemId() == R.id.expmenu_attach_camera_video) {
 			onCaptureOption(new String[] { CATCH_TYPES.VIDEO_CAMERA.toString() }, null);
-			break;
-		case R.id.expmenu_attach_gallery_photo:
+		} else if (item.getItemId() == R.id.expmenu_attach_gallery_photo) {
 			onCaptureOption(new String[] { CATCH_TYPES.IMAGE_GALLERY.toString() }, null);
-			break;
-		case R.id.expmenu_attach_gallery_video:
+		} else if (item.getItemId() == R.id.expmenu_attach_gallery_video) {
 			onCaptureOption(new String[] { CATCH_TYPES.VIDEO_GALLERY.toString() }, null);
-			break;
-		case R.id.expmenu_attach_qrcode:
+		} else if (item.getItemId() == R.id.expmenu_attach_qrcode) {
 			onCaptureOption(new String[] { CATCH_TYPES.QRCODE.toString() }, null);
-			break;
-		case R.id.expmenu_attach_text:
+		} else if (item.getItemId() == R.id.expmenu_attach_text) {
 			DialogFragment textFragment = new EditNoteFragment();
 			textFragment.setArguments(EditNoteFragment.prepare("", exp.getContents().size()));
 			textFragment.show(getActivity().getSupportFragmentManager(), "exp_content_note");
-			break;
-		case R.id.expmenu_remove:
+		} else if (item.getItemId() == R.id.expmenu_remove) {
 			DialogFragment newFragment = new DeleteExperienceFragment();
 			newFragment.setArguments(DeleteExperienceFragment.prepare(exp.getId()));
 			newFragment.show(getActivity().getSupportFragmentManager(), "exp_delete");
-			break;
-		case R.id.expmenu_assign_collection:
+		} else if (item.getItemId() == R.id.expmenu_assign_collection) {
 			DialogFragment assignFragment = new AssignCollectionFragment();
 			assignFragment.setArguments(AssignCollectionFragment.prepare(exp.getId(), exp.getCollectionIds()));
 			assignFragment.show(getActivity().getSupportFragmentManager(), "exp_assign_colls");
-			break;
-		case R.id.expmenu_share:
+		} else if (item.getItemId() == R.id.expmenu_share) {
 			ShareEntityObject obj = new ShareEntityObject(exp.getEntityId(), exp.getTitle(), Constants.ENTITY_TYPE_EXPERIENCE);
 			SharingHelper.share(getActivity(), obj);
-			break;
-		case R.id.expmenu_map:
-		case R.id.expmenu_export:
+		} else if (item.getItemId() == R.id.expmenu_map || item.getItemId() == R.id.expmenu_export) {
 			Toast.makeText(getActivity(), R.string.not_implemented, Toast.LENGTH_SHORT).show();
-			// TODO
-			break;
-		default:
-			break;
+		} else {
 		}
 		return super.onOptionsItemSelected(item);
 	}
@@ -590,8 +572,7 @@ public class EditExpMuseFragment extends SherlockFragment implements OnTagsSelec
 		AdapterContextMenuInfo info = (AdapterContextMenuInfo) item.getMenuInfo();
 		if (info.position <= exp.getContents().size() && info.position > 0) {
 			final Content content = exp.getContents().get(info.position - 1);
-			switch (item.getItemId()) {
-			case R.id.expcontentmenu_remove:
+			if (item.getItemId() == R.id.expcontentmenu_remove) {
 				switchToEdit();
 				Content c = null;
 				try {
@@ -602,15 +583,12 @@ public class EditExpMuseFragment extends SherlockFragment implements OnTagsSelec
 							"Error added content to deleted contents id: " + c != null ? c.getId() : null);
 				}
 				adapter.notifyDataSetChanged();
-				break;
-			case R.id.expcontentmenu_comment:
+			} else if (item.getItemId() == R.id.expcontentmenu_comment) {
 				DialogFragment newFragment = new EditNoteFragment();
 				String text = content.getType() == ContentType.TEXT ? content.getValue() : content.getNote();
 				newFragment.setArguments(EditNoteFragment.prepare(text, info.position - 1));
 				newFragment.show(getActivity().getSupportFragmentManager(), "exp_content_note");
-				break;
-			default:
-				break;
+			} else {
 			}
 		}
 		return super.onContextItemSelected(item);

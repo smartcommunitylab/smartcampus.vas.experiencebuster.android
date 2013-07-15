@@ -157,22 +157,21 @@ public class ExperiencesListFragment extends SherlockListFragment
 		final AdapterContextMenuInfo info = (AdapterContextMenuInfo) item
 				.getMenuInfo();
 		final Experience exp = experiencesList.get(info.position);
-		switch (item.getItemId()) {
-		case R.id.expmenu_remove:
+		if (item.getItemId() == R.id.expmenu_remove) {
 			DialogFragment newFragment = new DeleteExperienceFragment();
 			newFragment.setArguments(DeleteExperienceFragment.prepare(exp
 					.getId()));
 			newFragment.show(getActivity().getSupportFragmentManager(),
 					"exp_delete");
 			return true;
-		case R.id.expmenu_assign_collection:
+		} else if (item.getItemId() == R.id.expmenu_assign_collection) {
 			DialogFragment assignFragment = new AssignCollectionFragment();
 			assignFragment.setArguments(AssignCollectionFragment.prepare(
 					exp.getId(), exp.getCollectionIds()));
 			assignFragment.show(getActivity().getSupportFragmentManager(),
 					"exp_assign_colls");
 			return true;
-		default:
+		} else {
 			Toast.makeText(getActivity(), R.string.not_implemented,
 					Toast.LENGTH_SHORT).show();
 			return true;
