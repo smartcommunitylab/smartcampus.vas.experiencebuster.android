@@ -16,14 +16,14 @@
 -->
 <menu xmlns:android="http://schemas.android.com/apk/res/android" >
 
-    <item
-        android:id="@+id/expmenu_assign_collection"
-        android:icon="@drawable/select_folder"
-        android:menuCategory="system"
-        android:orderInCategory="1"
-        android:showAsAction="always"
-        android:title="@string/empty">
-    </item>
+<!--     <item -->
+<!--         android:id="@+id/expmenu_assign_collection" -->
+<!--         android:icon="@drawable/select_folder" -->
+<!--         android:menuCategory="system" -->
+<!--         android:orderInCategory="1" -->
+<!--         android:showAsAction="always" -->
+<!--         android:title="@string/empty"> -->
+<!--     </item> -->
     <item
         android:id="@+id/expmenu_done"
         android:menuCategory="system"

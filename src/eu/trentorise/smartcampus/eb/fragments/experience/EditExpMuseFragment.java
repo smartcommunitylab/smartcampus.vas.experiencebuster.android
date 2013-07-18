@@ -134,6 +134,8 @@ public class EditExpMuseFragment extends SherlockFragment implements OnTagsSelec
 		} else if (grabbedContent != null) {
 			exp = findExperienceByContentEntity(grabbedContent.toContent().getEntityType(), grabbedContent.toContent()
 					.getEntityId());
+			src = findExperienceByContentEntity(grabbedContent.toContent().getEntityType(), grabbedContent.toContent()
+					.getEntityId());
 		}
 
 		if (exp == null) {

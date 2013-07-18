@@ -47,30 +47,30 @@
                 android:title="@string/expmenu_attach_text"/>
         </menu>
     </item>
-    <item
-        android:id="@+id/expmenu_toggler"
-        android:icon="@drawable/abs__ic_menu_moreoverflow_normal_holo_light"
-        android:menuCategory="system"
-        android:orderInCategory="10"
-        android:showAsAction="always"
-        android:title="@string/empty">
-        <menu android:id="@+id/placeholder_menu" >
-            <item
-                android:id="@+id/expmenu_assign_collection"
-                android:title="@string/expmenu_assign_collection"/>
-            <item
-                android:id="@+id/expmenu_share"
-                android:title="@string/expmenu_share"/>
-            <item
-                android:id="@+id/expmenu_export"
-                android:title="@string/expmenu_export"/>
-            <item
-                android:id="@+id/expmenu_map"
-                android:title="@string/expmenu_map"/>
-            <item
-                android:id="@+id/expmenu_remove"
-                android:title="@string/expmenu_remove"/>
-        </menu>
-    </item>
+<!--     <item -->
+<!--         android:id="@+id/expmenu_toggler" -->
+<!--         android:icon="@drawable/abs__ic_menu_moreoverflow_normal_holo_light" -->
+<!--         android:menuCategory="system" -->
+<!--         android:orderInCategory="10" -->
+<!--         android:showAsAction="always" -->
+<!--         android:title="@string/empty"> -->
+<!--         <menu android:id="@+id/placeholder_menu" > -->
+<!--             <item -->
+<!--                 android:id="@+id/expmenu_assign_collection" -->
+<!--                 android:title="@string/expmenu_assign_collection"/> -->
+<!--             <item -->
+<!--                 android:id="@+id/expmenu_share" -->
+<!--                 android:title="@string/expmenu_share"/> -->
+<!--             <item -->
+<!--                 android:id="@+id/expmenu_export" -->
+<!--                 android:title="@string/expmenu_export"/> -->
+<!--             <item -->
+<!--                 android:id="@+id/expmenu_map" -->
+<!--                 android:title="@string/expmenu_map"/> -->
+<!--             <item -->
+<!--                 android:id="@+id/expmenu_remove" -->
+<!--                 android:title="@string/expmenu_remove"/> -->
+<!--         </menu> -->
+<!--     </item> -->
 
 </menu>
