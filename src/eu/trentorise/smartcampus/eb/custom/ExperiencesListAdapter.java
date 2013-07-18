@@ -98,7 +98,8 @@ public class ExperiencesListAdapter extends ArrayAdapter<Experience> {
 		}
 
 		String collectionsString = "";
-		collectionsString = EBHelper.getUserPreference().collectionNames(
+//		if (EBHelper.getUserPreference()!=null)
+			collectionsString = EBHelper.getUserPreference().collectionNames(
 				experience.getCollectionIds());
 
 		// // set up for possible future "click on collection name to open it"

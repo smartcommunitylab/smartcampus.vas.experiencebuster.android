@@ -76,7 +76,7 @@ public class EBHelper {
 
 	private static EBHelper instance = null;
 	private static RemoteStorage remoteStorage;
-	private static String userAccountId ="51d57fe0975a3b2fb2831062";
+	private static String userAccountId = "51d57fe0975a3b2fb2831062";
 	private static SCAccessProvider accessProvider = new AMSCAccessProvider();
 
 	public static Account SCAccount;
@@ -95,7 +95,7 @@ public class EBHelper {
 		if (instance == null) {
 			instance = new EBHelper(mContext);
 		}
-		//init synchro and accountid
+		// init synchro and accountid
 		try {
 			saveConfiguration(CONF_SYNCHRO, true, Boolean.class);
 			saveConfiguration(CONF_USER_ACCOUNT, userAccountId, String.class);
@@ -110,22 +110,17 @@ public class EBHelper {
 		return getInstance().storage;
 	}
 
-	private static RemoteStorage getRemote(Context mContext, String token)
-			throws ProtocolException, DataException {
+	private static RemoteStorage getRemote(Context mContext, String token) throws ProtocolException, DataException {
 		if (remoteStorage == null) {
 			remoteStorage = new RemoteStorage(mContext, Constants.APP_TOKEN);
 		}
-		remoteStorage.setConfig(token,
-				GlobalConfig.getAppUrl(getInstance().mContext),
-				Constants.SERVICE);
+		remoteStorage.setConfig(token, GlobalConfig.getAppUrl(getInstance().mContext), Constants.SERVICE);
 		return remoteStorage;
 	}
 
-	public static Collection<UserPreference> readUserPreference()
-			throws DataException, ConnectionException, ProtocolException,
-			SecurityException {
-		return getRemote(instance.mContext, getAuthToken()).getObjects(
-				UserPreference.class);
+	public static Collection<UserPreference> readUserPreference() throws DataException, ConnectionException,
+			ProtocolException, SecurityException {
+		return getRemote(instance.mContext, getAuthToken()).getObjects(UserPreference.class);
 
 	}
 
@@ -133,8 +128,7 @@ public class EBHelper {
 		if (isSynchronizationActive()) {
 			Bundle bundle = new Bundle();
 			bundle.putBoolean("synchroFile", synchronizeFile);
-			ContentResolver.requestSync(SCAccount,
-					"eu.trentorise.smartcampus.eb", bundle);
+			ContentResolver.requestSync(SCAccount, "eu.trentorise.smartcampus.eb", bundle);
 		}
 
 	}
@@ -143,16 +137,13 @@ public class EBHelper {
 		try {
 			return EBHelper.getConfiguration(CONF_SYNCHRO, Boolean.class);
 		} catch (Exception e) {
-			Log.e(EBHelper.class.getName(),
-					"Error getting synchro configuration. Synchronization is not active!");
+			Log.e(EBHelper.class.getName(), "Error getting synchro configuration. Synchronization is not active!");
 			return false;
 		}
 	}
 
-	public static <T> boolean saveConfiguration(String configuration,
-			Object value, Class<T> type) throws DataException {
-		SharedPreferences confs = PreferenceManager
-				.getDefaultSharedPreferences(getInstance().mContext);
+	public static <T> boolean saveConfiguration(String configuration, Object value, Class<T> type) throws DataException {
+		SharedPreferences confs = PreferenceManager.getDefaultSharedPreferences(getInstance().mContext);
 
 		Editor editor = confs.edit();
 		if (type == String.class) {
@@ -164,10 +155,8 @@ public class EBHelper {
 		return editor.commit();
 	}
 
-	public static <T> T getConfiguration(String configuration, Class<T> type)
-			throws DataException {
-		SharedPreferences confs = PreferenceManager
-				.getDefaultSharedPreferences(getInstance().mContext);
+	public static <T> T getConfiguration(String configuration, Class<T> type) throws DataException {
+		SharedPreferences confs = PreferenceManager.getDefaultSharedPreferences(getInstance().mContext);
 		Object o = null;
 		if (type == String.class) {
 			o = confs.getString(configuration, null);
@@ -181,8 +170,7 @@ public class EBHelper {
 	public static boolean checkFileSizeConstraints(Resource resource) {
 		try {
 			// express in mb
-			float maxSize = Float.valueOf(getConfiguration(CONF_FILE_SIZE,
-					String.class));
+			float maxSize = Float.valueOf(getConfiguration(CONF_FILE_SIZE, String.class));
 			// transform in bytes
 			maxSize = maxSize * 1048576;
 			return resource.getContent().length <= maxSize;
@@ -194,8 +182,7 @@ public class EBHelper {
 	public static boolean checkFileSizeConstraints(long resourceSize) {
 		try {
 			// express in mb
-			float maxSize = Float.valueOf(getConfiguration(CONF_FILE_SIZE,
-					String.class));
+			float maxSize = Float.valueOf(getConfiguration(CONF_FILE_SIZE, String.class));
 			// transform in bytes
 			maxSize = maxSize * 1048576;
 			return resourceSize <= maxSize;
@@ -204,18 +191,15 @@ public class EBHelper {
 		}
 	}
 
-	public static void askUserAccount(Activity a, int requestCode,
-			boolean showDialog) throws DataException {
-		Intent i = new Intent(getInstance().mContext,
-				FilestorageAccountActivity.class);
+	public static void askUserAccount(Activity a, int requestCode, boolean showDialog) throws DataException {
+		Intent i = new Intent(getInstance().mContext, FilestorageAccountActivity.class);
 		i.putExtra(FilestorageAccountActivity.EXTRA_SHOW_DIALOG, showDialog);
 		a.startActivityForResult(i, requestCode);
 	}
 
-	public static void askUserAccount(android.support.v4.app.Fragment f,
-			int requestCode, boolean showDialog) throws DataException {
-		Intent i = new Intent(getInstance().mContext,
-				FilestorageAccountActivity.class);
+	public static void askUserAccount(android.support.v4.app.Fragment f, int requestCode, boolean showDialog)
+			throws DataException {
+		Intent i = new Intent(getInstance().mContext, FilestorageAccountActivity.class);
 		i.putExtra(FilestorageAccountActivity.EXTRA_SHOW_DIALOG, showDialog);
 		f.startActivityForResult(i, requestCode);
 	}
@@ -239,18 +223,13 @@ public class EBHelper {
 		super();
 		this.mContext = mContext;
 		this.sc = new EBStorageConfiguration();
-		this.storage = new FileSyncStorage(
-				mContext,
-				eu.trentorise.smartcampus.eb.custom.data.Constants.APP_TOKEN,
-				eu.trentorise.smartcampus.eb.custom.data.Constants.SYNC_DB_NAME,
-				1, sc);
+		this.storage = new FileSyncStorage(mContext, eu.trentorise.smartcampus.eb.custom.data.Constants.APP_TOKEN,
+				eu.trentorise.smartcampus.eb.custom.data.Constants.SYNC_DB_NAME, 1, sc);
 		this.mProtocolCarrier = new ProtocolCarrier(mContext,
 				eu.trentorise.smartcampus.eb.custom.data.Constants.APP_TOKEN);
-	
-		SCAccount = new Account(
-				eu.trentorise.smartcampus.ac.Constants.getAccountName(mContext),
-				eu.trentorise.smartcampus.ac.Constants.getAccountType(mContext));
 
+		SCAccount = new Account(eu.trentorise.smartcampus.ac.Constants.getAccountName(mContext),
+				eu.trentorise.smartcampus.ac.Constants.getAccountType(mContext));
 
 		// LocationManager locationManager = (LocationManager)
 		// mContext.getSystemService(Context.LOCATION_SERVICE);
@@ -263,12 +242,10 @@ public class EBHelper {
 		setLocationHelper(new LocationHelper(mContext));
 	}
 
-	public static void start() throws RemoteException, DataException,
-			StorageConfigurationException, ConnectionException,
-			ProtocolException, SecurityException {
+	public static void start() throws RemoteException, DataException, StorageConfigurationException,
+			ConnectionException, ProtocolException, SecurityException {
 		// UserPreference
-		Collection<UserPreference> userPreferencesCollection = getInstance().storage
-				.getObjects(UserPreference.class);
+		Collection<UserPreference> userPreferencesCollection = getInstance().storage.getObjects(UserPreference.class);
 		if (userPreferencesCollection.isEmpty()) {
 			userPreferencesCollection = readUserPreference();
 		}
@@ -276,51 +253,48 @@ public class EBHelper {
 		if (userPreferencesCollection.isEmpty()) {
 			UserPreference userPreference = new UserPreference();
 			userPreference.setSocialUserId(1L);
-			getInstance().preference = getInstance().storage
-					.create(userPreference);
+			getInstance().preference = getInstance().storage.create(userPreference);
 		}
 		getInstance().preference = userPreferencesCollection.iterator().next();
 		synchronize(true);
 	}
 
 	public static void endAppFailure(Activity activity, int id) {
-		Toast.makeText(activity, activity.getResources().getString(id),
-				Toast.LENGTH_LONG).show();
+		Toast.makeText(activity, activity.getResources().getString(id), Toast.LENGTH_LONG).show();
 		activity.finish();
 	}
 
 	public static void showFailure(Activity activity, int id) {
-		Toast.makeText(activity, activity.getResources().getString(id),
-				Toast.LENGTH_LONG).show();
+		Toast.makeText(activity, activity.getResources().getString(id), Toast.LENGTH_LONG).show();
 	}
 
 	public static UserPreference getUserPreference() {
 		try {
-			return getInstance().preference;
+			if (getInstance().preference != null)
+				return getInstance().preference;
+			else
+				return new UserPreference();
 		} catch (DataException e) {
 			Log.e(EBHelper.class.getName(), "" + e.getMessage());
 			return new UserPreference();
 		}
 	}
 
-	public static boolean updateUserPreference(Activity a,
-			UserPreference userPreference) {
+	public static boolean updateUserPreference(Activity a, UserPreference userPreference) {
 		try {
 			getInstance().preference = userPreference;
 			getInstance().storage.update(getInstance().preference, false);
 			synchronize(true);
 			return true;
 		} catch (Exception e) {
-			Log.e(EBHelper.class.getName(),
-					"Failed to store preferences: " + e.getMessage());
+			Log.e(EBHelper.class.getName(), "Failed to store preferences: " + e.getMessage());
 			showFailure(a, R.string.error_collection_store);
 			return false;
 		}
 	}
 
-	public static List<SemanticSuggestion> getSuggestions(CharSequence suggest)
-			throws ConnectionException, ProtocolException, SecurityException,
-			DataException {
+	public static List<SemanticSuggestion> getSuggestions(CharSequence suggest) throws ConnectionException,
+			ProtocolException, SecurityException, DataException {
 		return SuggestionHelper.getSuggestions(suggest, getInstance().mContext,
 				GlobalConfig.getAppUrl(getInstance().mContext), getAuthToken(),
 				eu.trentorise.smartcampus.eb.custom.data.Constants.APP_TOKEN);
@@ -337,20 +311,17 @@ public class EBHelper {
 	// return findExperiences(f, position, size);
 	// }
 
-	public static List<Experience> findExperiences(
-			ExperienceFilter experienceFilter, int position, int size) {
+	public static List<Experience> findExperiences(ExperienceFilter experienceFilter, int position, int size) {
 		String query = "";
 		List<String> params = new ArrayList<String>();
 
 		assert experienceFilter != null;
 		if (experienceFilter.getCollectionId() != null) {
-			query += (query.length() > 0 ? " AND " : "")
-					+ "collectionIds LIKE '%\""
+			query += (query.length() > 0 ? " AND " : "") + "collectionIds LIKE '%\""
 					+ experienceFilter.getCollectionId() + "\"%'";
 		}
 
-		if (experienceFilter.getText() != null
-				&& experienceFilter.getText().length() > 0) {
+		if (experienceFilter.getText() != null && experienceFilter.getText().length() > 0) {
 			query += (query.length() > 0 ? " AND " : "") + "experience MATCH ?";
 			params.add(experienceFilter.getText());
 		}
@@ -358,8 +329,7 @@ public class EBHelper {
 		Collection<Experience> collection = null;
 		try {
 			collection = getInstance().storage.query(Experience.class, query,
-					params.toArray(new String[params.size()]), position, size,
-					"creationTime DESC");
+					params.toArray(new String[params.size()]), position, size, "creationTime DESC");
 		} catch (Exception e) {
 			Log.e(EBHelper.class.getName(), "" + e.getMessage());
 			return Collections.emptyList();
@@ -370,8 +340,7 @@ public class EBHelper {
 		return Collections.emptyList();
 	}
 
-	public static Experience saveExperience(Activity a, Experience exp,
-			boolean synchronize) {
+	public static Experience saveExperience(Activity a, Experience exp, boolean synchronize) {
 		try {
 			Experience res = null;
 			if (exp.getId() == null) {
@@ -385,8 +354,7 @@ public class EBHelper {
 			}
 			return res;
 		} catch (Exception e) {
-			Log.e(EBHelper.class.getName(),
-					"Failed to store experience: " + e.getMessage());
+			Log.e(EBHelper.class.getName(), "Failed to store experience: " + e.getMessage());
 			if (a != null) {
 				showFailure(a, R.string.error_exp_store);
 			}
@@ -394,27 +362,23 @@ public class EBHelper {
 		}
 	}
 
-	public static void deleteExperience(Activity a, String id,
-			boolean synchronize) {
+	public static void deleteExperience(Activity a, String id, boolean synchronize) {
 		try {
 			getInstance().storage.delete(id, Experience.class);
 			if (synchronize) {
 				synchronize(true);
 			}
 		} catch (Exception e) {
-			Log.e(EBHelper.class.getName(),
-					"Failed to delete experience: " + e.getMessage());
+			Log.e(EBHelper.class.getName(), "Failed to delete experience: " + e.getMessage());
 			if (a != null) {
 				showFailure(a, R.string.error_exp_store);
 			}
 		}
 	}
 
-	public static List<NearMeObject> getNearMeNowSuggestions(double[] location,
-			long currentTimeMillis, boolean filterEvents,
-			boolean filterLocations) throws Exception {
-		MessageRequest request = new MessageRequest(
-				GlobalConfig.getAppUrl(getInstance().mContext),
+	public static List<NearMeObject> getNearMeNowSuggestions(double[] location, long currentTimeMillis,
+			boolean filterEvents, boolean filterLocations) throws Exception {
+		MessageRequest request = new MessageRequest(GlobalConfig.getAppUrl(getInstance().mContext),
 				eu.trentorise.smartcampus.eb.custom.data.Constants.OBJECT_SERVICE);
 		request.setMethod(Method.GET);
 		ObjectFilter filter = new ObjectFilter();
@@ -439,10 +403,8 @@ public class EBHelper {
 		String queryString = "filter=" + queryStrObject;
 		request.setQuery(queryString);
 
-		MessageResponse response = getInstance().mProtocolCarrier.invokeSync(
-				request,
-				eu.trentorise.smartcampus.eb.custom.data.Constants.APP_TOKEN,
-				getAuthToken());
+		MessageResponse response = getInstance().mProtocolCarrier.invokeSync(request,
+				eu.trentorise.smartcampus.eb.custom.data.Constants.APP_TOKEN, getAuthToken());
 		String body = response.getBody();
 		if (body == null || body.trim().length() == 0) {
 			return Collections.emptyList();
@@ -458,8 +420,7 @@ public class EBHelper {
 				List<Map<String, Object>> protos = map.get(key);
 				if (protos != null) {
 					for (Map<String, Object> proto : protos) {
-						objects.add(Utils.convertObjectToData(
-								NearMeObject.class, proto));
+						objects.add(Utils.convertObjectToData(NearMeObject.class, proto));
 					}
 				}
 			}
