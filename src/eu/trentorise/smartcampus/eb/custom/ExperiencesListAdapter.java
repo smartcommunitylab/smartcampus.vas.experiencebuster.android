@@ -41,8 +41,7 @@ public class ExperiencesListAdapter extends ArrayAdapter<Experience> {
 	private int layoutResourceId;
 	private List<Experience> contentsList;
 
-	public ExperiencesListAdapter(Context context, int layoutResourceId,
-			List<Experience> contentsList) {
+	public ExperiencesListAdapter(Context context, int layoutResourceId, List<Experience> contentsList) {
 		super(context, layoutResourceId, contentsList);
 		this.context = context;
 		this.layoutResourceId = layoutResourceId;
@@ -81,26 +80,23 @@ public class ExperiencesListAdapter extends ArrayAdapter<Experience> {
 		if (previousExperience == null
 				|| ((long) (experience.getCreationTime() / (1000 * 60 * 60 * 24))) != ((long) (previousExperience
 						.getCreationTime() / (1000 * 60 * 60 * 24)))) {
-			String headerDateString = formatDateForHeader(
-					experience.getCreationTime()).toUpperCase();
-			((TextView) holder.separator.findViewById(R.id.separator_text))
-					.setText(headerDateString);
+			String headerDateString = formatDateForHeader(experience.getCreationTime()).toUpperCase();
+			((TextView) holder.separator.findViewById(R.id.separator_text)).setText(headerDateString);
 			holder.separator.setVisibility(View.VISIBLE);
 		} else {
 			holder.separator.setVisibility(View.GONE);
 		}
 
 		holder.title.setText(experience.getTitle());
-		if (experience != null && experience.getDescription().length() > 0) {
+		if (experience != null && experience.getDescription() != null && experience.getDescription().length() > 0) {
 			holder.description.setText(experience.getDescription());
 		} else {
 			holder.description.setVisibility(View.GONE);
 		}
 
 		String collectionsString = "";
-//		if (EBHelper.getUserPreference()!=null)
-			collectionsString = EBHelper.getUserPreference().collectionNames(
-				experience.getCollectionIds());
+		// if (EBHelper.getUserPreference()!=null)
+		collectionsString = EBHelper.getUserPreference().collectionNames(experience.getCollectionIds());
 
 		// // set up for possible future "click on collection name to open it"
 		// // implementation
@@ -130,12 +126,10 @@ public class ExperiencesListAdapter extends ArrayAdapter<Experience> {
 				holder.preview.setTag(previewContent.getId());
 				// if device use android 3, use parallel async execution
 				if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.GINGERBREAD) {
-					new ImageLoadTask(holder.preview, null).executeOnExecutor(
-							android.os.AsyncTask.THREAD_POOL_EXECUTOR,
+					new ImageLoadTask(holder.preview, null).executeOnExecutor(android.os.AsyncTask.THREAD_POOL_EXECUTOR,
 							previewContent);
 				} else {// serial otherwise
-					new ImageLoadTask(holder.preview, null)
-							.execute(previewContent);
+					new ImageLoadTask(holder.preview, null).execute(previewContent);
 				}
 
 			} else {
