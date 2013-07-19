@@ -17,6 +17,7 @@ package eu.trentorise.smartcampus.eb;
 
 import android.accounts.AccountManager;
 import android.content.Intent;
+import android.content.res.Configuration;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
@@ -128,6 +129,11 @@ public class CatchActivity extends SherlockFragmentActivity implements
 		}
 	}
 
+	@Override
+	public void onConfigurationChanged(Configuration newConfig) {
+		super.onConfigurationChanged(newConfig);
+	}
+	
 	private boolean initData(String token) {
 		if (getIntent().getAction() != null
 				&& getIntent().getAction().equals(
