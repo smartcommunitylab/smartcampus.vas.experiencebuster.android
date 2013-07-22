@@ -85,9 +85,8 @@ import eu.trentorise.smartcampus.storage.DataException;
 import eu.trentorise.smartcampus.storage.sync.SyncData;
 
 @SuppressLint("NewApi")
-public class EditExpMuseFragment extends SherlockFragment implements OnTagsSelectedListener, OnEditListener,
-		ResultHandler, NoteHandler,
-		eu.trentorise.smartcampus.eb.fragments.experience.DeleteExperienceFragment.RemoveCallback,
+public class EditExpMuseFragment extends SherlockFragment implements OnTagsSelectedListener, OnEditListener, ResultHandler,
+		NoteHandler, eu.trentorise.smartcampus.eb.fragments.experience.DeleteExperienceFragment.RemoveCallback,
 		eu.trentorise.smartcampus.eb.fragments.experience.AssignCollectionFragment.AssignCollectionsCallback,
 		CollectionSavedHandler, PositionHandler {
 
@@ -174,8 +173,7 @@ public class EditExpMuseFragment extends SherlockFragment implements OnTagsSelec
 			list.addHeaderView(header, null, false);
 			mTitleSwitch = new TextEditSwitch(returnView, R.id.title_switcher, R.id.title_tv, R.id.title, this);
 			mTitleSwitch.setValue(exp.getTitle());
-			mDescrSwitch = new TextEditSwitch(returnView, R.id.descr_switcher, R.id.description_tv, R.id.description,
-					this);
+			mDescrSwitch = new TextEditSwitch(returnView, R.id.descr_switcher, R.id.description_tv, R.id.description, this);
 			mDescrSwitch.setValue(exp.getDescription());
 		}
 		adapter = new ExpContentAdapter(getSherlockActivity(), R.layout.exp_contents_row, exp.getContents());
@@ -222,17 +220,17 @@ public class EditExpMuseFragment extends SherlockFragment implements OnTagsSelec
 	}
 
 	@Override
-	public void onStart() {
-		super.onStart();
-
-	}
-
-	@Override
 	public void onSaveInstanceState(Bundle outState) {
 		super.onSaveInstanceState(outState);
 		outState.putSerializable(ARG_EXP, exp);
 		// outState.putSerializable(ARG_SRC, src);
 		outState.putBoolean("editMode", editMode);
+	}
+
+	@Override
+	public void onStart() {
+		super.onStart();
+
 	}
 
 	@Override
@@ -279,8 +277,14 @@ public class EditExpMuseFragment extends SherlockFragment implements OnTagsSelec
 
 	@Override
 	public void onDestroy() {
-		if (adapter != null)
+		if (adapter != null) {
 			adapter.release();
+		}
+		
+		if (exp.getContents().size() == 1) {
+			EBHelper.deleteExperience(getSherlockActivity(), exp.getId(), false);
+		}
+		
 		super.onDestroy();
 	}
 
@@ -353,8 +357,7 @@ public class EditExpMuseFragment extends SherlockFragment implements OnTagsSelec
 			assignFragment.setArguments(AssignCollectionFragment.prepare(exp.getId(), exp.getCollectionIds()));
 			assignFragment.show(getActivity().getSupportFragmentManager(), "exp_assign_colls");
 		} else if (item.getItemId() == R.id.expmenu_share) {
-			ShareEntityObject obj = new ShareEntityObject(exp.getEntityId(), exp.getTitle(),
-					Constants.ENTITY_TYPE_EXPERIENCE);
+			ShareEntityObject obj = new ShareEntityObject(exp.getEntityId(), exp.getTitle(), Constants.ENTITY_TYPE_EXPERIENCE);
 			SharingHelper.share(getActivity(), obj);
 		} else if (item.getItemId() == R.id.expmenu_map || item.getItemId() == R.id.expmenu_export) {
 			Toast.makeText(getActivity(), R.string.not_implemented, Toast.LENGTH_SHORT).show();
@@ -435,8 +438,7 @@ public class EditExpMuseFragment extends SherlockFragment implements OnTagsSelec
 
 	private void updateFooterTV(String address, Long creationTime) {
 		if (creationTime != null) {
-			((TextView) returnView.findViewById(R.id.date_tv)).setText(Constants.DATE_FORMATTER.format(new Date(
-					creationTime)));
+			((TextView) returnView.findViewById(R.id.date_tv)).setText(Constants.DATE_FORMATTER.format(new Date(creationTime)));
 		}
 		if (address != null) {
 			((TextView) returnView.findViewById(R.id.place_tv)).setText(address);
@@ -545,8 +547,7 @@ public class EditExpMuseFragment extends SherlockFragment implements OnTagsSelec
 		public SaveTask() {
 			super(getSherlockActivity(), new AbstractAsyncTaskProcessor<Void, Experience>(getSherlockActivity()) {
 				@Override
-				public Experience performAction(Void... params) throws SecurityException, ConnectionException,
-						Exception {
+				public Experience performAction(Void... params) throws SecurityException, ConnectionException, Exception {
 					exp.setUpdateTime(System.currentTimeMillis());
 					String expId = exp.getId();
 					if (expId == null) {
@@ -571,8 +572,8 @@ public class EditExpMuseFragment extends SherlockFragment implements OnTagsSelec
 									eu.trentorise.smartcampus.eb.custom.data.Constants.SYNC_SERVICE);
 							if (data.getUpdated().get(Experience.class.getCanonicalName()) != null) {
 								for (Object o : data.getUpdated().get(Experience.class.getCanonicalName())) {
-									Experience updatedExp = eu.trentorise.smartcampus.android.common.Utils
-											.convertObjectToData(Experience.class, o);
+									Experience updatedExp = eu.trentorise.smartcampus.android.common.Utils.convertObjectToData(
+											Experience.class, o);
 									if (updatedExp.getId().equals(exp.getId())) {
 										return updatedExp;
 									}
@@ -594,8 +595,7 @@ public class EditExpMuseFragment extends SherlockFragment implements OnTagsSelec
 						updateFooterTV(exp.getAddress(), exp.getCreationTime());
 						// exp.copyTo(src);
 					} else {
-						Toast.makeText(getSherlockActivity(), R.string.msg_location_undefined, Toast.LENGTH_SHORT)
-								.show();
+						Toast.makeText(getSherlockActivity(), R.string.msg_location_undefined, Toast.LENGTH_SHORT).show();
 					}
 				}
 
