@@ -76,7 +76,7 @@ public class EBHelper {
 
 	private static EBHelper instance = null;
 	private static RemoteStorage remoteStorage;
-	private static String userAccountId = "51d57fe0975a3b2fb2831062";
+	private static String userAccountId = "51ee3c61975af973ade7bb24";
 	private static SCAccessProvider accessProvider = new AMSCAccessProvider();
 
 	public static Account SCAccount;
