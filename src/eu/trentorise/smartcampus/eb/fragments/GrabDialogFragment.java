@@ -34,9 +34,14 @@ import com.actionbarsherlock.app.SherlockDialogFragment;
 import eu.trentorise.smartcampus.eb.CatchActivity;
 import eu.trentorise.smartcampus.eb.Constants.CATCH_TYPES;
 import eu.trentorise.smartcampus.eb.R;
+import eu.trentorise.smartcampus.eb.model.Experience;
 
 public class GrabDialogFragment extends SherlockDialogFragment {
 
+	public static final String ARG_EXP = "exp";
+	
+	private Experience exp;
+	
 	static GrabDialogFragment newInstance() {
 		GrabDialogFragment f = new GrabDialogFragment();
 		return f;
@@ -47,6 +52,12 @@ public class GrabDialogFragment extends SherlockDialogFragment {
 
 	@Override
 	public Dialog onCreateDialog(Bundle savedInstanceState) {
+		if (savedInstanceState != null && savedInstanceState.containsKey(ARG_EXP)) {
+			exp = (Experience) savedInstanceState.getSerializable(ARG_EXP);
+		} else if (getArguments() != null && getArguments().containsKey(ARG_EXP)) {
+			exp = (Experience) getArguments().getSerializable(ARG_EXP);
+		}
+
 		AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
 		builder.setTitle(R.string.dialog_grab);
 		builder.setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
@@ -55,16 +66,16 @@ public class GrabDialogFragment extends SherlockDialogFragment {
 				dialog.dismiss();
 			}
 		});
-		
+
 		LayoutInflater inflater = (LayoutInflater) getActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 		View v = inflater.inflate(R.layout.grabdialog, null);
 		ListView list = (ListView) v.findViewById(R.id.grabList);
 		final String[] items = getResources().getStringArray(R.array.grabDialogArray);
 		final String[] types = getResources().getStringArray(R.array.grabDialogTypesArray);
 		final String[] labels = getResources().getStringArray(R.array.grabDialogLabelsArray);
-		
-		ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(this.getActivity(),
-				android.R.layout.simple_list_item_1, items);
+
+		ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(this.getActivity(), android.R.layout.simple_list_item_1,
+				items);
 		list.setAdapter(arrayAdapter);
 		list.setOnItemClickListener(new OnItemClickListener() {
 			@Override
@@ -73,7 +84,7 @@ public class GrabDialogFragment extends SherlockDialogFragment {
 				final String[] elems = typeString.split("\\|");
 				final String[] labelElems = labels[position].split("\\|");
 				assert labelElems.length == elems.length;
-				final Intent i = new Intent(getActivity(),CatchActivity.class);
+				final Intent i = new Intent(getActivity(), CatchActivity.class);
 				if (elems.length > 1) {
 					getDialog().hide();
 					AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
@@ -105,6 +116,7 @@ public class GrabDialogFragment extends SherlockDialogFragment {
 	private void startCapture(Intent i, String typeString) {
 		CATCH_TYPES type = CATCH_TYPES.valueOf(typeString);
 		i.putExtra(CatchActivity.ARG_TYPE, type.toString());
+		i.putExtra(CatchActivity.ARG_EXP, exp);
 		startActivity(i);
 	}
 

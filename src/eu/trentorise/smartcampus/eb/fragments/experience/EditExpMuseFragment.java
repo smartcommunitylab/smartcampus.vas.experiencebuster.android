@@ -90,11 +90,17 @@ public class EditExpMuseFragment extends SherlockFragment implements OnTagsSelec
 		eu.trentorise.smartcampus.eb.fragments.experience.AssignCollectionFragment.AssignCollectionsCallback,
 		CollectionSavedHandler, PositionHandler {
 
+	public static final String ARG_EXP = "exp";
+	public static final String ARG_VALUE = "value";
+	public static final String ARG_BACK = "back";
+
 	private TextEditSwitch mTitleSwitch, mDescrSwitch;
+
+	private GrabbedContent grabbedContent;
 	private Experience exp = null;
-	// private Experience src = null;
 
 	private boolean editMode = false;
+	private boolean backFromCapture = false;
 
 	private CaptureHelper mHelper = null;
 
@@ -102,18 +108,19 @@ public class EditExpMuseFragment extends SherlockFragment implements OnTagsSelec
 
 	private View returnView;
 
-	private static final String ARG_SRC = "src";
-	public static final String ARG_EXP = "exp";
-	public static final String ARG_VALUE = "value";
-
 	public static final int ACCOUNT_CREATION = 10000;
 
-	public static Bundle prepareArgs(Experience e, GrabbedContent content) {
+	public static Bundle prepareArgs(Experience e, GrabbedContent content, Boolean backFromCapture) {
 		Bundle b = new Bundle();
-		if (e != null)
+		if (e != null) {
 			b.putSerializable(ARG_EXP, e);
-		if (content != null)
+		}
+		if (content != null) {
 			b.putSerializable(ARG_VALUE, content);
+		}
+		if (backFromCapture != null) {
+			b.putBoolean(ARG_BACK, backFromCapture);
+		}
 		return b;
 	}
 
@@ -122,7 +129,7 @@ public class EditExpMuseFragment extends SherlockFragment implements OnTagsSelec
 		super.onCreate(savedInstanceState);
 		mHelper = new CaptureHelper(getSherlockActivity(), 10, this);
 
-		GrabbedContent grabbedContent = null;
+		boolean found = false;
 
 		if (savedInstanceState == null && getArguments() != null && getArguments().containsKey(ARG_VALUE)) {
 			grabbedContent = (GrabbedContent) getArguments().getSerializable(ARG_VALUE);
@@ -130,23 +137,25 @@ public class EditExpMuseFragment extends SherlockFragment implements OnTagsSelec
 
 		if (savedInstanceState != null && savedInstanceState.containsKey(ARG_EXP)) {
 			exp = (Experience) savedInstanceState.getSerializable(ARG_EXP);
-			// src = (Experience) savedInstanceState.getSerializable(ARG_SRC);
 		} else if (getArguments() != null && getArguments().containsKey(ARG_EXP)) {
-			// src = (Experience) getArguments().getSerializable(ARG_EXP);
-			// src.copyTo(exp = new Experience());
 			exp = (Experience) getArguments().getSerializable(ARG_EXP);
 		} else if (grabbedContent != null && (savedInstanceState == null || !savedInstanceState.containsKey(ARG_EXP))) {
 			exp = findExperienceByContentEntity(grabbedContent.toContent().getEntityType(), grabbedContent.toContent()
 					.getEntityId());
-			// src =
-			// findExperienceByContentEntity(grabbedContent.toContent().getEntityType(),
-			// grabbedContent.toContent()
-			// .getEntityId());
+			if (exp != null) {
+				found = true;
+			}
 		}
 
 		if (exp == null) {
 			exp = new Experience();
-			// src = exp;
+		}
+
+		if (exp.getContents() == null) {
+			exp.setContents(new ArrayList<Content>());
+		}
+
+		if (!found) {
 			appendContent(grabbedContent);
 		}
 
@@ -154,8 +163,12 @@ public class EditExpMuseFragment extends SherlockFragment implements OnTagsSelec
 			editMode = savedInstanceState.getBoolean("editMode");
 		}
 
-		if (exp.getContents() == null)
-			exp.setContents(new ArrayList<Content>());
+		if (savedInstanceState != null && savedInstanceState.containsKey(ARG_BACK)) {
+			backFromCapture = savedInstanceState.getBoolean(ARG_BACK);
+		} else if (getArguments() != null && getArguments().containsKey(ARG_BACK)) {
+			backFromCapture = getArguments().getBoolean(ARG_BACK);
+		}
+
 		setHasOptionsMenu(true);
 	}
 
@@ -263,9 +276,14 @@ public class EditExpMuseFragment extends SherlockFragment implements OnTagsSelec
 		}
 
 		// open grab dialog fragment automatically
-		FragmentManager fm = getSherlockActivity().getSupportFragmentManager();
-		GrabDialogFragment gd = new GrabDialogFragment();
-		gd.show(fm, "Grab");
+		if (!backFromCapture) {
+			FragmentManager fm = getSherlockActivity().getSupportFragmentManager();
+			GrabDialogFragment gd = new GrabDialogFragment();
+			Bundle args = new Bundle();
+			args.putSerializable(GrabDialogFragment.ARG_EXP, exp);
+			gd.setArguments(args);
+			gd.show(fm, "Grab");
+		}
 	}
 
 	@Override
@@ -280,11 +298,11 @@ public class EditExpMuseFragment extends SherlockFragment implements OnTagsSelec
 		if (adapter != null) {
 			adapter.release();
 		}
-		
+
 		if (exp.getContents().size() == 1) {
 			EBHelper.deleteExperience(getSherlockActivity(), exp.getId(), false);
 		}
-		
+
 		super.onDestroy();
 	}
 
