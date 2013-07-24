@@ -42,23 +42,31 @@ import eu.trentorise.smartcampus.eb.fragments.experience.EditExpFragment;
 import eu.trentorise.smartcampus.eb.fragments.experience.EditExpMuseFragment;
 import eu.trentorise.smartcampus.eb.fragments.experience.EditNoteFragment.NoteHandler;
 import eu.trentorise.smartcampus.eb.fragments.experience.EditPositionFragment.PositionHandler;
+import eu.trentorise.smartcampus.eb.model.Experience;
 import eu.trentorise.smartcampus.eb.model.NearMeObject;
 
-public class CatchActivity extends SherlockFragmentActivity implements
-		ResultHandler, DialogCallbackContainer {
+public class CatchActivity extends SherlockFragmentActivity implements ResultHandler, DialogCallbackContainer {
 
 	public static final String ARG_TYPE = "type";
+	public static final String ARG_EXP = "exp";
 	private CaptureHelper mHelper = null;
 	private Boolean initialized = false;
 	private Boolean isMuse = false;
+
+	private Experience exp = null;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		getSupportActionBar().setDisplayShowTitleEnabled(false);
 
-		if (savedInstanceState != null
-				&& savedInstanceState.containsKey("initialized")) {
+		if (savedInstanceState != null && savedInstanceState.containsKey(ARG_EXP)) {
+			exp = (Experience) savedInstanceState.getSerializable(ARG_EXP);
+		} else if (getIntent().getExtras() != null && getIntent().getExtras().containsKey(ARG_EXP)) {
+			exp = (Experience) getIntent().getExtras().getSerializable(ARG_EXP);
+		}
+
+		if (savedInstanceState != null && savedInstanceState.containsKey("initialized")) {
 			initialized = savedInstanceState.getBoolean("initialized");
 		}
 		if (!initialized) {
@@ -97,17 +105,16 @@ public class CatchActivity extends SherlockFragmentActivity implements
 		}
 		if (type != null) {
 			if (CATCH_TYPES.TEXT.equals(type)) {
-				FragmentTransaction ft = getSupportFragmentManager()
-						.beginTransaction();
+				FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
 				Fragment frag = new EditExpFragment();
-				ft.replace(android.R.id.content, frag)
-						.commitAllowingStateLoss();
+				if (isMuse) {
+					frag = new EditExpMuseFragment();
+				}
+				ft.replace(android.R.id.content, frag).commitAllowingStateLoss();
 			} else if (CATCH_TYPES.NEARME.equals(type)) {
-				FragmentTransaction ft = getSupportFragmentManager()
-						.beginTransaction();
+				FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
 				Fragment frag = new NearMeNowFragment();
-				ft.replace(android.R.id.content, frag)
-						.commitAllowingStateLoss();
+				ft.replace(android.R.id.content, frag).commitAllowingStateLoss();
 			} else {
 				mHelper.startCapture(type);
 			}
@@ -119,8 +126,7 @@ public class CatchActivity extends SherlockFragmentActivity implements
 	private void initDataManagement(Bundle savedInstanceState) {
 		try {
 			EBHelper.init(getApplicationContext());
-			String token = EBHelper.getAccessProvider()
-					.getAuthToken(this, null);
+			String token = EBHelper.getAccessProvider().getAuthToken(this, null);
 			if (token != null) {
 				initData(token);
 			}
@@ -133,24 +139,18 @@ public class CatchActivity extends SherlockFragmentActivity implements
 	public void onConfigurationChanged(Configuration newConfig) {
 		super.onConfigurationChanged(newConfig);
 	}
-	
+
 	private boolean initData(String token) {
-		if (getIntent().getAction() != null
-				&& getIntent().getAction().equals(
-						"eu.trentorise.smartcampus.EDIT")) {
+		if (getIntent().getAction() != null && getIntent().getAction().equals("eu.trentorise.smartcampus.EDIT")) {
 			String json = getIntent().getStringExtra("NearMeObject");
 			if (json != null && json.trim().length() > 0) {
-				NearMeObject nearMeObject = Utils.convertJSONToObject(json,
-						NearMeObject.class);
-				Bundle bundle = EditExpFragment.prepareArgs(null,
-						new ObjectContent(nearMeObject));
+				NearMeObject nearMeObject = Utils.convertJSONToObject(json, NearMeObject.class);
+				Bundle bundle = EditExpFragment.prepareArgs(null, new ObjectContent(nearMeObject));
 
-				FragmentTransaction ft = getSupportFragmentManager()
-						.beginTransaction();
+				FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
 				Fragment frag = new EditExpMuseFragment();
 				frag.setArguments(bundle);
-				ft.replace(android.R.id.content, frag)
-						.commitAllowingStateLoss();
+				ft.replace(android.R.id.content, frag, "editexp").commitAllowingStateLoss();
 				return true;
 			}
 		}
@@ -174,16 +174,14 @@ public class CatchActivity extends SherlockFragmentActivity implements
 		mHelper.onCaptureResult(requestCode, resultCode, data);
 		if (requestCode == SCAccessProvider.SC_AUTH_ACTIVITY_REQUEST_CODE) {
 			if (resultCode == RESULT_OK) {
-				String token = data.getExtras().getString(
-						AccountManager.KEY_AUTHTOKEN);
+				String token = data.getExtras().getString(AccountManager.KEY_AUTHTOKEN);
 				if (token == null) {
 					EBHelper.endAppFailure(this, R.string.app_failure_security);
 				} else {
 					initData(token);
 				}
 			} else if (resultCode == RESULT_CANCELED) {
-				EBHelper.endAppFailure(this,
-						R.string.token_required);
+				EBHelper.endAppFailure(this, R.string.token_required);
 			}
 		}
 		super.onActivityResult(requestCode, resultCode, data);
@@ -192,16 +190,23 @@ public class CatchActivity extends SherlockFragmentActivity implements
 	@Override
 	public void onResult(GrabbedContent value) {
 		FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-		Fragment frag = null;
-		if (isMuse) {
+		Fragment frag = getSupportFragmentManager().findFragmentByTag("editexp");
+
+		if (frag == null) {
 			frag = new EditExpMuseFragment();
-			frag.setArguments(EditExpMuseFragment.prepareArgs(null, value));
-		} else {
-			frag = new EditExpFragment();
-			frag.setArguments(EditExpFragment.prepareArgs(null, value));
 		}
-		ft.replace(android.R.id.content, frag, "grabbed")
-				.commitAllowingStateLoss();
+
+		frag.setArguments(EditExpMuseFragment.prepareArgs(exp, value, true));
+
+		// if (frag instanceof EditExpMuseFragment) {
+		// isMuse = true;
+		// }
+		// if (isMuse) {
+		// } else {
+		// frag = new EditExpFragment();
+		// frag.setArguments(EditExpFragment.prepareArgs(null, value));
+		// }
+		ft.replace(android.R.id.content, frag, "grabbed").commitAllowingStateLoss();
 	}
 
 	@Override
@@ -211,8 +216,7 @@ public class CatchActivity extends SherlockFragmentActivity implements
 
 	@Override
 	public CollectionSavedHandler getCollectionSavedHandler() {
-		Fragment fragment = getSupportFragmentManager().findFragmentById(
-				android.R.id.content);
+		Fragment fragment = getSupportFragmentManager().findFragmentById(android.R.id.content);
 		if (fragment instanceof EditExpMuseFragment) {
 			isMuse = true;
 			return (EditExpMuseFragment) fragment;
@@ -223,8 +227,7 @@ public class CatchActivity extends SherlockFragmentActivity implements
 
 	@Override
 	public AssignCollectionsCallback getAssignCollectionsCallback() {
-		Fragment fragment = getSupportFragmentManager().findFragmentById(
-				android.R.id.content);
+		Fragment fragment = getSupportFragmentManager().findFragmentById(android.R.id.content);
 		if (fragment instanceof EditExpMuseFragment) {
 			isMuse = true;
 			return (EditExpMuseFragment) fragment;
@@ -235,8 +238,7 @@ public class CatchActivity extends SherlockFragmentActivity implements
 
 	@Override
 	public RemoveCallback getRemoveCallback() {
-		Fragment fragment = getSupportFragmentManager().findFragmentById(
-				android.R.id.content);
+		Fragment fragment = getSupportFragmentManager().findFragmentById(android.R.id.content);
 		if (fragment instanceof EditExpMuseFragment) {
 			isMuse = true;
 			return (EditExpMuseFragment) fragment;
@@ -247,8 +249,7 @@ public class CatchActivity extends SherlockFragmentActivity implements
 
 	@Override
 	public NoteHandler getNoteHandler() {
-		Fragment fragment = getSupportFragmentManager().findFragmentById(
-				android.R.id.content);
+		Fragment fragment = getSupportFragmentManager().findFragmentById(android.R.id.content);
 		if (fragment instanceof EditExpMuseFragment) {
 			isMuse = true;
 			return (EditExpMuseFragment) fragment;
@@ -259,8 +260,7 @@ public class CatchActivity extends SherlockFragmentActivity implements
 
 	@Override
 	public PositionHandler getPositionHandler() {
-		Fragment fragment = getSupportFragmentManager().findFragmentById(
-				android.R.id.content);
+		Fragment fragment = getSupportFragmentManager().findFragmentById(android.R.id.content);
 		if (fragment instanceof EditExpMuseFragment) {
 			isMuse = true;
 			return (EditExpMuseFragment) fragment;
@@ -271,8 +271,7 @@ public class CatchActivity extends SherlockFragmentActivity implements
 
 	@Override
 	public OnTagsSelectedListener getTagListener() {
-		Fragment fragment = getSupportFragmentManager().findFragmentById(
-				android.R.id.content);
+		Fragment fragment = getSupportFragmentManager().findFragmentById(android.R.id.content);
 		if (fragment instanceof EditExpMuseFragment) {
 			isMuse = true;
 			return (EditExpMuseFragment) fragment;

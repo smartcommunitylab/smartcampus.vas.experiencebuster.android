@@ -161,5 +161,5 @@ public class MainAdapter extends BaseAdapter {
 			new MainActionDescriptor(R.string.mainmenu_diary, R.drawable.ic_diary, ExperiencesListFragment.class),
 			new MainActionDescriptor(R.string.mainmenu_collections, R.drawable.ic_collections,
 					CollectionsListFragment.class),
-			new MainActionDescriptor(R.string.mainmenu_search, R.drawable.ic_search, SearchFragment.class) };
+			new MainActionDescriptor(R.string.mainmenu_search, R.drawable.ic_search_eb, SearchFragment.class) };
 }
