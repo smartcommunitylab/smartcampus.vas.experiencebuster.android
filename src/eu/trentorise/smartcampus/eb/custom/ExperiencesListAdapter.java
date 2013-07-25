@@ -125,7 +125,7 @@ public class ExperiencesListAdapter extends ArrayAdapter<Experience> {
 			if (previewContent != null) {
 				holder.preview.setTag(previewContent.getId());
 				// if device use android 3, use parallel async execution
-				if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.GINGERBREAD) {
+				if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
 					new ImageLoadTask(holder.preview, null).executeOnExecutor(android.os.AsyncTask.THREAD_POOL_EXECUTOR,
 							previewContent);
 				} else {// serial otherwise
