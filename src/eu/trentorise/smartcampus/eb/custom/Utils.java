@@ -91,7 +91,7 @@ public class Utils {
 		Resource resource = null;
 		if (ext != null) {
 			contentType = MimeTypeMap.getSingleton().getMimeTypeFromExtension(
-					ext);
+					ext.toLowerCase());
 		}
 		try {
 			fis = new FileInputStream(res);
