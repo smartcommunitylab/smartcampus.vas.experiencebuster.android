@@ -285,10 +285,10 @@ public class EditExpMuseFragment extends SherlockFragment implements OnTagsSelec
 			// gd.setArguments(args);
 			// gd.show(fm, "Grab");
 			openGrabDialog();
-		} else {
-			if (adapter != null) {
-				adapter.notifyDataSetChanged();
-			}
+		}
+
+		if (adapter != null) {
+			adapter.notifyDataSetChanged();
 		}
 	}
 
@@ -440,9 +440,11 @@ public class EditExpMuseFragment extends SherlockFragment implements OnTagsSelec
 		mHelper.startCapture(CATCH_TYPES.valueOf(string));
 	}
 
-	private void appendContent(GrabbedContent value) {
-		if (value.contentType() == ContentType.TEXT)
-			return;
+	private Experience appendContent(GrabbedContent value) {
+		Log.e("eemf", "appendContent Contents (before): " + exp.getContents().size());
+		if (value.contentType() == ContentType.TEXT) {
+			return exp;
+		}
 
 		Content c = value.toContent();
 		c.setId(Utils.generateUID());
@@ -452,13 +454,16 @@ public class EditExpMuseFragment extends SherlockFragment implements OnTagsSelec
 		if (exp.getContents() == null)
 			exp.setContents(new ArrayList<Content>());
 		exp.getContents().add(0, c);
-
 		exp.resetPreview();
-		// src.resetPreview();
 
+		Log.e("eemf", "appendContent Value: " + value);
+		Log.e("eemf", "appendContent Adapter: " + adapter);
+		Log.e("eemf", "appendContent Contents (after): " + exp.getContents().size());
 		if (adapter != null) {
 			adapter.notifyDataSetChanged();
 		}
+
+		return exp;
 	}
 
 	private void updateFooterTV(String address, Long creationTime) {

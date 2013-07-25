@@ -49,9 +49,7 @@ import eu.trentorise.smartcampus.eb.model.Experience;
 import eu.trentorise.smartcampus.eb.model.ExperienceFilter;
 import eu.trentorise.smartcampus.storage.DataException;
 
-public class ExperiencesListFragment extends SherlockListFragment
-		implements
-		RemoveCallback,
+public class ExperiencesListFragment extends SherlockListFragment implements RemoveCallback,
 		eu.trentorise.smartcampus.eb.fragments.experience.AssignCollectionFragment.AssignCollectionsCallback {
 
 	public static final String ARG_FILTER = "filter";
@@ -71,14 +69,10 @@ public class ExperiencesListFragment extends SherlockListFragment
 		super.onCreate(savedInstanceState);
 		setHasOptionsMenu(true);
 
-		if (savedInstanceState != null
-				&& savedInstanceState.containsKey(STATE_ITEMS)) {
-			experiencesList = (List<Experience>) savedInstanceState
-					.getSerializable(STATE_ITEMS);
-		} else if (getArguments() != null
-				&& getArguments().containsKey(ARG_FILTER)) {
-			filter = (ExperienceFilter) getArguments().getSerializable(
-					ARG_FILTER);
+		if (savedInstanceState != null && savedInstanceState.containsKey(STATE_ITEMS)) {
+			experiencesList = (List<Experience>) savedInstanceState.getSerializable(STATE_ITEMS);
+		} else if (getArguments() != null && getArguments().containsKey(ARG_FILTER)) {
+			filter = (ExperienceFilter) getArguments().getSerializable(ARG_FILTER);
 			experiencesList = EBHelper.findExperiences(filter, 0, -1);
 		} else {
 			experiencesList = EBHelper.getExperiences(0, -1);
@@ -88,22 +82,18 @@ public class ExperiencesListFragment extends SherlockListFragment
 	@Override
 	public void onSaveInstanceState(Bundle arg0) {
 		super.onSaveInstanceState(arg0);
-		arg0.putSerializable(STATE_ITEMS, experiencesList == null ? null
-				: new ArrayList<Experience>(experiencesList));
+		arg0.putSerializable(STATE_ITEMS, experiencesList == null ? null : new ArrayList<Experience>(experiencesList));
 	}
 
 	@Override
-	public View onCreateView(LayoutInflater inflater, ViewGroup container,
-			Bundle savedInstanceState) {
-		this.setListAdapter(new ExperiencesListAdapter(getSherlockActivity(),
-				R.layout.experience_row, experiencesList));
+	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+		this.setListAdapter(new ExperiencesListAdapter(getSherlockActivity(), R.layout.experience_row, experiencesList));
 		return inflater.inflate(R.layout.explist, null);
 	}
 
 	@Override
 	public void onListItemClick(ListView l, View v, int position, long id) {
-		Intent i = ExperiencePager.prepareIntent(getActivity(), position,
-				new ArrayList<Experience>(experiencesList));
+		Intent i = ExperiencePager.prepareIntent(getActivity(), position, new ArrayList<Experience>(experiencesList));
 		startActivityForResult(i, REQUEST_CODE_PAGER);
 	}
 
@@ -114,66 +104,54 @@ public class ExperiencesListFragment extends SherlockListFragment
 
 		// Showing/hiding back button
 		getSherlockActivity().getSupportActionBar().setHomeButtonEnabled(true);
-		getSherlockActivity().getSupportActionBar().setDisplayHomeAsUpEnabled(
-				true);
-		getSherlockActivity().getSupportActionBar().setDisplayShowTitleEnabled(
-				true);
+		getSherlockActivity().getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+		getSherlockActivity().getSupportActionBar().setDisplayShowTitleEnabled(true);
 		if (filter == null) {
-			getSherlockActivity().getSupportActionBar().setTitle(
-					R.string.title_diary);
+			getSherlockActivity().getSupportActionBar().setTitle(R.string.title_diary);
 		} else if (filter.getCollectionId() != null) {
 			ExpCollection c = EBHelper.findCollection(filter.getCollectionId());
 			if (c != null)
-				getSherlockActivity().getSupportActionBar().setTitle(
-						c.getName());
+				getSherlockActivity().getSupportActionBar().setTitle(c.getName());
 		} else if (filter.getText() != null) {
-			getSherlockActivity().getSupportActionBar().setTitle(
-					"Search for '" + filter.getText() + "'");
+			getSherlockActivity().getSupportActionBar().setTitle("Search for '" + filter.getText() + "'");
 		} else {
-			getSherlockActivity().getSupportActionBar().setTitle(
-					R.string.title_search);
+			getSherlockActivity().getSupportActionBar().setTitle(R.string.title_search);
 		}
 	}
 
-	@Override
-	public void onCreateContextMenu(ContextMenu menu, View view,
-			ContextMenuInfo menuInfo) {
-		menu.setHeaderTitle(R.string.exp_menu_header);
-		android.view.MenuInflater inflater = getSherlockActivity()
-				.getMenuInflater();
-		inflater.inflate(R.menu.exp_list_menu, menu);
-		MenuItem item = menu.findItem(R.id.expmenu_share);
-		if (item != null) {
-			AdapterContextMenuInfo info = (AdapterContextMenuInfo) item
-					.getMenuInfo();
-			Experience exp = experiencesList.get(info.position);
-			item.setEnabled(exp.getEntityId() > 0).setVisible(
-					exp.getEntityId() > 0);
-		}
-	}
+	// @Override
+	// public void onCreateContextMenu(ContextMenu menu, View view,
+	// ContextMenuInfo menuInfo) {
+	// menu.setHeaderTitle(R.string.exp_menu_header);
+	// android.view.MenuInflater inflater = getSherlockActivity()
+	// .getMenuInflater();
+	// inflater.inflate(R.menu.exp_list_menu, menu);
+	// MenuItem item = menu.findItem(R.id.expmenu_share);
+	// if (item != null) {
+	// AdapterContextMenuInfo info = (AdapterContextMenuInfo) item
+	// .getMenuInfo();
+	// Experience exp = experiencesList.get(info.position);
+	// item.setEnabled(exp.getEntityId() > 0).setVisible(
+	// exp.getEntityId() > 0);
+	// }
+	// }
 
 	@Override
 	public boolean onContextItemSelected(android.view.MenuItem item) {
-		final AdapterContextMenuInfo info = (AdapterContextMenuInfo) item
-				.getMenuInfo();
+		final AdapterContextMenuInfo info = (AdapterContextMenuInfo) item.getMenuInfo();
 		final Experience exp = experiencesList.get(info.position);
 		if (item.getItemId() == R.id.expmenu_remove) {
 			DialogFragment newFragment = new DeleteExperienceFragment();
-			newFragment.setArguments(DeleteExperienceFragment.prepare(exp
-					.getId()));
-			newFragment.show(getActivity().getSupportFragmentManager(),
-					"exp_delete");
+			newFragment.setArguments(DeleteExperienceFragment.prepare(exp.getId()));
+			newFragment.show(getActivity().getSupportFragmentManager(), "exp_delete");
 			return true;
 		} else if (item.getItemId() == R.id.expmenu_assign_collection) {
 			DialogFragment assignFragment = new AssignCollectionFragment();
-			assignFragment.setArguments(AssignCollectionFragment.prepare(
-					exp.getId(), exp.getCollectionIds()));
-			assignFragment.show(getActivity().getSupportFragmentManager(),
-					"exp_assign_colls");
+			assignFragment.setArguments(AssignCollectionFragment.prepare(exp.getId(), exp.getCollectionIds()));
+			assignFragment.show(getActivity().getSupportFragmentManager(), "exp_assign_colls");
 			return true;
 		} else {
-			Toast.makeText(getActivity(), R.string.not_implemented,
-					Toast.LENGTH_SHORT).show();
+			Toast.makeText(getActivity(), R.string.not_implemented, Toast.LENGTH_SHORT).show();
 			return true;
 		}
 
@@ -181,13 +159,11 @@ public class ExperiencesListFragment extends SherlockListFragment
 
 	@Override
 	public void onRemoved(String id) {
-		for (Iterator<Experience> iterator = experiencesList.iterator(); iterator
-				.hasNext();) {
+		for (Iterator<Experience> iterator = experiencesList.iterator(); iterator.hasNext();) {
 			Experience e = iterator.next();
 			if (e.getId().equals(id)) {
 				iterator.remove();
-				((ExperiencesListAdapter) getListAdapter())
-						.notifyDataSetChanged();
+				((ExperiencesListAdapter) getListAdapter()).notifyDataSetChanged();
 				break;
 			}
 		}
@@ -196,20 +172,17 @@ public class ExperiencesListFragment extends SherlockListFragment
 	@Override
 	public void onCollectionsAssigned(String id, List<String> colls) {
 		try {
-			if (EBHelper.getConfiguration(EBHelper.CONF_USER_ACCOUNT,
-					String.class) == null) {
+			if (EBHelper.getConfiguration(EBHelper.CONF_USER_ACCOUNT, String.class) == null) {
 				EBHelper.askUserAccount(getActivity(), ACCOUNT_CREATION, true);
 			}
 		} catch (DataException e1) {
-			Log.e(ExperiencesListFragment.class.getName(),
-					"Error creating filestorage user account");
+			Log.e(ExperiencesListFragment.class.getName(), "Error creating filestorage user account");
 		}
 		for (Experience e : experiencesList) {
 			if (e.getId().equals(id)) {
 				e.setCollectionIds(colls);
 				EBHelper.saveExperience(getSherlockActivity(), e, true);
-				((ExperiencesListAdapter) getListAdapter())
-						.notifyDataSetChanged();
+				((ExperiencesListAdapter) getListAdapter()).notifyDataSetChanged();
 				break;
 			}
 		}
@@ -221,25 +194,20 @@ public class ExperiencesListFragment extends SherlockListFragment
 			if (resCode == Activity.RESULT_OK) {
 				String accountId = data.getStringExtra("USER_ACCOUNT_ID");
 				try {
-					EBHelper.saveConfiguration(EBHelper.CONF_USER_ACCOUNT,
-							accountId, String.class);
+					EBHelper.saveConfiguration(EBHelper.CONF_USER_ACCOUNT, accountId, String.class);
 				} catch (DataException e) {
-					Log.e(EditExpFragment.class.getName(),
-							"Error saving configuration: "
-									+ EBHelper.CONF_USER_ACCOUNT);
+					Log.e(EditExpFragment.class.getName(), "Error saving configuration: " + EBHelper.CONF_USER_ACCOUNT);
 				}
 			}
 		}
 
 		if (REQUEST_CODE_PAGER == reqCode && Activity.RESULT_OK == resCode) {
 			@SuppressWarnings("unchecked")
-			ArrayList<Experience> list = (ArrayList<Experience>) data
-					.getSerializableExtra(ExperiencePager.ARG_COLLECTION);
+			ArrayList<Experience> list = (ArrayList<Experience>) data.getSerializableExtra(ExperiencePager.ARG_COLLECTION);
 			if (list != null) {
 				experiencesList.clear();
 				experiencesList.addAll(list);
-				((ExperiencesListAdapter) getListAdapter())
-						.notifyDataSetChanged();
+				((ExperiencesListAdapter) getListAdapter()).notifyDataSetChanged();
 			}
 		}
 		super.onActivityResult(reqCode, resCode, data);
