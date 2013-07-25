@@ -146,22 +146,23 @@ public class CatchActivity extends SherlockFragmentActivity implements ResultHan
 			if (json != null && json.trim().length() > 0) {
 				NearMeObject nearMeObject = Utils.convertJSONToObject(json, NearMeObject.class);
 				Bundle bundle = EditExpFragment.prepareArgs(null, new ObjectContent(nearMeObject));
-
 				FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
 				Fragment frag = new EditExpMuseFragment();
 				frag.setArguments(bundle);
+
+				getIntent().removeExtra("NearMeObject");
+
 				ft.replace(android.R.id.content, frag, "editexp").commitAllowingStateLoss();
 				return true;
 			}
-		}
-
-		try {
-			startCapture();
-			initialized = true;
-
-		} catch (Exception e1) {
-			EBHelper.endAppFailure(this, R.string.app_failure_setup);
-			return false;
+		} else {
+			try {
+				startCapture();
+				initialized = true;
+			} catch (Exception e1) {
+				EBHelper.endAppFailure(this, R.string.app_failure_setup);
+				return false;
+			}
 		}
 		return true;
 	}

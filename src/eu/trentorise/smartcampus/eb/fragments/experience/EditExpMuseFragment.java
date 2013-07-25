@@ -26,13 +26,13 @@ import java.util.Locale;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.location.Address;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
-import android.support.v4.app.FragmentManager;
 import android.util.Log;
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
@@ -43,6 +43,7 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.AdapterView.AdapterContextMenuInfo;
 import android.widget.AdapterView.OnItemClickListener;
+import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -70,7 +71,6 @@ import eu.trentorise.smartcampus.eb.custom.capture.ContentRenderer;
 import eu.trentorise.smartcampus.eb.custom.capture.GrabbedContent;
 import eu.trentorise.smartcampus.eb.custom.data.EBHelper;
 import eu.trentorise.smartcampus.eb.filestorage.FilestorageAccountActivity;
-import eu.trentorise.smartcampus.eb.fragments.GrabDialogFragment;
 import eu.trentorise.smartcampus.eb.fragments.NewCollectionDialogFragment.CollectionSavedHandler;
 import eu.trentorise.smartcampus.eb.fragments.experience.EditNoteFragment.NoteHandler;
 import eu.trentorise.smartcampus.eb.fragments.experience.EditPositionFragment.PositionHandler;
@@ -277,12 +277,18 @@ public class EditExpMuseFragment extends SherlockFragment implements OnTagsSelec
 
 		// open grab dialog fragment automatically
 		if (!backFromCapture) {
-			FragmentManager fm = getSherlockActivity().getSupportFragmentManager();
-			GrabDialogFragment gd = new GrabDialogFragment();
-			Bundle args = new Bundle();
-			args.putSerializable(GrabDialogFragment.ARG_EXP, exp);
-			gd.setArguments(args);
-			gd.show(fm, "Grab");
+			// FragmentManager fm =
+			// getSherlockActivity().getSupportFragmentManager();
+			// GrabDialogFragment gd = new GrabDialogFragment();
+			// Bundle args = new Bundle();
+			// args.putSerializable(GrabDialogFragment.ARG_EXP, exp);
+			// gd.setArguments(args);
+			// gd.show(fm, "Grab");
+			openGrabDialog();
+		} else {
+			if (adapter != null) {
+				adapter.notifyDataSetChanged();
+			}
 		}
 	}
 
@@ -421,6 +427,7 @@ public class EditExpMuseFragment extends SherlockFragment implements OnTagsSelec
 
 	@Override
 	public void onResult(GrabbedContent value) {
+		backFromCapture = true;
 		appendContent(value);
 		switchToEdit();
 	}
@@ -725,6 +732,71 @@ public class EditExpMuseFragment extends SherlockFragment implements OnTagsSelec
 		exp.setCollectionIds(Collections.singletonList(coll.getId()));
 		updateCollectionTV();
 		switchToEdit();
+	}
+
+	private void openGrabDialog() {
+		AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+		builder.setTitle(R.string.dialog_grab);
+		builder.setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
+			@Override
+			public void onClick(DialogInterface dialog, int which) {
+				dialog.dismiss();
+			}
+		});
+
+		LayoutInflater inflater = (LayoutInflater) getActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+		View v = inflater.inflate(R.layout.grabdialog, null);
+		ListView list = (ListView) v.findViewById(R.id.grabList);
+		final String[] items = getResources().getStringArray(R.array.grabDialogArray);
+		final String[] types = getResources().getStringArray(R.array.grabDialogTypesArray);
+		final String[] labels = getResources().getStringArray(R.array.grabDialogLabelsArray);
+
+		builder.setView(v);
+		final AlertDialog dialog = builder.create();
+
+		ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(this.getActivity(), android.R.layout.simple_list_item_1,
+				items);
+		list.setAdapter(arrayAdapter);
+		list.setOnItemClickListener(new OnItemClickListener() {
+			@Override
+			public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+				String typeString = types[position];
+				// final String[] elems = typeString.split("\\|");
+				// final String[] labelElems = labels[position].split("\\|");
+				// assert labelElems.length == elems.length;
+				// final Intent i = new Intent(getActivity(),
+				// CatchActivity.class);
+				// if (elems.length > 1) {
+				// getDialog().hide();
+				// AlertDialog.Builder builder = new
+				// AlertDialog.Builder(getActivity());
+				// builder.setItems(labelElems, new OnClickListener() {
+				// @Override
+				// public void onClick(DialogInterface dialog, int which) {
+				// startCapture(i, elems[which]);
+				// dialog.dismiss();
+				// dismiss();
+				// }
+				// });
+				// AlertDialog dlg = builder.create();
+				// dlg.setOwnerActivity(getActivity());
+				// dlg.show();
+				// } else {
+
+				if (typeString.equals("TEXT")) {
+					DialogFragment textFragment = new EditNoteFragment();
+					textFragment.setArguments(EditNoteFragment.prepare("", exp.getContents().size()));
+					textFragment.show(getActivity().getSupportFragmentManager(), "exp_content_note");
+				} else {
+					startCapture(typeString);
+				}
+				dialog.dismiss();
+				// }
+			}
+
+		});
+
+		dialog.show();
 	}
 
 }
