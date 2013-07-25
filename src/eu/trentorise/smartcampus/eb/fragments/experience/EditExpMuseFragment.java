@@ -287,9 +287,11 @@ public class EditExpMuseFragment extends SherlockFragment implements OnTagsSelec
 			openGrabDialog();
 		}
 
-		if (adapter != null) {
-			adapter.notifyDataSetChanged();
-		}
+		if (exp != null && adapter != null && exp.getContents() != null && exp.getContents().size() != adapter.getCount()) {
+			ListView list = (ListView) returnView.findViewById(R.id.exp_contents);
+			adapter = new ExpContentAdapter(getSherlockActivity(), R.layout.exp_contents_row, exp.getContents());
+			list.setAdapter(adapter);
+		}		
 	}
 
 	@Override
@@ -456,9 +458,6 @@ public class EditExpMuseFragment extends SherlockFragment implements OnTagsSelec
 		exp.getContents().add(0, c);
 		exp.resetPreview();
 
-		Log.e("eemf", "appendContent Value: " + value);
-		Log.e("eemf", "appendContent Adapter: " + adapter);
-		Log.e("eemf", "appendContent Contents (after): " + exp.getContents().size());
 		if (adapter != null) {
 			adapter.notifyDataSetChanged();
 		}
