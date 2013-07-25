@@ -17,14 +17,14 @@
 <resources>
 
     <array name="grabDialogArray">
-        <item>Photo</item>
+        <item>Foto</item>
         <item>Video</item>
-        <item>Photo from gallery</item>
-        <item>Video from gallery</item>
-        <item>Text</item>
+        <item>Foto da galleria</item>
+        <item>Video da galleria</item>
+        <item>Testo</item>
         <item>Audio</item>
         <item>QR code</item>
-        <item>Near me now</item>
+        <item>Intorno a me</item>
     </array>
     <array name="grabDialogTypesArray">
         <item>IMAGE_CAMERA</item>
