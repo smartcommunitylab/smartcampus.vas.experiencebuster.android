@@ -57,7 +57,7 @@ public class Utils {
 	private static Address findAddress(GeoPoint p, Context contexto) {
 		SCGeocoder geoCoder = new SCGeocoder(contexto, Locale.getDefault());
 		try {
-			List<Address> addresses = geoCoder.getFromLocationSC(p.getLatitudeE6() / 1E6, p.getLongitudeE6() / 1E6, true);
+			List<Address> addresses = geoCoder.getFromLocationSC(p.getLatitudeE6() / 1E6, p.getLongitudeE6() / 1E6, true, null);
 			if (addresses == null || addresses.isEmpty())
 				return null;
 			return addresses.get(0);
