@@ -8,6 +8,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.util.Log;
 import android.widget.ListView;
 import android.widget.TextView;
 import eu.trentorise.smartcampus.android.common.GlobalConfig;
@@ -30,6 +31,7 @@ public class ViewerActivity extends Activity {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		Log.v("ViewerActivity", "OnCreate");
 		setContentView(R.layout.exp_shared);
 
 		Intent data = getIntent();
@@ -53,6 +55,8 @@ public class ViewerActivity extends Activity {
 
 		@Override
 		protected Experience doInBackground(String... params) {
+			Log.v("ViewerActivity", "Loader doInBackground");
+
 			String expId = params[0];
 			RemoteStorage remoteStorage = new RemoteStorage(
 					getApplicationContext(), Constants.APP_TOKEN);
@@ -78,12 +82,16 @@ public class ViewerActivity extends Activity {
 
 		@Override
 		protected void onPreExecute() {
+			Log.v("ViewerActivity", "Loader onPre");
+
 			// progress = ProgressDialog.show(ctx, null,
 			// "Caricamento in corso");
 		}
 
 		@Override
 		protected void onPostExecute(Experience result) {
+			Log.v("ViewerActivity", "Loader onPost");
+
 			ListView list = (ListView) findViewById(R.id.exp_contents_shared);
 
 			if (result != null) {
