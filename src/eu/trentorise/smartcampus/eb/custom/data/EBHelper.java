@@ -15,6 +15,7 @@
  ******************************************************************************/
 package eu.trentorise.smartcampus.eb.custom.data;
 
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -426,7 +427,7 @@ public class EBHelper {
 		}
 
 		String queryStrObject = Utils.convertToJSON(filter);
-		String queryString = "filter=" + queryStrObject;
+		String queryString = "filter=" + URLEncoder.encode(queryStrObject,"UTF-8");
 		request.setQuery(queryString);
 
 		MessageResponse response = getInstance().mProtocolCarrier.invokeSync(
