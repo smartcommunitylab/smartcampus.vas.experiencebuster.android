@@ -63,10 +63,11 @@ public class HomeActivity extends SherlockFragmentActivity implements
 	private void initDataManagement(Bundle savedInstanceState) {
 		try {
 			EBHelper.init(getApplicationContext());
-			String token = EBHelper.getAccessProvider()
-					.getAuthToken(this, null);
-			if (token != null) {
-				initData(token);
+			if (!EBHelper.getAccessProvider().login(this, null)) {
+				String token = EBHelper.getAuthToken();
+				if (token != null) {
+					initData(token);
+				}
 			}
 		} catch (Exception e) {
 			EBHelper.endAppFailure(this, R.string.app_failure_setup);
@@ -80,7 +81,8 @@ public class HomeActivity extends SherlockFragmentActivity implements
 			if (EBHelper.getConfiguration(EBHelper.CONF_SYNCHRO, Boolean.class)
 					&& EBHelper.getConfiguration(EBHelper.CONF_USER_ACCOUNT,
 							String.class) == null) {
-				EBHelper.askUserAccount(this, FILESTORAGE_ACCOUNT_REGISTRATION, true);
+				EBHelper.askUserAccount(this, FILESTORAGE_ACCOUNT_REGISTRATION,
+						true);
 			} else {
 				new SCAsyncTask<Void, Void, Void>(this,
 						new StartProcessor(this)).execute();
@@ -138,8 +140,7 @@ public class HomeActivity extends SherlockFragmentActivity implements
 					initData(token);
 				}
 			} else if (resultCode == RESULT_CANCELED) {
-				EBHelper.endAppFailure(this,
-						eu.trentorise.smartcampus.ac.R.string.token_required);
+				EBHelper.endAppFailure(this, R.string.token_required);
 			}
 		}
 		if (requestCode == FILESTORAGE_ACCOUNT_REGISTRATION) {
@@ -217,9 +218,9 @@ public class HomeActivity extends SherlockFragmentActivity implements
 	private BroadcastReceiver mTokenInvalidReceiver = new BroadcastReceiver() {
 		@Override
 		public void onReceive(Context context, Intent intent) {
-			EBHelper.getAccessProvider().invalidateToken(HomeActivity.this,
-					null);
-			initDataManagement(null);
+			// EBHelper.getAccessProvider().invalidateToken(HomeActivity.this,
+			// null);
+			// initDataManagement(null);
 		}
 	};
 

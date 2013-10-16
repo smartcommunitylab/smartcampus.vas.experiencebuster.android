@@ -14,11 +14,11 @@
  * limitations under the License.
  ******************************************************************************/
 
-
 package eu.trentorise.smartcampus.eb.syncadapter;
 
 import android.app.Service;
 import android.content.Intent;
+import android.content.pm.PackageManager.NameNotFoundException;
 import android.os.IBinder;
 
 /**
@@ -27,26 +27,31 @@ import android.os.IBinder;
  * IBinder.
  */
 public class EBSyncService extends Service {
-    private static final Object sSyncAdapterLock = new Object();
-    private static EBSyncAdapter sSyncAdapter = null;
+	private static final Object sSyncAdapterLock = new Object();
+	private static EBSyncAdapter sSyncAdapter = null;
 
-    /*
-     * {@inheritDoc}
-     */
-    @Override
-    public void onCreate() {
-        synchronized (sSyncAdapterLock) {
-            if (sSyncAdapter == null) {
-                sSyncAdapter = new EBSyncAdapter(getApplicationContext(), true);
-            }
-        }
-    }
+	/*
+	 * {@inheritDoc}
+	 */
+	@Override
+	public void onCreate() {
+		synchronized (sSyncAdapterLock) {
+			if (sSyncAdapter == null) {
+				try {
+					sSyncAdapter = new EBSyncAdapter(getApplicationContext(),
+							true);
+				} catch (NameNotFoundException e) {
+					e.printStackTrace();
+				}
+			}
+		}
+	}
 
-    /*
-     * {@inheritDoc}
-     */
-    @Override
-    public IBinder onBind(Intent intent) {
-        return sSyncAdapter.getSyncAdapterBinder();
-    }
+	/*
+	 * {@inheritDoc}
+	 */
+	@Override
+	public IBinder onBind(Intent intent) {
+		return sSyncAdapter.getSyncAdapterBinder();
+	}
 }

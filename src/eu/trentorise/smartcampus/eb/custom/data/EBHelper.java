@@ -30,13 +30,14 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
+import android.content.pm.PackageManager.NameNotFoundException;
 import android.os.Bundle;
 import android.os.RemoteException;
 import android.preference.PreferenceManager;
 import android.util.Log;
 import android.widget.Toast;
+import eu.trentorise.smartcampus.ac.AACException;
 import eu.trentorise.smartcampus.ac.SCAccessProvider;
-import eu.trentorise.smartcampus.ac.authenticator.AMSCAccessProvider;
 import eu.trentorise.smartcampus.android.common.GlobalConfig;
 import eu.trentorise.smartcampus.android.common.LocationHelper;
 import eu.trentorise.smartcampus.android.common.Utils;
@@ -77,7 +78,7 @@ public class EBHelper {
 	private static EBHelper instance = null;
 	private static RemoteStorage remoteStorage;
 
-	private static SCAccessProvider accessProvider = new AMSCAccessProvider();
+	private static SCAccessProvider accessProvider;
 
 	public static Account SCAccount;
 
@@ -91,7 +92,7 @@ public class EBHelper {
 	private UserPreference preference = null;
 	private boolean loaded = false;
 
-	public static void init(Context mContext) {
+	public static void init(Context mContext) throws NameNotFoundException {
 		if (instance == null) {
 			instance = new EBHelper(mContext);
 		}
@@ -114,7 +115,7 @@ public class EBHelper {
 
 	public static Collection<UserPreference> readUserPreference()
 			throws DataException, ConnectionException, ProtocolException,
-			SecurityException {
+			SecurityException, AACException {
 		return getRemote(instance.mContext, getAuthToken()).getObjects(
 				UserPreference.class);
 
@@ -211,8 +212,8 @@ public class EBHelper {
 		f.startActivityForResult(i, requestCode);
 	}
 
-	public static String getAuthToken() {
-		return getAccessProvider().readToken(instance.mContext, null);
+	public static String getAuthToken() throws AACException {
+		return getAccessProvider().readToken(instance.mContext);
 	}
 
 	private static EBHelper getInstance() throws DataException {
@@ -226,7 +227,7 @@ public class EBHelper {
 		return accessProvider;
 	}
 
-	protected EBHelper(Context mContext) {
+	protected EBHelper(Context mContext) throws NameNotFoundException {
 		super();
 		this.mContext = mContext;
 		this.sc = new EBStorageConfiguration();
@@ -242,20 +243,14 @@ public class EBHelper {
 				eu.trentorise.smartcampus.ac.Constants.getAccountName(mContext),
 				eu.trentorise.smartcampus.ac.Constants.getAccountType(mContext));
 
-		// LocationManager locationManager = (LocationManager)
-		// mContext.getSystemService(Context.LOCATION_SERVICE);
-		// locationManager.requestLocationUpdates(LocationManager.PASSIVE_PROVIDER,
-		// 0, 0, new EBLocationListener());
-		// locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER,
-		// 0, 0, new EBLocationListener());
-		// locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER,
-		// 0, 0, new EBLocationListener());
+		accessProvider = SCAccessProvider.getInstance(mContext);
+
 		setLocationHelper(new LocationHelper(mContext));
 	}
 
 	public static void start() throws RemoteException, DataException,
 			StorageConfigurationException, ConnectionException,
-			ProtocolException, SecurityException {
+			ProtocolException, SecurityException, AACException {
 		// UserPreference
 		Collection<UserPreference> userPreferencesCollection = getInstance().storage
 				.getObjects(UserPreference.class);
@@ -310,7 +305,7 @@ public class EBHelper {
 
 	public static List<SemanticSuggestion> getSuggestions(CharSequence suggest)
 			throws ConnectionException, ProtocolException, SecurityException,
-			DataException {
+			DataException, AACException {
 		return SuggestionHelper.getSuggestions(suggest, getInstance().mContext,
 				GlobalConfig.getAppUrl(getInstance().mContext), getAuthToken(),
 				eu.trentorise.smartcampus.eb.custom.data.Constants.APP_TOKEN);

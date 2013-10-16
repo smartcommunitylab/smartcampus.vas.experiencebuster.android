@@ -10,6 +10,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.widget.ListView;
 import android.widget.TextView;
+import eu.trentorise.smartcampus.ac.AACException;
 import eu.trentorise.smartcampus.android.common.GlobalConfig;
 import eu.trentorise.smartcampus.eb.custom.ExpContentAdapter;
 import eu.trentorise.smartcampus.eb.custom.ExperiencesListAdapter;
@@ -70,6 +71,8 @@ public class ViewerActivity extends Activity {
 			} catch (ConnectionException e) {
 				e.printStackTrace();
 			} catch (SecurityException e) {
+				e.printStackTrace();
+			} catch (AACException e) {
 				e.printStackTrace();
 			}
 

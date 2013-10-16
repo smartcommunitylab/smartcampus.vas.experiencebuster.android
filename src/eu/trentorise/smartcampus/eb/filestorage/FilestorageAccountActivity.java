@@ -25,6 +25,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.Toast;
+import eu.trentorise.smartcampus.ac.AACException;
 import eu.trentorise.smartcampus.android.common.GlobalConfig;
 import eu.trentorise.smartcampus.eb.custom.data.Constants;
 import eu.trentorise.smartcampus.eb.custom.data.EBHelper;
@@ -151,11 +152,15 @@ public class FilestorageAccountActivity extends Activity {
 			// request new account for the required app
 			if (result != null && result.size() > 0) {
 				AppAccount appAccount = result.get(0);
-				mFilestorage.startAuthActivityForResult(
-						FilestorageAccountActivity.this,
-						EBHelper.getAuthToken(),
-						appAccount.getAppAccountName(), appAccount.getId(),
-						StorageType.DROPBOX, AUTH_REQUESTCODE);
+				try {
+					mFilestorage.startAuthActivityForResult(
+							FilestorageAccountActivity.this,
+							EBHelper.getAuthToken(),
+							appAccount.getAppAccountName(), appAccount.getId(),
+							StorageType.DROPBOX, AUTH_REQUESTCODE);
+				} catch (AACException e) {
+					e.printStackTrace();
+				}
 			} else {
 				Toast.makeText(
 						FilestorageAccountActivity.this,

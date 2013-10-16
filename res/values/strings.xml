@@ -106,4 +106,6 @@
     <string name="pref_max_file_lenght">maximum file size to synchronize</string>
     <string name="pref_title_max_file_lenght">Max file length (MB)</string>
     <string name="mainmenu_settings">Settings</string>
+    <string name="token_required">Please login before proceeding with the application.</string>
+    <string name="token_expired">App login expired.</string>
 </resources>

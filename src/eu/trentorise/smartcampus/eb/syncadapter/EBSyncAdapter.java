@@ -26,6 +26,7 @@ import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SyncResult;
+import android.content.pm.PackageManager.NameNotFoundException;
 import android.os.Bundle;
 import android.util.Log;
 import eu.trentorise.smartcampus.android.common.GlobalConfig;
@@ -39,9 +40,11 @@ import eu.trentorise.smartcampus.protocolcarrier.exceptions.SecurityException;
 public class EBSyncAdapter extends AbstractThreadedSyncAdapter {
 	private static final String TAG = "EBSyncAdapter";
 
+	private static final int ACCOUNT_NOTIFICATION_ID = 1;
 	private final Context mContext;
 
-	public EBSyncAdapter(Context context, boolean autoInitialize) {
+	public EBSyncAdapter(Context context, boolean autoInitialize)
+			throws NameNotFoundException {
 		super(context, autoInitialize);
 		mContext = context;
 		EBHelper.init(mContext);
@@ -85,17 +88,15 @@ public class EBSyncAdapter extends AbstractThreadedSyncAdapter {
 		Intent i = new Intent("eu.trentorise.smartcampus.START");
 		i.setPackage(mContext.getPackageName());
 
-		EBHelper.getAccessProvider().invalidateToken(mContext, null);
-
 		NotificationManager mNotificationManager = (NotificationManager) mContext
 				.getSystemService(Context.NOTIFICATION_SERVICE);
 
-		int icon = eu.trentorise.smartcampus.ac.R.drawable.stat_notify_error;
+		int icon = eu.trentorise.smartcampus.eb.R.drawable.stat_notify_error;
 		CharSequence tickerText = mContext
-				.getString(eu.trentorise.smartcampus.ac.R.string.token_expired);
+				.getString(eu.trentorise.smartcampus.eb.R.string.token_expired);
 		long when = System.currentTimeMillis();
 		CharSequence contentText = mContext
-				.getString(eu.trentorise.smartcampus.ac.R.string.token_required);
+				.getString(eu.trentorise.smartcampus.eb.R.string.token_required);
 		PendingIntent contentIntent = PendingIntent.getActivity(mContext, 0, i,
 				0);
 
@@ -104,9 +105,7 @@ public class EBSyncAdapter extends AbstractThreadedSyncAdapter {
 		notification.setLatestEventInfo(mContext, tickerText, contentText,
 				contentIntent);
 
-		mNotificationManager.notify(
-				eu.trentorise.smartcampus.ac.Constants.ACCOUNT_NOTIFICATION_ID,
-				notification);
+		mNotificationManager.notify(ACCOUNT_NOTIFICATION_ID, notification);
 	}
 
 }

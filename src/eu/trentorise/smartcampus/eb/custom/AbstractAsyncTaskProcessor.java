@@ -17,43 +17,39 @@ package eu.trentorise.smartcampus.eb.custom;
 
 import android.app.Activity;
 import android.util.Log;
-import eu.trentorise.smartcampus.ac.SCAccessProvider;
 import eu.trentorise.smartcampus.android.common.HandleExceptionHelper;
 import eu.trentorise.smartcampus.android.common.SCAsyncTask.SCAsyncTaskProcessor;
 import eu.trentorise.smartcampus.eb.HomeActivity;
 import eu.trentorise.smartcampus.eb.R;
 import eu.trentorise.smartcampus.eb.custom.data.EBHelper;
 
-public abstract class AbstractAsyncTaskProcessor<Params, Result> implements SCAsyncTaskProcessor<Params, Result>{
+public abstract class AbstractAsyncTaskProcessor<Params, Result> implements
+		SCAsyncTaskProcessor<Params, Result> {
 
 	private Activity activity;
-	
+
 	public AbstractAsyncTaskProcessor(Activity activity) {
 		super();
 		this.activity = activity;
 	}
 
-	
 	@Override
 	public void handleConnectionError() {
 		HandleExceptionHelper.showDialogConnectivity(activity);
 	}
 
-
 	@Override
 	public void handleFailure(Exception e) {
-		Log.e(activity.getClass().getName(), ""+e.getMessage());
+		Log.e(activity.getClass().getName(), "" + e.getMessage());
 		EBHelper.showFailure(activity, R.string.app_failure_operation);
 	}
 
 	@Override
 	public void handleSecurityError() {
-		SCAccessProvider accessProvider =  EBHelper.getAccessProvider();
 		try {
-			accessProvider.invalidateToken(activity, null);
-			accessProvider.getAuthToken(activity, null);
+			EBHelper.getAuthToken();
 		} catch (Exception e) {
-			Log.e(HomeActivity.class.getName(), ""+e.getMessage());
+			Log.e(HomeActivity.class.getName(), "" + e.getMessage());
 			EBHelper.showFailure(activity, R.string.app_failure_security);
 		}
 	}
