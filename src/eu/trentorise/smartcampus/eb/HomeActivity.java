@@ -64,17 +64,14 @@ public class HomeActivity extends SherlockFragmentActivity implements
 		try {
 			EBHelper.init(getApplicationContext());
 			if (!EBHelper.getAccessProvider().login(this, null)) {
-				String token = EBHelper.getAuthToken();
-				if (token != null) {
-					initData(token);
-				}
+				initData();
 			}
 		} catch (Exception e) {
 			EBHelper.endAppFailure(this, R.string.app_failure_setup);
 		}
 	}
 
-	private boolean initData(String token) {
+	private boolean initData() {
 		try {
 
 			// check filestorage account
@@ -134,11 +131,8 @@ public class HomeActivity extends SherlockFragmentActivity implements
 			if (resultCode == RESULT_OK) {
 				String token = data.getExtras().getString(
 						AccountManager.KEY_AUTHTOKEN);
-				if (token == null) {
-					EBHelper.endAppFailure(this, R.string.app_failure_security);
-				} else {
-					initData(token);
-				}
+				EBHelper.endAppFailure(this, R.string.app_failure_security);
+				initData();
 			} else if (resultCode == RESULT_CANCELED) {
 				EBHelper.endAppFailure(this, R.string.token_required);
 			}

@@ -23,21 +23,20 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import android.content.Context;
 import android.util.Log;
-import eu.trentorise.smartcampus.android.common.GlobalConfig;
 import eu.trentorise.smartcampus.eb.custom.data.Constants;
 import eu.trentorise.smartcampus.eb.custom.data.EBHelper;
 import eu.trentorise.smartcampus.eb.model.Content;
 import eu.trentorise.smartcampus.eb.model.Experience;
 import eu.trentorise.smartcampus.eb.model.Resource;
+import eu.trentorise.smartcampus.filestorage.client.model.Metadata;
 import eu.trentorise.smartcampus.protocolcarrier.exceptions.ConnectionException;
 import eu.trentorise.smartcampus.protocolcarrier.exceptions.ProtocolException;
 import eu.trentorise.smartcampus.protocolcarrier.exceptions.SecurityException;
+import eu.trentorise.smartcampus.storage.AndroidFilestorage;
 import eu.trentorise.smartcampus.storage.BasicObject;
 import eu.trentorise.smartcampus.storage.DataException;
-import eu.trentorise.smartcampus.storage.Filestorage;
 import eu.trentorise.smartcampus.storage.StorageConfigurationException;
 import eu.trentorise.smartcampus.storage.db.StorageConfiguration;
-import eu.trentorise.smartcampus.storage.model.Metadata;
 import eu.trentorise.smartcampus.storage.sync.SyncData;
 import eu.trentorise.smartcampus.storage.sync.SyncStorageWithPaging;
 
@@ -49,7 +48,7 @@ import eu.trentorise.smartcampus.storage.sync.SyncStorageWithPaging;
  */
 public class FileSyncStorage extends SyncStorageWithPaging {
 
-	private Filestorage filestorage;
+	private AndroidFilestorage filestorage;
 
 	private static Map<String, BasicObject> expToDelete = new ConcurrentHashMap<String, BasicObject>();
 	private static List<String> contentToDelete = new ArrayList<String>();
@@ -67,13 +66,8 @@ public class FileSyncStorage extends SyncStorageWithPaging {
 			int dbVersion, StorageConfiguration config) {
 		super(context, appToken, dbName, dbVersion, config);
 
-		try {
-			filestorage = new Filestorage(context, Constants.APP_NAME,
-					appToken, GlobalConfig.getAppUrl(mContext),
-					Constants.FILE_SERVICE);
-		} catch (ProtocolException e) {
-			Log.e(getClass().getName(), e.getMessage());
-		}
+		filestorage = new AndroidFilestorage(Constants.FILE_SERVICE,
+				Constants.APP_NAME);
 	}
 
 	/*
@@ -127,7 +121,6 @@ public class FileSyncStorage extends SyncStorageWithPaging {
 		}
 	}
 
-
 	public SyncData synchroFile(String authToken, String host, String service)
 			throws StorageConfigurationException, SecurityException,
 			ConnectionException, DataException, ProtocolException {
@@ -163,14 +156,16 @@ public class FileSyncStorage extends SyncStorageWithPaging {
 								if (userAccountId != null
 										&& EBHelper
 												.checkFileSizeConstraints(res)) {
-									Metadata meta = filestorage.storeResource(
-											res.getContent(),
-											res.getContentType(),
-											res.getName(), authToken,
-											userAccountId, false);
+									Metadata meta = filestorage
+											.storeResourceByUser(
+													res.getContent(),
+													res.getName(),
+													res.getContentType(),
+													authToken, userAccountId,
+													false);
 									fileStoraging.put(c.getLocalValue(),
-											meta.getRid());
-									c.setValue(meta.getRid());
+											meta.getResourceId());
+									c.setValue(meta.getResourceId());
 								}
 							}
 
@@ -193,13 +188,12 @@ public class FileSyncStorage extends SyncStorageWithPaging {
 		Iterator<String> iter = contentToDelete.iterator();
 		while (iter.hasNext()) {
 			try {
-				String userAccountId = EBHelper.getConfiguration(
-						EBHelper.CONF_USER_ACCOUNT, String.class);
-				if (userAccountId != null) {
-					filestorage.deleteResource(authToken, userAccountId,
-							iter.next());
-					iter.remove();
-				}
+				// String userAccountId = EBHelper.getConfiguration(
+				// EBHelper.CONF_USER_ACCOUNT, String.class);
+				// if (userAccountId != null) {
+				filestorage.deleteResourceByUser(authToken, iter.next());
+				iter.remove();
+				// }
 			} catch (Exception e) {
 				Log.e(getClass().getName(), "Exception deleting file content");
 			}
@@ -218,14 +212,14 @@ public class FileSyncStorage extends SyncStorageWithPaging {
 							if (c.getValue() != null
 									&& c.getValue().length() > 0) {
 								try {
-									String userAccountId = EBHelper
-											.getConfiguration(
-													EBHelper.CONF_USER_ACCOUNT,
-													String.class);
-									if (userAccountId != null) {
-										filestorage.deleteResource(authToken,
-												userAccountId, c.getValue());
-									}
+									// String userAccountId = EBHelper
+									// .getConfiguration(
+									// EBHelper.CONF_USER_ACCOUNT,
+									// String.class);
+									// if (userAccountId != null) {
+									filestorage.deleteResourceByUser(authToken,
+											c.getValue());
+									// }
 								} catch (Exception e) {
 									Log.e(getClass().getName(),
 											"Exception deleting file content");

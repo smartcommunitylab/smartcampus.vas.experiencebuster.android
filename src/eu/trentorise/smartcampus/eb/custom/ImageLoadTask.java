@@ -28,22 +28,20 @@ import android.os.AsyncTask;
 import android.provider.MediaStore;
 import android.util.Log;
 import android.widget.ImageView;
-import eu.trentorise.smartcampus.android.common.GlobalConfig;
 import eu.trentorise.smartcampus.eb.custom.data.Constants;
 import eu.trentorise.smartcampus.eb.custom.data.EBHelper;
 import eu.trentorise.smartcampus.eb.model.Content;
 import eu.trentorise.smartcampus.eb.model.ContentType;
-import eu.trentorise.smartcampus.protocolcarrier.exceptions.ProtocolException;
-import eu.trentorise.smartcampus.storage.Filestorage;
-import eu.trentorise.smartcampus.storage.model.Metadata;
-import eu.trentorise.smartcampus.storage.model.Resource;
+import eu.trentorise.smartcampus.filestorage.client.model.Metadata;
+import eu.trentorise.smartcampus.filestorage.client.model.Resource;
+import eu.trentorise.smartcampus.storage.AndroidFilestorage;
 
 public class ImageLoadTask extends AsyncTask<Content, Void, Bitmap> {
 
 	private final WeakReference<ImageView> imageViewReference;
 
 	private String tag;
-	private Filestorage filestorage;
+	private AndroidFilestorage filestorage;
 
 	private static Map<String, Boolean> loadingHistory = new HashMap<String, Boolean>();
 
@@ -51,17 +49,8 @@ public class ImageLoadTask extends AsyncTask<Content, Void, Bitmap> {
 		// Use a WeakReference to ensure the ImageView can be garbage
 		// collected
 		imageViewReference = new WeakReference<ImageView>(imageView);
-
-		try {
-			filestorage = new Filestorage(imageView.getContext(),
-					Constants.APP_NAME, Constants.APP_TOKEN,
-					GlobalConfig.getAppUrl(imageView.getContext()),
-					Constants.FILE_SERVICE);
-		} catch (ProtocolException e) {
-			Log.e(ImageLoadTask.class.getName(),
-					"Error istantiating filestorage class");
-		}
-
+		filestorage = new AndroidFilestorage(Constants.FILE_SERVICE,
+				Constants.APP_NAME);
 	}
 
 	@Override
@@ -89,10 +78,10 @@ public class ImageLoadTask extends AsyncTask<Content, Void, Bitmap> {
 						&& EBHelper.isSynchronizationActive()
 						&& params[0].isUploaded()) {
 					loadingHistory.put(params[0].getId(), true);
-					Metadata meta = filestorage.getResourceMetadata(
+					Metadata meta = filestorage.getResourceMetadataByUser(
 							EBHelper.getAuthToken(), params[0].getValue());
 					if (EBHelper.checkFileSizeConstraints(meta.getSize())) {
-						Resource resource = filestorage.getMyResource(
+						Resource resource = filestorage.getResourceByUser(
 								EBHelper.getAuthToken(), params[0].getValue());
 						FileOutputStream fout = new FileOutputStream(
 								params[0].getLocalValue());

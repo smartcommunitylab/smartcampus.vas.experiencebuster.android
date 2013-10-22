@@ -115,16 +115,13 @@ public class CatchActivity extends SherlockFragmentActivity implements
 	private void initDataManagement(Bundle savedInstanceState) {
 		try {
 			EBHelper.init(getApplicationContext());
-			String token = EBHelper.getAuthToken();
-			if (token != null) {
-				initData(token);
-			}
+			initData();
 		} catch (Exception e) {
 			EBHelper.endAppFailure(this, R.string.app_failure_setup);
 		}
 	}
 
-	private boolean initData(String token) {
+	private boolean initData() {
 		try {
 			startCapture();
 			initialized = true;
@@ -149,7 +146,7 @@ public class CatchActivity extends SherlockFragmentActivity implements
 				if (token == null) {
 					EBHelper.endAppFailure(this, R.string.app_failure_security);
 				} else {
-					initData(token);
+					initData();
 				}
 			} else if (resultCode == RESULT_CANCELED) {
 				EBHelper.endAppFailure(this, R.string.token_required);
