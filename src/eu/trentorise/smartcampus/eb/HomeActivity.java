@@ -212,9 +212,6 @@ public class HomeActivity extends SherlockFragmentActivity implements
 	private BroadcastReceiver mTokenInvalidReceiver = new BroadcastReceiver() {
 		@Override
 		public void onReceive(Context context, Intent intent) {
-			// EBHelper.getAccessProvider().invalidateToken(HomeActivity.this,
-			// null);
-			// initDataManagement(null);
 		}
 	};
 

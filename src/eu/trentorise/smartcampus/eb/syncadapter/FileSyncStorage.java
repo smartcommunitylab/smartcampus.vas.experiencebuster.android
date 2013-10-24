@@ -188,12 +188,8 @@ public class FileSyncStorage extends SyncStorageWithPaging {
 		Iterator<String> iter = contentToDelete.iterator();
 		while (iter.hasNext()) {
 			try {
-				// String userAccountId = EBHelper.getConfiguration(
-				// EBHelper.CONF_USER_ACCOUNT, String.class);
-				// if (userAccountId != null) {
 				filestorage.deleteResourceByUser(authToken, iter.next());
 				iter.remove();
-				// }
 			} catch (Exception e) {
 				Log.e(getClass().getName(), "Exception deleting file content");
 			}
@@ -212,14 +208,8 @@ public class FileSyncStorage extends SyncStorageWithPaging {
 							if (c.getValue() != null
 									&& c.getValue().length() > 0) {
 								try {
-									// String userAccountId = EBHelper
-									// .getConfiguration(
-									// EBHelper.CONF_USER_ACCOUNT,
-									// String.class);
-									// if (userAccountId != null) {
 									filestorage.deleteResourceByUser(authToken,
 											c.getValue());
-									// }
 								} catch (Exception e) {
 									Log.e(getClass().getName(),
 											"Exception deleting file content");

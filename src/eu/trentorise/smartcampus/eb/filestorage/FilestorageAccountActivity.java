@@ -24,7 +24,6 @@ import android.os.Bundle;
 import eu.trentorise.smartcampus.ac.AACException;
 import eu.trentorise.smartcampus.eb.custom.data.Constants;
 import eu.trentorise.smartcampus.eb.custom.data.EBHelper;
-import eu.trentorise.smartcampus.filestorage.client.model.Account;
 import eu.trentorise.smartcampus.filestorage.client.model.StorageType;
 import eu.trentorise.smartcampus.storage.AndroidFilestorage;
 
@@ -38,13 +37,6 @@ public class FilestorageAccountActivity extends Activity {
 
 	/** Logging tag */
 	private static final String TAG = "File";
-
-	private Account account = null;
-
-	/** Access token for the application user */
-	// private String mToken = null;
-	/** Filestorage connector reference */
-	// private Filestorage mFilestorage = null;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -61,17 +53,6 @@ public class FilestorageAccountActivity extends Activity {
 								public void onClick(DialogInterface dialog,
 										int which) {
 									new AccountTask().execute();
-									// new AppAccountTask().execute();
-									// try {
-									// mFilestorage
-									// .startAuthActivityForResult(
-									// FilestorageAccountActivity.this,
-									// EBHelper.getAuthToken(),
-									// StorageType.DROPBOX,
-									// AUTH_REQUESTCODE);
-									// } catch (AACException e) {
-									// e.printStackTrace();
-									// }
 								}
 							})
 					.setNegativeButton(
@@ -84,18 +65,7 @@ public class FilestorageAccountActivity extends Activity {
 								}
 							}).setCancelable(false).show();
 		} else {
-			// new AppAccountTask().execute();
 			new AccountTask().execute();
-			// try {
-			// AndroidFilestorage mFilestorage = new AndroidFilestorage(
-			// Constants.FILE_SERVICE, Constants.APP_NAME);
-			// mFilestorage.startAuthActivityForResult(
-			// FilestorageAccountActivity.this,
-			// EBHelper.getAuthToken(), StorageType.DROPBOX,
-			// AUTH_REQUESTCODE);
-			// } catch (AACException e) {
-			// e.printStackTrace();
-			// }
 		}
 
 	}
@@ -140,28 +110,4 @@ public class FilestorageAccountActivity extends Activity {
 		}
 
 	}
-
-	/*
-	 * class AppAccountTask extends AsyncTask<Void, Void, List<Storage>> {
-	 * 
-	 * private AndroidFilestorage mFilestorage;
-	 * 
-	 * public AppAccountTask() { mFilestorage = new
-	 * AndroidFilestorage(Constants.FILE_SERVICE, Constants.APP_NAME); }
-	 * 
-	 * @Override protected List<Storage> doInBackground(Void... params) { try {
-	 * // read app accounts return mFilestorage.gets } catch (Exception e) {
-	 * e.printStackTrace(); return null; } }
-	 * 
-	 * @Override protected void onPostExecute(List<AppAccount> result) { //
-	 * request new account for the required app if (result != null &&
-	 * result.size() > 0) { AppAccount appAccount = result.get(0); try {
-	 * mFilestorage.startAuthActivityForResult( FilestorageAccountActivity.this,
-	 * EBHelper.getAuthToken(), appAccount.getAppAccountName(),
-	 * appAccount.getId(), StorageType.DROPBOX, AUTH_REQUESTCODE); } catch
-	 * (AACException e) { e.printStackTrace(); } } else { Toast.makeText(
-	 * FilestorageAccountActivity.this,
-	 * eu.trentorise.smartcampus.eb.R.string.msg_synchro_no_appaccount,
-	 * Toast.LENGTH_LONG).show(); finish(); } } }
-	 */
 }

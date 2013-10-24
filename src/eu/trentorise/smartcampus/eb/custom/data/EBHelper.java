@@ -315,13 +315,6 @@ public class EBHelper {
 		return findExperiences(new ExperienceFilter(), position, size);
 	}
 
-	// public static List<Experience> getExperiencesByCollection(String
-	// collectionId, int position, int size) {
-	// ExperienceFilter f = new ExperienceFilter();
-	// f.setCollectionId(collectionId);
-	// return findExperiences(f, position, size);
-	// }
-
 	public static List<Experience> findExperiences(
 			ExperienceFilter experienceFilter, int position, int size) {
 		String query = "";
