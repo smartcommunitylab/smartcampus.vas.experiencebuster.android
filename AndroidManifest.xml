@@ -54,16 +54,6 @@
         <meta-data
             android:name="eu.trentorise.smartcampus.account.ACCOUNT_NAME"
             android:value="SmartCampus" />
-        <!--  WORKAROUND FOR BAD RETRIEVING METADATA FROM LAUNCHER -->
-<!--         <meta-data -->
-<!--             android:name="eu.trentorise.smartcampus.account.CLIENT_ID" -->
-<!--             android:value="" /> -->
-<!--         <meta-data -->
-<!--             android:name="eu.trentorise.smartcampus.account.CLIENT_SECRET" -->
-<!--             android:value="" /> -->
-<!--         <meta-data -->
-<!--             android:name="eu.trentorise.smartcampus.account.AUTH_URL" -->
-<!--             android:value="https://vas-dev.smartcampuslab.it/aac" /> -->
         <meta-data
             android:name="eu.trentorise.smartcampus.account.ACCOUNT_BASED_ACCESS"
             android:value="true" />
@@ -150,7 +140,7 @@
             android:configChanges="orientation|keyboard"
             android:launchMode="singleTask" >
             <intent-filter>
-                <data android:scheme="db-DROPBOX_APP_KEY" />
+                <data android:scheme="db-yerhpkuav29wxou" />
 
                 <action android:name="android.intent.action.VIEW" />
 
