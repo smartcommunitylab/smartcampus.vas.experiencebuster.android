@@ -21,7 +21,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import eu.trentorise.smartcampus.ac.AACException;
+import eu.trentorise.smartcampus.android.common.GlobalConfig;
 import eu.trentorise.smartcampus.eb.custom.data.Constants;
 import eu.trentorise.smartcampus.eb.custom.data.EBHelper;
 import eu.trentorise.smartcampus.filestorage.client.model.StorageType;
@@ -98,12 +98,13 @@ public class FilestorageAccountActivity extends Activity {
 		protected Void doInBackground(Void... params) {
 			try {
 				AndroidFilestorage mFilestorage = new AndroidFilestorage(
-						Constants.FILE_SERVICE, Constants.APP_NAME);
+						GlobalConfig.getAppUrl(getApplicationContext())
+								+ Constants.FILE_SERVICE, Constants.APP_NAME);
 				mFilestorage.startAuthActivityForResult(
 						FilestorageAccountActivity.this,
 						EBHelper.getAuthToken(), StorageType.DROPBOX,
 						AUTH_REQUESTCODE);
-			} catch (AACException e) {
+			} catch (Exception e) {
 				e.printStackTrace();
 			}
 			return null;

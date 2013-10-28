@@ -22,7 +22,7 @@ public class Constants {
 	public static final String SERVICE = "/smartcampus.vas.experiencebuster.web";
 	public static final String SYNC_SERVICE = "/smartcampus.vas.experiencebuster.web/sync";
 	public static final String OBJECT_SERVICE = "/smartcampus.vas.discovertrento.web/objects/simple";
-	public static final String FILE_SERVICE = "https://vas-dev.smartcampuslab.it/core.filestorage";
+	public static final String FILE_SERVICE = "/core.filestorage";
 	public static final long SYNC_INTERVAL = 5 * 60000;
 	public static final String SYNC_DB_NAME = "experiencebusterdb";
 	public static final int MAX_MESSAGE_NUM = 1000;

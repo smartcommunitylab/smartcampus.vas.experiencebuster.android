@@ -28,12 +28,14 @@ import android.os.AsyncTask;
 import android.provider.MediaStore;
 import android.util.Log;
 import android.widget.ImageView;
+import eu.trentorise.smartcampus.android.common.GlobalConfig;
 import eu.trentorise.smartcampus.eb.custom.data.Constants;
 import eu.trentorise.smartcampus.eb.custom.data.EBHelper;
 import eu.trentorise.smartcampus.eb.model.Content;
 import eu.trentorise.smartcampus.eb.model.ContentType;
 import eu.trentorise.smartcampus.filestorage.client.model.Metadata;
 import eu.trentorise.smartcampus.filestorage.client.model.Resource;
+import eu.trentorise.smartcampus.protocolcarrier.exceptions.ProtocolException;
 import eu.trentorise.smartcampus.storage.AndroidFilestorage;
 
 public class ImageLoadTask extends AsyncTask<Content, Void, Bitmap> {
@@ -49,8 +51,14 @@ public class ImageLoadTask extends AsyncTask<Content, Void, Bitmap> {
 		// Use a WeakReference to ensure the ImageView can be garbage
 		// collected
 		imageViewReference = new WeakReference<ImageView>(imageView);
-		filestorage = new AndroidFilestorage(Constants.FILE_SERVICE,
-				Constants.APP_NAME);
+		try {
+			filestorage = new AndroidFilestorage(
+					GlobalConfig.getAppUrl(imageView.getContext()
+							.getApplicationContext()) + Constants.FILE_SERVICE,
+					Constants.APP_NAME);
+		} catch (ProtocolException e) {
+			e.printStackTrace();
+		}
 	}
 
 	@Override

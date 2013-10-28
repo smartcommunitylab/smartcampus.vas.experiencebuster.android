@@ -23,6 +23,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import android.content.Context;
 import android.util.Log;
+import eu.trentorise.smartcampus.android.common.GlobalConfig;
 import eu.trentorise.smartcampus.eb.custom.data.Constants;
 import eu.trentorise.smartcampus.eb.custom.data.EBHelper;
 import eu.trentorise.smartcampus.eb.model.Content;
@@ -66,8 +67,13 @@ public class FileSyncStorage extends SyncStorageWithPaging {
 			int dbVersion, StorageConfiguration config) {
 		super(context, appToken, dbName, dbVersion, config);
 
-		filestorage = new AndroidFilestorage(Constants.FILE_SERVICE,
-				Constants.APP_NAME);
+		try {
+			filestorage = new AndroidFilestorage(GlobalConfig.getAppUrl(context
+					.getApplicationContext()) + Constants.FILE_SERVICE,
+					Constants.APP_NAME);
+		} catch (ProtocolException e) {
+			e.printStackTrace();
+		}
 	}
 
 	/*
