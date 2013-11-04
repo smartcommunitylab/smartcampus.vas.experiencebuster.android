@@ -16,12 +16,10 @@
 package eu.trentorise.smartcampus.eb.custom.data;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
-import java.util.Map;
-
-import org.codehaus.jackson.type.TypeReference;
 
 import android.accounts.Account;
 import android.app.Activity;
@@ -38,9 +36,9 @@ import android.util.Log;
 import android.widget.Toast;
 import eu.trentorise.smartcampus.ac.AACException;
 import eu.trentorise.smartcampus.ac.SCAccessProvider;
+import eu.trentorise.smartcampus.android.common.AppHelper;
 import eu.trentorise.smartcampus.android.common.GlobalConfig;
 import eu.trentorise.smartcampus.android.common.LocationHelper;
-import eu.trentorise.smartcampus.android.common.Utils;
 import eu.trentorise.smartcampus.android.common.tagging.SemanticSuggestion;
 import eu.trentorise.smartcampus.android.common.tagging.SuggestionHelper;
 import eu.trentorise.smartcampus.eb.R;
@@ -49,31 +47,31 @@ import eu.trentorise.smartcampus.eb.model.ExpCollection;
 import eu.trentorise.smartcampus.eb.model.Experience;
 import eu.trentorise.smartcampus.eb.model.ExperienceFilter;
 import eu.trentorise.smartcampus.eb.model.NearMeObject;
-import eu.trentorise.smartcampus.eb.model.ObjectFilter;
 import eu.trentorise.smartcampus.eb.model.Resource;
 import eu.trentorise.smartcampus.eb.model.UserPreference;
 import eu.trentorise.smartcampus.eb.syncadapter.FileSyncStorage;
-import eu.trentorise.smartcampus.protocolcarrier.ProtocolCarrier;
-import eu.trentorise.smartcampus.protocolcarrier.common.Constants.Method;
-import eu.trentorise.smartcampus.protocolcarrier.custom.MessageRequest;
-import eu.trentorise.smartcampus.protocolcarrier.custom.MessageResponse;
 import eu.trentorise.smartcampus.protocolcarrier.exceptions.ConnectionException;
 import eu.trentorise.smartcampus.protocolcarrier.exceptions.ProtocolException;
 import eu.trentorise.smartcampus.protocolcarrier.exceptions.SecurityException;
+import eu.trentorise.smartcampus.social.model.Entity;
 import eu.trentorise.smartcampus.storage.DataException;
 import eu.trentorise.smartcampus.storage.StorageConfigurationException;
 import eu.trentorise.smartcampus.storage.db.StorageConfiguration;
 import eu.trentorise.smartcampus.storage.remote.RemoteStorage;
+import eu.trentorise.smartcampus.territoryservice.TerritoryService;
+import eu.trentorise.smartcampus.territoryservice.model.BaseDTObject;
+import eu.trentorise.smartcampus.territoryservice.model.POIData;
+import eu.trentorise.smartcampus.territoryservice.model.POIObject;
 
 public class EBHelper {
-
-	private static final String EB_CONFS = "filelog";
 
 	public static final String CONF_SYNCHRO = "pref_synchro_file";
 	public static final String CONF_FILE_SIZE = "pref_max_file_lenght";
 	public static final String CONF_USER_ACCOUNT = "EB_USER_ACCOUNT";
 
 	private static final boolean testing = true;
+
+	private static final String TERRITORY_URL = "/core.territory";
 
 	private static EBHelper instance = null;
 	private static RemoteStorage remoteStorage;
@@ -85,7 +83,6 @@ public class EBHelper {
 	private Context mContext;
 	private StorageConfiguration sc = null;
 	private FileSyncStorage storage = null;
-	private ProtocolCarrier mProtocolCarrier = null;
 
 	private static LocationHelper mLocationHelper;
 
@@ -156,6 +153,7 @@ public class EBHelper {
 		return editor.commit();
 	}
 
+	@SuppressWarnings("unchecked")
 	public static <T> T getConfiguration(String configuration, Class<T> type)
 			throws DataException {
 		SharedPreferences confs = PreferenceManager
@@ -236,8 +234,6 @@ public class EBHelper {
 				eu.trentorise.smartcampus.eb.custom.data.Constants.APP_TOKEN,
 				eu.trentorise.smartcampus.eb.custom.data.Constants.SYNC_DB_NAME,
 				1, sc);
-		this.mProtocolCarrier = new ProtocolCarrier(mContext,
-				eu.trentorise.smartcampus.eb.custom.data.Constants.APP_TOKEN);
 
 		SCAccount = new Account(
 				eu.trentorise.smartcampus.ac.Constants.getAccountName(mContext),
@@ -388,62 +384,59 @@ public class EBHelper {
 		}
 	}
 
-	public static List<NearMeObject> getNearMeNowSuggestions(double[] location,
-			long currentTimeMillis, boolean filterEvents,
-			boolean filterLocations) throws Exception {
-		MessageRequest request = new MessageRequest(
-				GlobalConfig.getAppUrl(getInstance().mContext),
-				eu.trentorise.smartcampus.eb.custom.data.Constants.OBJECT_SERVICE);
-		request.setMethod(Method.GET);
-		ObjectFilter filter = new ObjectFilter();
-
+	public static List<NearMeObject> getNearMeNowSuggestions(double[] location, boolean filterEvents, boolean filterLocations) throws Exception 
+	{
+		eu.trentorise.smartcampus.territoryservice.model.ObjectFilter filter = new eu.trentorise.smartcampus.territoryservice.model.ObjectFilter();
 		filter.setSkip(0);
 		filter.setLimit(100);
 		// filter by near me
 
 		filter.setCenter(location);
 		filter.setRadius(0.01);
-		filter.setFromTime(currentTimeMillis - 1000 * 60 * 60 * 1);
-		filter.setToTime(currentTimeMillis + 1000 * 60 * 60 * 3);
 
-		if (filterLocations && !filterEvents) {
-			filter.setClassName("eu.trentorise.smartcampus.dt.model.POIObject");
+		TerritoryService territoryService = new TerritoryService(GlobalConfig.getAppUrl(getInstance().mContext) + TERRITORY_URL);
+
+		List<BaseDTObject> objects = new ArrayList<BaseDTObject>();
+		if (filterLocations) {
+			objects.addAll(territoryService.getPOIs(filter, getAuthToken()));
 		}
-		if (!filterLocations && filterEvents) {
-			filter.setClassName("eu.trentorise.smartcampus.dt.model.EventObject");
+		Calendar c = Calendar.getInstance();
+		if (filterEvents) {
+			c.set(Calendar.HOUR_OF_DAY, 23);
+			c.set(Calendar.MINUTE, 59);
+			c.set(Calendar.SECOND, 0);
+			c.set(Calendar.MILLISECOND, 0);
+			filter.setToTime(c.getTimeInMillis());
+			c.set(Calendar.HOUR_OF_DAY, 0);
+			c.set(Calendar.MINUTE, 0);
+			filter.setFromTime(c.getTimeInMillis());
+			objects.addAll(territoryService.getEvents(filter, getAuthToken()));
 		}
-
-		String queryStrObject = Utils.convertToJSON(filter);
-		String queryString = "filter=" + queryStrObject;
-		request.setQuery(queryString);
-
-		MessageResponse response = getInstance().mProtocolCarrier.invokeSync(
-				request,
-				eu.trentorise.smartcampus.eb.custom.data.Constants.APP_TOKEN,
-				getAuthToken());
-		String body = response.getBody();
-		if (body == null || body.trim().length() == 0) {
-			return Collections.emptyList();
-		}
-
-		Map<String, List<Map<String, Object>>> map = Utils.convertJSON(body,
-				new TypeReference<Map<String, List<Map<String, Object>>>>() {
-				});
-		ArrayList<NearMeObject> objects = new ArrayList<NearMeObject>();
-		if (map != null) {
-			for (String key : map.keySet()) {
-				// if (types != null && !types.contains(key)) continue;
-				List<Map<String, Object>> protos = map.get(key);
-				if (protos != null) {
-					for (Map<String, Object> proto : protos) {
-						objects.add(Utils.convertObjectToData(
-								NearMeObject.class, proto));
-					}
+		
+		
+		List<NearMeObject> nearMeObjects = new ArrayList<NearMeObject>();
+		for (BaseDTObject object : objects) {
+			NearMeObject nmo = new NearMeObject();
+			nmo.setTitle(object.getTitle());
+			nmo.setDescription(object.getDescription());
+			if (object.getFromTime() != null && object.getFromTime() > 0) {
+				if (Math.abs(System.currentTimeMillis()-object.getFromTime())>24*60*60*1000) {
+					nmo.setFromTime(c.getTimeInMillis());
+				}else {
+					nmo.setFromTime(object.getFromTime());
 				}
 			}
+			if (object instanceof POIObject && ((POIObject) object).getPoi() != null) {
+				POIData data = ((POIObject) object).getPoi();
+				String s = "";
+				if (data.getStreet() != null) s += data.getStreet()+" ";
+				if (data.getCity() != null) s += data.getCity() + " ";
+				nmo.setAddress(s);
+			} 
+			nearMeObjects.add(nmo);
 		}
 
-		return objects;
+		return nearMeObjects;
 	}
 
 	public static LocationHelper getLocationHelper() {
@@ -459,5 +452,16 @@ public class EBHelper {
 			if (c.getId().equals(collectionId))
 				return c;
 		return null;
+	}
+	
+	public static void share(Experience exp, Activity ctx) {
+		Entity obj = new Entity();
+		obj.setEntityId(exp.getEntityId());
+		obj.setTitle(exp.getTitle());
+		obj.setEntityType(eu.trentorise.smartcampus.eb.Constants.ENTITY_TYPE_EXPERIENCE);
+		Intent intent = new Intent();
+		intent.setAction(ctx.getString(eu.trentorise.smartcampus.android.common.R.string.share_intent_action));
+		intent.putExtra(ctx.getString(eu.trentorise.smartcampus.android.common.R.string.share_entity_arg_entity), obj);
+		AppHelper.startActivityForApp(intent, ctx);
 	}
 }

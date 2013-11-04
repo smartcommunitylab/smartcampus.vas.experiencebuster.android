@@ -31,7 +31,7 @@ public class NearMeObject implements Serializable {
 	private String source = null; // service 'source' of the object
 
 	// semantic entity
-	private Long entityId = null;
+	private String entityId = null;
 	private String entityType = null;
 	
 	// only for user-created objects
@@ -70,10 +70,10 @@ public class NearMeObject implements Serializable {
 	public void setSource(String source) {
 		this.source = source;
 	}
-	public Long getEntityId() {
+	public String getEntityId() {
 		return entityId;
 	}
-	public void setEntityId(Long entityId) {
+	public void setEntityId(String entityId) {
 		this.entityId = entityId;
 	}
 	public String getCreatorId() {
@@ -129,6 +129,9 @@ public class NearMeObject implements Serializable {
 		String s = "";
 		if (fromTime != null && fromTime > 0) {
 			s += Constants.DATE_FORMATTER.format(new Date(fromTime));
+			if (s.endsWith(" 00:00")) {
+				s = s.substring(0,s.length()-6);
+			}
 		}
 		if (address != null) {
 			if (s.length() > 0) s += ", ";

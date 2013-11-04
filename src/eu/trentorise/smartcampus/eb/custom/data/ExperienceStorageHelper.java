@@ -37,7 +37,7 @@ public class ExperienceStorageHelper implements BeanStorageHelper<Experience> {
 		e.setContents(Utils.convertJSONToObjects(cursor.getString(cursor.getColumnIndex("contents")), Content.class));
 		e.setCreationTime(cursor.getLong(cursor.getColumnIndex("creationTime")));
 		e.setDescription(cursor.getString(cursor.getColumnIndex("description")));
-		e.setEntityId(cursor.getLong(cursor.getColumnIndex("entityId")));
+		e.setEntityId(cursor.getString(cursor.getColumnIndex("entityId")));
 		e.setId(cursor.getString(cursor.getColumnIndex("id")));
 		e.setLocation(new double[]{cursor.getDouble(cursor.getColumnIndex("latitude")),cursor.getDouble(cursor.getColumnIndex("longitude"))});
 		e.setTags(Utils.convertJSONToObjects(cursor.getString(cursor.getColumnIndex("tags")), Concept.class));

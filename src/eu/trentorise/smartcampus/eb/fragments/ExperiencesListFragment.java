@@ -147,8 +147,8 @@ public class ExperiencesListFragment extends SherlockListFragment
 			AdapterContextMenuInfo info = (AdapterContextMenuInfo) item
 					.getMenuInfo();
 			Experience exp = experiencesList.get(info.position);
-			item.setEnabled(exp.getEntityId() > 0).setVisible(
-					exp.getEntityId() > 0);
+			item.setEnabled(exp.getEntityId() != null).setVisible(
+					exp.getEntityId() != null);
 		}
 	}
 
@@ -171,6 +171,9 @@ public class ExperiencesListFragment extends SherlockListFragment
 					exp.getId(), exp.getCollectionIds()));
 			assignFragment.show(getActivity().getSupportFragmentManager(),
 					"exp_assign_colls");
+			return true;
+		case R.id.expmenu_share:
+			EBHelper.share(exp, getActivity());
 			return true;
 		default:
 			Toast.makeText(getActivity(), R.string.not_implemented,

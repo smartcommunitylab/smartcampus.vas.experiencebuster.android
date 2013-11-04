@@ -22,14 +22,14 @@
     <item
         android:id="@+id/expmenu_share"
         android:title="@string/expmenu_share"/>
-    <item
-        android:id="@+id/expmenu_export"
-        android:title="@string/expmenu_export"/>
+<!--     <item -->
+<!--         android:id="@+id/expmenu_export" -->
+<!--         android:title="@string/expmenu_export"/> -->
     <item
         android:id="@+id/expmenu_assign_collection"
         android:title="@string/expmenu_assign_collection"/>
-    <item
-        android:id="@+id/expmenu_map"
-        android:title="@string/expmenu_map"/>
+<!--     <item -->
+<!--         android:id="@+id/expmenu_map" -->
+<!--         android:title="@string/expmenu_map"/> -->
 
 </menu>

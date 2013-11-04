@@ -51,8 +51,6 @@ import com.actionbarsherlock.view.MenuItem;
 
 import eu.trentorise.smartcampus.android.common.GlobalConfig;
 import eu.trentorise.smartcampus.android.common.SCAsyncTask;
-import eu.trentorise.smartcampus.android.common.sharing.ShareEntityObject;
-import eu.trentorise.smartcampus.android.common.sharing.SharingHelper;
 import eu.trentorise.smartcampus.android.common.tagging.SemanticSuggestion;
 import eu.trentorise.smartcampus.android.common.tagging.TaggingDialog.OnTagsSelectedListener;
 import eu.trentorise.smartcampus.eb.CatchActivity;
@@ -398,16 +396,14 @@ public class EditExpFragment extends SherlockFragment
 					"exp_assign_colls");
 			break;
 		case R.id.expmenu_share:
-			ShareEntityObject obj = new ShareEntityObject(exp.getEntityId(),
-					exp.getTitle(), Constants.ENTITY_TYPE_EXPERIENCE);
-			SharingHelper.share(getActivity(), obj);
+			EBHelper.share(exp, getActivity());
 			break;
-		case R.id.expmenu_map:
-		case R.id.expmenu_export:
-			Toast.makeText(getActivity(), R.string.not_implemented,
-					Toast.LENGTH_SHORT).show();
-			// TODO
-			break;
+//		case R.id.expmenu_map:
+//		case R.id.expmenu_export:
+//			Toast.makeText(getActivity(), R.string.not_implemented,
+//					Toast.LENGTH_SHORT).show();
+//			 // TODO
+//			break;
 		default:
 			break;
 		}
@@ -455,16 +451,16 @@ public class EditExpFragment extends SherlockFragment
 					R.menu.exp_menu, menu);
 			MenuItem item = menu.findItem(R.id.expmenu_share);
 			if (item != null)
-				item.setEnabled(exp.getEntityId() > 0).setVisible(
-						exp.getEntityId() > 0);
+				item.setEnabled(exp.getEntityId() != null).setVisible(
+						exp.getEntityId() != null);
 		} else {
 			// edit mode
 			getSherlockActivity().getSupportMenuInflater().inflate(
 					R.menu.exp_menu_edit, menu);
 			MenuItem item = menu.findItem(R.id.expmenu_share);
 			if (item != null)
-				item.setEnabled(exp.getEntityId() > 0).setVisible(
-						exp.getEntityId() > 0);
+				item.setEnabled(exp.getEntityId() != null).setVisible(
+						exp.getEntityId() != null);
 		}
 	}
 

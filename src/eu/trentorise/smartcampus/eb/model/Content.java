@@ -24,7 +24,7 @@ public class Content implements Serializable {
 	private ContentType type;
 	private String value;
 	private String note;
-	private long entityId;
+	private String entityId;
 	private String entityType;
 	private long timestamp;
 	private String localValue;
@@ -63,11 +63,11 @@ public class Content implements Serializable {
 		this.note = note;
 	}
 
-	public long getEntityId() {
+	public String getEntityId() {
 		return entityId;
 	}
 
-	public void setEntityId(long entityId) {
+	public void setEntityId(String entityId) {
 		this.entityId = entityId;
 	}
 

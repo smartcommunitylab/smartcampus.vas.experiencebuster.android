@@ -181,7 +181,7 @@ public class NearMeNowFragment extends SherlockListFragment {
 							GeoPoint location = Utils.requestMyLocation(getActivity());
 							if (location == null) return Collections.emptyList();
 							
-							return EBHelper.getNearMeNowSuggestions(new double[]{location.getLatitudeE6() / 1E6, location.getLongitudeE6() / 1E6},System.currentTimeMillis(), filterEvents, filterLocations);
+							return EBHelper.getNearMeNowSuggestions(new double[]{location.getLatitudeE6() / 1E6, location.getLongitudeE6() / 1E6}, filterEvents, filterLocations);
 						}
 
 						@Override
