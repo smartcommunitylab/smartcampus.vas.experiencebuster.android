@@ -1,28 +1,27 @@
 package eu.trentorise.smartcampus.eb;
 
+import java.util.ArrayList;
 import java.util.Date;
 
 import android.app.Activity;
 import android.app.ProgressDialog;
-import android.content.Context;
 import android.content.Intent;
-import android.os.AsyncTask;
+import android.content.pm.PackageManager.NameNotFoundException;
 import android.os.Bundle;
+import android.view.View;
 import android.widget.ListView;
 import android.widget.TextView;
-import eu.trentorise.smartcampus.ac.AACException;
-import eu.trentorise.smartcampus.android.common.GlobalConfig;
+import android.widget.Toast;
+import eu.trentorise.smartcampus.android.common.SCAsyncTask;
+import eu.trentorise.smartcampus.eb.custom.AbstractAsyncTaskProcessor;
 import eu.trentorise.smartcampus.eb.custom.ExpContentAdapter;
 import eu.trentorise.smartcampus.eb.custom.ExperiencesListAdapter;
-import eu.trentorise.smartcampus.eb.custom.data.Constants;
 import eu.trentorise.smartcampus.eb.custom.data.EBHelper;
+import eu.trentorise.smartcampus.eb.fragments.experience.ExperiencePager;
 import eu.trentorise.smartcampus.eb.model.Concept;
 import eu.trentorise.smartcampus.eb.model.Experience;
 import eu.trentorise.smartcampus.protocolcarrier.exceptions.ConnectionException;
-import eu.trentorise.smartcampus.protocolcarrier.exceptions.ProtocolException;
 import eu.trentorise.smartcampus.protocolcarrier.exceptions.SecurityException;
-import eu.trentorise.smartcampus.storage.DataException;
-import eu.trentorise.smartcampus.storage.remote.RemoteStorage;
 
 public class ViewerActivity extends Activity {
 
@@ -33,63 +32,54 @@ public class ViewerActivity extends Activity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.exp_shared);
 
+		try {
+			EBHelper.init(getApplicationContext());
+		} catch (NameNotFoundException e) {
+			EBHelper.endAppFailure(this, R.string.app_failure_setup);
+		}
+		
 		Intent data = getIntent();
 		String expId = data
 				.getStringExtra(getApplicationContext()
 						.getString(
 								eu.trentorise.smartcampus.android.common.R.string.view_intent_arg_object_id));
 
-		new Loader(getApplicationContext(), this).execute(expId);
+		new SCAsyncTask<String, Void, Experience>(this, new Loader(this)).execute(expId);
 	}
 
-	class Loader extends AsyncTask<String, Void, Experience> {
+	class Loader extends AbstractAsyncTaskProcessor<String, Experience> {
 		ProgressDialog progress;
-		Context ctx;
 		Activity act;
+		boolean own = false;
 
-		public Loader(Context ctx, Activity a) {
-			this.ctx = ctx;
-			act = a;
+		public Loader(Activity a) {
+			super(a);
+			this.act = a;
 		}
-
+		
 		@Override
-		protected Experience doInBackground(String... params) {
+		public Experience performAction(String... params) throws SecurityException, ConnectionException, Exception {
 			String expId = params[0];
-			RemoteStorage remoteStorage = new RemoteStorage(
-					getApplicationContext(), Constants.APP_TOKEN);
-			try {
-				remoteStorage.setConfig(EBHelper.getAuthToken(),
-						GlobalConfig.getAppUrl(getApplicationContext()),
-						Constants.SERVICE);
-				if (expId != null) {
-					return remoteStorage.getObjectById(expId, Experience.class);
-				}
-			} catch (ProtocolException e) {
-				e.printStackTrace();
-			} catch (DataException e) {
-				e.printStackTrace();
-			} catch (ConnectionException e) {
-				e.printStackTrace();
-			} catch (SecurityException e) {
-				e.printStackTrace();
-			} catch (AACException e) {
-				e.printStackTrace();
-			}
-
-			return null;
-		};
-
-		@Override
-		protected void onPreExecute() {
-			// progress = ProgressDialog.show(ctx, null,
-			// "Caricamento in corso");
+			Experience e = EBHelper.findExperienceByEntityId(expId);
+			if (e != null) own = EBHelper.isOwnExperience(e);
+			return e;
 		}
 
+
 		@Override
-		protected void onPostExecute(Experience result) {
+		public void handleResult(Experience result) {
 			ListView list = (ListView) findViewById(R.id.exp_contents_shared);
 
 			if (result != null) {
+				if (own) {
+					ArrayList<Experience> arrayList = new ArrayList<Experience>(1);
+					arrayList.add(result);
+					Intent i = ExperiencePager.prepareIntent(ViewerActivity.this, 0, arrayList);
+					startActivityForResult(i, 0);
+					return;
+				}
+				findViewById(R.id.exp_shared_container).setVisibility(View.VISIBLE);
+				
 				if (result.getTitle() != null) {
 					((TextView) findViewById(R.id.title_tv_shared))
 							.setText(result.getTitle());
@@ -118,8 +108,15 @@ public class ViewerActivity extends Activity {
 						R.layout.exp_contents_row, result.getContents());
 				list.setAdapter(content);
 			} else {
-				setContentView(R.layout.exp_shared_error);
+				Toast.makeText(act, R.string.exp_shared_error, Toast.LENGTH_LONG).show();
+				finish();
+//				setContentView(R.layout.exp_shared_error);
 			}
 		}
+
+	}
+	@Override
+	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+		finish();
 	}
 }

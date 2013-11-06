@@ -50,6 +50,8 @@ import eu.trentorise.smartcampus.eb.model.NearMeObject;
 import eu.trentorise.smartcampus.eb.model.Resource;
 import eu.trentorise.smartcampus.eb.model.UserPreference;
 import eu.trentorise.smartcampus.eb.syncadapter.FileSyncStorage;
+import eu.trentorise.smartcampus.profileservice.BasicProfileService;
+import eu.trentorise.smartcampus.profileservice.model.BasicProfile;
 import eu.trentorise.smartcampus.protocolcarrier.exceptions.ConnectionException;
 import eu.trentorise.smartcampus.protocolcarrier.exceptions.ProtocolException;
 import eu.trentorise.smartcampus.protocolcarrier.exceptions.SecurityException;
@@ -88,6 +90,8 @@ public class EBHelper {
 
 	private UserPreference preference = null;
 	private boolean loaded = false;
+	
+	private static BasicProfile bp = null;
 
 	public static void init(Context mContext) throws NameNotFoundException {
 		if (instance == null) {
@@ -118,6 +122,22 @@ public class EBHelper {
 
 	}
 
+	/**
+	 * To call from non UI thread only!
+	 * @return
+	 */
+	public static BasicProfile readBasicProfile() {
+		if (bp == null) {
+			try {
+				BasicProfileService bps = new BasicProfileService(GlobalConfig.getAppUrl(getInstance().mContext)+"/aac");
+				bp = bps.getBasicProfile(getAuthToken());
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+		return bp;
+	}
+	
 	public static synchronized void synchronize(boolean synchronizeFile) {
 		if (isSynchronizationActive()) {
 			Bundle bundle = new Bundle();
@@ -125,7 +145,6 @@ public class EBHelper {
 			ContentResolver.requestSync(SCAccount,
 					"eu.trentorise.smartcampus.eb", bundle);
 		}
-
 	}
 
 	public static boolean isSynchronizationActive() {
@@ -233,7 +252,7 @@ public class EBHelper {
 				mContext,
 				eu.trentorise.smartcampus.eb.custom.data.Constants.APP_TOKEN,
 				eu.trentorise.smartcampus.eb.custom.data.Constants.SYNC_DB_NAME,
-				1, sc);
+				Constants.DB_VERSION, sc);
 
 		SCAccount = new Account(
 				eu.trentorise.smartcampus.ac.Constants.getAccountName(mContext),
@@ -317,10 +336,10 @@ public class EBHelper {
 		List<String> params = new ArrayList<String>();
 
 		assert experienceFilter != null;
-		if (experienceFilter.getCollectionId() != null) {
+		if (experienceFilter.getCollectionIds() != null && experienceFilter.getCollectionIds().length > 0) {
 			query += (query.length() > 0 ? " AND " : "")
 					+ "collectionIds LIKE '%\""
-					+ experienceFilter.getCollectionId() + "\"%'";
+					+ experienceFilter.getCollectionIds()[0] + "\"%'";
 		}
 
 		if (experienceFilter.getText() != null
@@ -342,6 +361,37 @@ public class EBHelper {
 		if (collection.size() > 0)
 			return new ArrayList<Experience>(collection);
 		return Collections.emptyList();
+	}
+
+	public static Experience findExperienceByEntityId(String id) {
+		Experience res = findLocalExperienceByEntityId(id);
+		if (res == null) {
+			try {
+				ExperienceFilter filter = new ExperienceFilter();
+				filter.setEntityIds(new String[]{id});
+				Collection<Experience> coll = getRemote(getInstance().mContext, getAuthToken()).searchObjects(filter, Experience.class);
+				if (coll != null && coll.size() > 0) return coll.iterator().next();
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		} else {
+			BasicProfile profile = readBasicProfile();
+			if (profile != null) res.setSocialUserId(profile.getSocialId());
+		}
+		return res;
+	}
+	
+	public static Experience findLocalExperienceByEntityId(String id) {
+		String query = "entityId = '"+id+"'";
+		
+		Collection<Experience> collection = null;
+		try {
+			collection = getInstance().storage.query(Experience.class, query, null);
+			if (collection != null && collection.size() == 1) return collection.iterator().next();
+		} catch (Exception e) {
+			Log.e(EBHelper.class.getName(), "" + e.getMessage());
+		}
+		return null;
 	}
 
 	public static Experience saveExperience(Activity a, Experience exp,
@@ -463,5 +513,18 @@ public class EBHelper {
 		intent.setAction(ctx.getString(eu.trentorise.smartcampus.android.common.R.string.share_intent_action));
 		intent.putExtra(ctx.getString(eu.trentorise.smartcampus.android.common.R.string.share_entity_arg_entity), obj);
 		AppHelper.startActivityForApp(intent, ctx);
+	}
+	
+	/**
+	 * To call from non UI thread only!
+	 * @return
+	 */
+	public static boolean isOwnExperience(Experience e) {
+		if (e == null) return false;
+		BasicProfile profile = readBasicProfile();
+		if (profile == null) {
+			return false;
+		}
+		return profile.getSocialId().equals(e.getSocialUserId());
 	}
 }

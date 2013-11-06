@@ -127,7 +127,7 @@ public class CollectionsListFragment extends SherlockListFragment implements Col
 		Fragment f = new ExperiencesListFragment();
 		Bundle b = new Bundle();
 		ExperienceFilter filter = new ExperienceFilter();
-		filter.setCollectionId(collections.get(position).getId());
+		filter.setCollectionIds(new String[]{collections.get(position).getId()});
 		b.putSerializable(ExperiencesListFragment.ARG_FILTER, filter);
 		f.setArguments(b);
 		ft.replace(android.R.id.content, f);

@@ -121,8 +121,8 @@ public class ExperiencesListFragment extends SherlockListFragment
 		if (filter == null) {
 			getSherlockActivity().getSupportActionBar().setTitle(
 					R.string.title_diary);
-		} else if (filter.getCollectionId() != null) {
-			ExpCollection c = EBHelper.findCollection(filter.getCollectionId());
+		} else if (filter.getCollectionIds() != null && filter.getCollectionIds().length > 0) {
+			ExpCollection c = EBHelper.findCollection(filter.getCollectionIds()[0]);
 			if (c != null)
 				getSherlockActivity().getSupportActionBar().setTitle(
 						c.getName());

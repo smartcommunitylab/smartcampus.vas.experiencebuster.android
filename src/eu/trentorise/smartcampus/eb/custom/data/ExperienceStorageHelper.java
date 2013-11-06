@@ -43,6 +43,7 @@ public class ExperienceStorageHelper implements BeanStorageHelper<Experience> {
 		e.setTags(Utils.convertJSONToObjects(cursor.getString(cursor.getColumnIndex("tags")), Concept.class));
 		e.setTitle(cursor.getString(cursor.getColumnIndex("title")));
 		e.setUpdateTime(cursor.getLong(cursor.getColumnIndex("updateTime")));
+//		e.setSocialUserId(cursor.getString(cursor.getColumnIndex("socialUserId")));
 		return e;
 	}
 
@@ -68,6 +69,7 @@ public class ExperienceStorageHelper implements BeanStorageHelper<Experience> {
 		values.put("id", bean.getId());
 		values.put("title", bean.getTitle());
 		values.put("updateTime", bean.getUpdateTime());
+//		values.put("socialUserId", bean.getSocialUserId());
 
 		if (bean.getLocation() != null) {
 			values.put("latitude", bean.getLocation()[0]);
@@ -86,12 +88,13 @@ public class ExperienceStorageHelper implements BeanStorageHelper<Experience> {
 		defs.put("contents", "TEXT");
 		defs.put("creationTime", "INTEGER");
 		defs.put("description", "TEXT");
-		defs.put("entityId", "INTEGER");
+		defs.put("entityId", "TEXT");
 		defs.put("title", "TEXT");
 		defs.put("updateTime", "INTEGER");
 		defs.put("latitude", "DOUBLE");
 		defs.put("longitude", "DOUBLE");
 		defs.put("tags", "TEXT");
+//		defs.put("socialUserId", "TEXT");
 		return defs;
 	}
 
