@@ -52,7 +52,7 @@ public class FilestorageAccountActivity extends Activity {
 							new DialogInterface.OnClickListener() {
 								public void onClick(DialogInterface dialog,
 										int which) {
-									new AccountTask().execute();
+									createAccount();
 								}
 							})
 					.setNegativeButton(
@@ -65,7 +65,7 @@ public class FilestorageAccountActivity extends Activity {
 								}
 							}).setCancelable(false).show();
 		} else {
-			new AccountTask().execute();
+			createAccount();
 		}
 
 	}
@@ -92,7 +92,21 @@ public class FilestorageAccountActivity extends Activity {
 		}
 	}
 
-	class AccountTask extends AsyncTask<Void, Void, Void> {
+	private void createAccount() {
+		try {
+			AndroidFilestorage mFilestorage = new AndroidFilestorage(
+					GlobalConfig.getAppUrl(getApplicationContext())
+							+ Constants.FILE_SERVICE, Constants.APP_NAME);
+			mFilestorage.startAuthActivityForResult(
+					FilestorageAccountActivity.this,
+					EBHelper.getAuthToken(), StorageType.DROPBOX,
+					AUTH_REQUESTCODE);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+	
+	private class AccountTask extends AsyncTask<Void, Void, Void> {
 
 		@Override
 		protected Void doInBackground(Void... params) {

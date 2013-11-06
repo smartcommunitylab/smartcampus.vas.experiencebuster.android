@@ -50,6 +50,8 @@ import eu.trentorise.smartcampus.eb.model.NearMeObject;
 import eu.trentorise.smartcampus.eb.model.Resource;
 import eu.trentorise.smartcampus.eb.model.UserPreference;
 import eu.trentorise.smartcampus.eb.syncadapter.FileSyncStorage;
+import eu.trentorise.smartcampus.network.RemoteConnector;
+import eu.trentorise.smartcampus.network.RemoteConnector.CLIENT_TYPE;
 import eu.trentorise.smartcampus.profileservice.BasicProfileService;
 import eu.trentorise.smartcampus.profileservice.model.BasicProfile;
 import eu.trentorise.smartcampus.protocolcarrier.exceptions.ConnectionException;
@@ -247,6 +249,10 @@ public class EBHelper {
 	protected EBHelper(Context mContext) throws NameNotFoundException {
 		super();
 		this.mContext = mContext;
+		if (android.os.Build.VERSION.SDK_INT <= android.os.Build.VERSION_CODES.FROYO) {
+			RemoteConnector.setClientType(CLIENT_TYPE.CLIENT_WILDCARD);
+		}
+
 		this.sc = new EBStorageConfiguration();
 		this.storage = new FileSyncStorage(
 				mContext,

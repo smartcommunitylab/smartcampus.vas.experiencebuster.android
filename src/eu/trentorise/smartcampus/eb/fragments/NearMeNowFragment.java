@@ -188,7 +188,9 @@ public class NearMeNowFragment extends SherlockListFragment {
 						public void handleResult(List<NearMeObject> result) {
 							list = result == null ? new ArrayList<NearMeObject>() : result;
 							mAdapter.clear();
-							mAdapter.addAll(result);
+							for (NearMeObject nmo : result) {
+								mAdapter.add(nmo);
+							}
 							mAdapter.notifyDataSetChanged();
 							checkListEmpty(result);
 
