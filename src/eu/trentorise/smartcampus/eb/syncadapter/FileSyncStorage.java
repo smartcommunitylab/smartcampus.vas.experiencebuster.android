@@ -127,7 +127,7 @@ public class FileSyncStorage extends SyncStorageWithPaging {
 		}
 	}
 
-	public SyncData synchroFile(String authToken, String host, String service)
+	public synchronized SyncData synchroFile(String authToken, String host, String service)
 			throws StorageConfigurationException, SecurityException,
 			ConnectionException, DataException, ProtocolException {
 		SyncData syncData = helper.getDataToSync(getSyncVersion());
@@ -138,12 +138,11 @@ public class FileSyncStorage extends SyncStorageWithPaging {
 	private boolean synchroFile(SyncData data, String authToken) {
 
 		// save new resources
-		if (data.getUpdated().get(
-				"eu.trentorise.smartcampus.eb.model.Experience") != null) {
-			for (Object o : data.getUpdated().get(
-					"eu.trentorise.smartcampus.eb.model.Experience")) {
+		if (data.getUpdated().get(Experience.class.getCanonicalName()) != null) {
+			for (Object o : data.getUpdated().get(Experience.class.getCanonicalName())) {
 				Experience exp = eu.trentorise.smartcampus.android.common.Utils
 						.convertObjectToData(Experience.class, o);
+				boolean toUpdate = false;
 				for (Content c : exp.getContents()) {
 					if (c.isStorable()) {
 						try {
@@ -172,6 +171,7 @@ public class FileSyncStorage extends SyncStorageWithPaging {
 									fileStoraging.put(c.getLocalValue(),
 											meta.getResourceId());
 									c.setValue(meta.getResourceId());
+									toUpdate = true;
 								}
 							}
 
@@ -179,6 +179,7 @@ public class FileSyncStorage extends SyncStorageWithPaging {
 									&& fileStoraging.containsKey(c
 											.getLocalValue())) {
 								c.setValue(fileStoraging.get(c.getLocalValue()));
+								toUpdate = true;
 							}
 						} catch (Exception e) {
 							Log.e(getClass().getName(),
@@ -186,7 +187,9 @@ public class FileSyncStorage extends SyncStorageWithPaging {
 						}
 					}
 				}
-				EBHelper.saveExperience(null, exp, false);
+				if (toUpdate) {
+					EBHelper.saveExperience(null, exp, false);
+				}
 			}
 		}
 
