@@ -150,13 +150,15 @@ public class EBHelper {
 	}
 
 	public static boolean isSynchronizationActive() {
-		try {
-			return EBHelper.getConfiguration(CONF_SYNCHRO, Boolean.class);
-		} catch (Exception e) {
-			Log.e(EBHelper.class.getName(),
-					"Error getting synchro configuration. Synchronization is not active!");
-			return false;
-		}
+		return false;
+		// TODO uncomment below to enable synchronization
+//		try {
+//			return EBHelper.getConfiguration(CONF_SYNCHRO, Boolean.class);
+//		} catch (Exception e) {
+//			Log.e(EBHelper.class.getName(),
+//					"Error getting synchro configuration. Synchronization is not active!");
+//			return false;
+//		}
 	}
 
 	public static <T> boolean saveConfiguration(String configuration,

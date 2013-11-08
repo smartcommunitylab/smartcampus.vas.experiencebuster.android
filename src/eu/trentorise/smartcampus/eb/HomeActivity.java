@@ -184,11 +184,12 @@ public class HomeActivity extends SherlockFragmentActivity implements
 
 	}
 
-	@Override
-	public boolean onCreateOptionsMenu(Menu menu) {
-		getSupportMenuInflater().inflate(R.menu.main_menu, menu);
-		return true;
-	}
+	// TODO enable for synchronization configuration
+//	@Override
+//	public boolean onCreateOptionsMenu(Menu menu) {
+//		getSupportMenuInflater().inflate(R.menu.main_menu, menu);
+//		return true;
+//	}
 
 	private class StartProcessor extends AbstractAsyncTaskProcessor<Void, Void> {
 

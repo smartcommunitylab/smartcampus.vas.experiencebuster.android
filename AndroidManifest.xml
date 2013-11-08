@@ -69,11 +69,11 @@
             android:configChanges="keyboardHidden|orientation"
             android:label="@string/app_name"
             android:launchMode="singleTop" >
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
+<!--             <intent-filter> -->
+<!--                 <action android:name="android.intent.action.MAIN" /> -->
 
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
+<!--                 <category android:name="android.intent.category.LAUNCHER" /> -->
+<!--             </intent-filter> -->
             <intent-filter>
                 <action android:name="eu.trentorise.smartcampus.START" />
 
@@ -99,27 +99,25 @@
 
         <!-- Sync Service -->
 
-        <service android:name="eu.trentorise.smartcampus.storage.sync.service.SyncStorageService" />
-        <service
-            android:name=".syncadapter.EBSyncService"
-            android:exported="false" >
-            <intent-filter>
-                <action android:name="android.content.SyncAdapter" />
-            </intent-filter>
+<!--         <service android:name="eu.trentorise.smartcampus.storage.sync.service.SyncStorageService" /> -->
+<!--         <service -->
+<!--             android:name=".syncadapter.EBSyncService" -->
+<!--             android:exported="false" > -->
+<!--             <intent-filter> -->
+<!--                 <action android:name="android.content.SyncAdapter" /> -->
+<!--             </intent-filter> -->
 
-            <meta-data
-                android:name="android.content.SyncAdapter"
-                android:resource="@xml/syncadapter" />
-        </service>
+<!--             <meta-data -->
+<!--                 android:name="android.content.SyncAdapter" -->
+<!--                 android:resource="@xml/syncadapter" /> -->
+<!--         </service> -->
 
-        <!-- fake content provider to permit sync -->
-
-        <provider
-            android:name=".EBDummyProvider"
-            android:authorities="eu.trentorise.smartcampus.eb"
-            android:exported="false"
-            android:label="@string/app_name"
-            android:syncable="true" />
+<!--         <provider -->
+<!--             android:name=".EBDummyProvider" -->
+<!--             android:authorities="eu.trentorise.smartcampus.eb" -->
+<!--             android:exported="false" -->
+<!--             android:label="@string/app_name" -->
+<!--             android:syncable="true" /> -->
 
         <!-- Filestorage activities -->
         <activity

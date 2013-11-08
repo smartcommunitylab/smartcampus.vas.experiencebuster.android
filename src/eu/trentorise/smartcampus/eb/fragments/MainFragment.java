@@ -65,12 +65,13 @@ public class MainFragment extends SherlockFragment {
 		getSherlockActivity().getSupportActionBar().setTitle(R.string.app_name);
 	}
 
-	@Override
-	public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-		menu.clear();
-		inflater.inflate(R.menu.main_menu, menu);
-		super.onCreateOptionsMenu(menu, inflater);
-	}
+	// TODO uncomment this to enable sync settings
+//	@Override
+//	public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+//		menu.clear();
+//		inflater.inflate(R.menu.main_menu, menu);
+//		super.onCreateOptionsMenu(menu, inflater);
+//	}
 
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
