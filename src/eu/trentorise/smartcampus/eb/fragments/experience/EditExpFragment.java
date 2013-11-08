@@ -578,33 +578,40 @@ public class EditExpFragment extends SherlockFragment
 							}
 
 							if (expId == null) {
-								exp = EBHelper.saveExperience(getActivity(),
-										exp, false);
-								// find experience updated
+								// save locally
+								exp = EBHelper.saveExperience(getActivity(), exp, false);
+								// if synchronized, force server sync
 								if (EBHelper.isSynchronizationActive()) {
-									SyncData data = EBHelper
+									// sync data with server without files sync
+									EBHelper
 											.getSyncStorage()
 											.synchroFile(
-													EBHelper.getAuthToken(),
+													EBHelper.getAuthToken(), 
+													false,
 													GlobalConfig
 															.getAppUrl(getActivity()
 																	.getApplicationContext()),
 													eu.trentorise.smartcampus.eb.custom.data.Constants.SYNC_SERVICE);
-									if (data.getUpdated()
-											.get(Experience.class
-													.getCanonicalName()) != null) {
-										for (Object o : data.getUpdated().get(
-												Experience.class
-														.getCanonicalName())) {
-											Experience updatedExp = eu.trentorise.smartcampus.android.common.Utils
-													.convertObjectToData(
-															Experience.class, o);
-											if (updatedExp.getId().equals(
-													exp.getId())) {
-												return updatedExp;
-											}
-										}
-									}
+									exp = EBHelper.getSyncStorage().getObjectById(exp.getId(), Experience.class);
+									// touch object to enable file synchronization
+									EBHelper.saveExperience(getActivity(), exp, false);
+									// call async synchronization of files
+									EBHelper.synchronize(true);
+//									if (data.getUpdated()
+//											.get(Experience.class
+//													.getCanonicalName()) != null) {
+//										for (Object o : data.getUpdated().get(
+//												Experience.class
+//														.getCanonicalName())) {
+//											Experience updatedExp = eu.trentorise.smartcampus.android.common.Utils
+//													.convertObjectToData(
+//															Experience.class, o);
+//											if (updatedExp.getId().equals(
+//													exp.getId())) {
+//												return updatedExp;
+//											}
+//										}
+//									}
 								}
 							} else {
 								exp = EBHelper.saveExperience(getActivity(),

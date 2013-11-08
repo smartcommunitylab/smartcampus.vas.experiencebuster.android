@@ -67,6 +67,7 @@ public class EBSyncAdapter extends AbstractThreadedSyncAdapter {
 			if (synchroFile) {
 				storage.synchroFile(
 						EBHelper.getAuthToken(),
+						true,
 						GlobalConfig.getAppUrl(mContext),
 						eu.trentorise.smartcampus.eb.custom.data.Constants.SYNC_SERVICE);
 			} else {

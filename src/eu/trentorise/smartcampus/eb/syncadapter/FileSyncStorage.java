@@ -29,6 +29,7 @@ import eu.trentorise.smartcampus.eb.custom.data.EBHelper;
 import eu.trentorise.smartcampus.eb.model.Content;
 import eu.trentorise.smartcampus.eb.model.Experience;
 import eu.trentorise.smartcampus.eb.model.Resource;
+import eu.trentorise.smartcampus.filestorage.client.FilestorageException;
 import eu.trentorise.smartcampus.filestorage.client.model.Metadata;
 import eu.trentorise.smartcampus.protocolcarrier.exceptions.ConnectionException;
 import eu.trentorise.smartcampus.protocolcarrier.exceptions.ProtocolException;
@@ -127,16 +128,21 @@ public class FileSyncStorage extends SyncStorageWithPaging {
 		}
 	}
 
-	public synchronized SyncData synchroFile(String authToken, String host,
-			String service) throws StorageConfigurationException,
+	public synchronized SyncData synchroFile(String authToken, boolean syncFiles, String host, String service) throws StorageConfigurationException,
 			SecurityException, ConnectionException, DataException,
 			ProtocolException {
-		SyncData syncData = helper.getDataToSync(getSyncVersion());
-		synchroFile(syncData, authToken);
+		if (syncFiles) {
+			SyncData syncData = helper.getDataToSync(getSyncVersion());
+			try {
+				synchroFile(syncData, authToken);
+			} catch (FilestorageException e) {
+				throw new ProtocolException(e.getMessage());
+			}
+		}
 		return super.synchronize(authToken, host, service);
 	}
 
-	private boolean synchroFile(SyncData data, String authToken) {
+	private boolean synchroFile(SyncData data, String authToken) throws DataException, FilestorageException {
 
 		// save new resources
 		if (data.getUpdated().get(Experience.class.getCanonicalName()) != null) {
@@ -183,9 +189,14 @@ public class FileSyncStorage extends SyncStorageWithPaging {
 								c.setValue(fileStoraging.get(c.getLocalValue()));
 								toUpdate = true;
 							}
-						} catch (Exception e) {
-							Log.e(getClass().getName(),
-									"Exception storing file content");
+						} catch (DataException e) {
+							Log.e(getClass().getName(), "Exception storing file content");
+							e.printStackTrace();
+							throw e;
+						} catch (FilestorageException e) {
+							Log.e(getClass().getName(), "Exception storing file content");
+							e.printStackTrace();
+							throw e;
 						}
 					}
 				}
