@@ -44,6 +44,7 @@ public class ImageLoadTask extends AsyncTask<Content, Void, Bitmap> {
 
 	private String tag;
 	private AndroidFilestorage filestorage;
+	private boolean shared = false;
 
 	private static Map<String, Boolean> loadingHistory = new HashMap<String, Boolean>();
 
@@ -59,6 +60,10 @@ public class ImageLoadTask extends AsyncTask<Content, Void, Bitmap> {
 		} catch (ProtocolException e) {
 			e.printStackTrace();
 		}
+	}
+	public ImageLoadTask(ImageView imageView, Integer icMenuReportImage, boolean shared) {
+		this(imageView, icMenuReportImage);
+		this.shared = shared;
 	}
 
 	@Override
@@ -86,10 +91,31 @@ public class ImageLoadTask extends AsyncTask<Content, Void, Bitmap> {
 						&& EBHelper.isSynchronizationActive()
 						&& params[0].isUploaded()) {
 					loadingHistory.put(params[0].getId(), true);
-					Metadata meta = filestorage.getResourceMetadataByUser(
-							EBHelper.getAuthToken(), params[0].getValue());
-					if (EBHelper.checkFileSizeConstraints(meta.getSize())) {
-						Resource resource = filestorage.getResourceByUser(
+					if (!shared) {
+						Metadata meta = filestorage.getResourceMetadataByUser(
+								EBHelper.getAuthToken(), params[0].getValue());
+						if (EBHelper.checkFileSizeConstraints(meta.getSize())) {
+							Resource resource = filestorage.getResourceByUser(
+									EBHelper.getAuthToken(), params[0].getValue());
+							FileOutputStream fout = new FileOutputStream(
+									params[0].getLocalValue());
+							fout.write(resource.getContent());
+							fout.close();
+							Log.i(ImageLoadTask.class.getName(),
+									"Image not present loaded from remote and saved: "
+											+ params[0].getLocalValue());
+						} else {
+							Log.i(ImageLoadTask.class.getName(),
+									String.format(
+											"Image %s size is bigger than max file configuration : %s > %s",
+											params[0].getLocalValue(), meta
+													.getSize(),
+											EBHelper.getConfiguration(
+													EBHelper.CONF_FILE_SIZE,
+													String.class)));
+						}
+					} else {
+						Resource resource = filestorage.getSharedResourceByUser(
 								EBHelper.getAuthToken(), params[0].getValue());
 						FileOutputStream fout = new FileOutputStream(
 								params[0].getLocalValue());
@@ -98,16 +124,8 @@ public class ImageLoadTask extends AsyncTask<Content, Void, Bitmap> {
 						Log.i(ImageLoadTask.class.getName(),
 								"Image not present loaded from remote and saved: "
 										+ params[0].getLocalValue());
-					} else {
-						Log.i(ImageLoadTask.class.getName(),
-								String.format(
-										"Image %s size is bigger than max file configuration : %s > %s",
-										params[0].getLocalValue(), meta
-												.getSize(),
-										EBHelper.getConfiguration(
-												EBHelper.CONF_FILE_SIZE,
-												String.class)));
 					}
+					
 				}
 				if (f.exists()) {
 					String absPath = f.getAbsolutePath();

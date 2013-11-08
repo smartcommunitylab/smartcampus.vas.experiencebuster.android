@@ -105,7 +105,7 @@ public class ViewerActivity extends Activity {
 				}
 
 				ExpContentAdapter content = new ExpContentAdapter(act,
-						R.layout.exp_contents_row, result.getContents());
+						R.layout.exp_contents_row, result.getContents(), true);
 				list.setAdapter(content);
 			} else {
 				Toast.makeText(act, R.string.exp_shared_error, Toast.LENGTH_LONG).show();

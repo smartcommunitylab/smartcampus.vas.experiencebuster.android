@@ -37,13 +37,23 @@ public class ExpContentAdapter extends ArrayAdapter<Content> {
 	private Activity context;
 	private int layoutResourceId;
 	private List<ResourceHandler> resourceHandlers = new ArrayList<ResourceHandler>();
-
+	private boolean shared = false;
+	
+	
 	public ExpContentAdapter(Activity context, int layoutResourceId, List<Content> list) {
 		super(context, layoutResourceId, list);
 		this.context = context;
 		this.layoutResourceId = layoutResourceId;
 	}
 
+	public ExpContentAdapter(Activity context, int layoutResourceId, List<Content> list, boolean shared) {
+		super(context, layoutResourceId, list);
+		this.context = context;
+		this.layoutResourceId = layoutResourceId;
+		this.shared = shared;
+	}
+
+	
 	@Override
 	public View getView(int position, View convertView, ViewGroup parent) {
 		View row = convertView;
@@ -74,7 +84,7 @@ public class ExpContentAdapter extends ArrayAdapter<Content> {
 		}
 		
 		tag.content_frame.removeAllViews();
-		ResourceHandler rh = ContentRenderer.render(content,tag.content_frame,position);
+		ResourceHandler rh = ContentRenderer.render(content, tag.content_frame, position, shared);
 		if (rh != null) resourceHandlers.add(rh);
 		
 		if (content.getNote() != null) {

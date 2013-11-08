@@ -55,7 +55,7 @@ public class ContentRenderer {
 	}
 
 	public static ResourceHandler render(Content content, final ViewGroup view,
-			int position) {
+			int position, boolean shared) {
 		switch (content.getType()) {
 		case PHOTO:
 			ImageView iv = new ImageView(view.getContext());
@@ -77,11 +77,11 @@ public class ContentRenderer {
 				iv.setTag(content.getId());
 				// if device use android 3, use parallel async execution
 				if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.GINGERBREAD) {
-					new ImageLoadTask(iv, R.drawable.ic_menu_report_image)
+					new ImageLoadTask(iv, R.drawable.ic_menu_report_image, shared)
 							.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR,
 									content);
 				} else {// serial otherwise
-					new ImageLoadTask(iv, R.drawable.ic_menu_report_image)
+					new ImageLoadTask(iv, R.drawable.ic_menu_report_image, shared)
 							.execute(content);
 				}
 			}
@@ -153,7 +153,7 @@ public class ContentRenderer {
 				vv.setImageBitmap(thumbnail);
 			} else {
 				vv.setTag(content.getId());
-				new ImageLoadTask(vv, R.drawable.ic_menu_report_image)
+				new ImageLoadTask(vv, R.drawable.ic_menu_report_image, shared)
 						.execute(content);
 			}
 

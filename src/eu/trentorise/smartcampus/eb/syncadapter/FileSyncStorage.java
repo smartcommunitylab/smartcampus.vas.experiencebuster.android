@@ -127,9 +127,10 @@ public class FileSyncStorage extends SyncStorageWithPaging {
 		}
 	}
 
-	public synchronized SyncData synchroFile(String authToken, String host, String service)
-			throws StorageConfigurationException, SecurityException,
-			ConnectionException, DataException, ProtocolException {
+	public synchronized SyncData synchroFile(String authToken, String host,
+			String service) throws StorageConfigurationException,
+			SecurityException, ConnectionException, DataException,
+			ProtocolException {
 		SyncData syncData = helper.getDataToSync(getSyncVersion());
 		synchroFile(syncData, authToken);
 		return super.synchronize(authToken, host, service);
@@ -139,7 +140,8 @@ public class FileSyncStorage extends SyncStorageWithPaging {
 
 		// save new resources
 		if (data.getUpdated().get(Experience.class.getCanonicalName()) != null) {
-			for (Object o : data.getUpdated().get(Experience.class.getCanonicalName())) {
+			for (Object o : data.getUpdated().get(
+					Experience.class.getCanonicalName())) {
 				Experience exp = eu.trentorise.smartcampus.android.common.Utils
 						.convertObjectToData(Experience.class, o);
 				boolean toUpdate = false;
