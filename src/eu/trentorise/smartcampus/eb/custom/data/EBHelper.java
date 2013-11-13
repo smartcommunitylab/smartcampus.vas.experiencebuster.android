@@ -287,8 +287,9 @@ public class EBHelper {
 			userPreference.setSocialUserId(1L);
 			getInstance().preference = getInstance().storage
 					.create(userPreference);
+		} else {
+			getInstance().preference = userPreferencesCollection.iterator().next();
 		}
-		getInstance().preference = userPreferencesCollection.iterator().next();
 		synchronize(true);
 	}
 

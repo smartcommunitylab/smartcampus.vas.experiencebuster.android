@@ -336,19 +336,20 @@ public class EditExpFragment extends SherlockFragment
 			exp.setTitle(mTitleSwitch.getValue());
 			exp.setDescription(mDescrSwitch.getValue());
 			if (validate(exp)) {
-				try {
-					if (EBHelper.getConfiguration(EBHelper.CONF_SYNCHRO,
-							Boolean.class)
-							&& EBHelper.getConfiguration(
-									EBHelper.CONF_USER_ACCOUNT, String.class) == null) {
-						EBHelper.askUserAccount(this, ACCOUNT_CREATION, false);
-					} else {
+				// TODO uncomment this to enable synchronization
+//				try {
+//					if (EBHelper.getConfiguration(EBHelper.CONF_SYNCHRO,
+//							Boolean.class)
+//							&& EBHelper.getConfiguration(
+//									EBHelper.CONF_USER_ACCOUNT, String.class) == null) {
+//						EBHelper.askUserAccount(this, ACCOUNT_CREATION, false);
+//					} else {
 						new SaveTask().execute();
-					}
-				} catch (DataException e) {
-					Log.e(EditExpFragment.class.getName(),
-							"Error creating filestorage account");
-				}
+//					}
+//				} catch (DataException e) {
+//					Log.e(EditExpFragment.class.getName(),
+//							"Error creating filestorage account");
+//				}
 			}
 			break;
 		case R.id.expmenu_attach_audio:

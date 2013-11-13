@@ -74,16 +74,17 @@ public class HomeActivity extends SherlockFragmentActivity implements
 	private boolean initData() {
 		try {
 
-			// check filestorage account
-			if (EBHelper.getConfiguration(EBHelper.CONF_SYNCHRO, Boolean.class)
-					&& EBHelper.getConfiguration(EBHelper.CONF_USER_ACCOUNT,
-							String.class) == null) {
-				EBHelper.askUserAccount(this, FILESTORAGE_ACCOUNT_REGISTRATION,
-						true);
-			} else {
+			// TODO uncomment this to enable synchronization
+//			// check filestorage account
+//			if (EBHelper.getConfiguration(EBHelper.CONF_SYNCHRO, Boolean.class)
+//					&& EBHelper.getConfiguration(EBHelper.CONF_USER_ACCOUNT,
+//							String.class) == null) {
+//				EBHelper.askUserAccount(this, FILESTORAGE_ACCOUNT_REGISTRATION,
+//						true);
+//			} else {
 				new SCAsyncTask<Void, Void, Void>(this,
 						new StartProcessor(this)).execute();
-			}
+//			}
 		} catch (Exception e1) {
 			EBHelper.endAppFailure(this, R.string.app_failure_setup);
 			return false;

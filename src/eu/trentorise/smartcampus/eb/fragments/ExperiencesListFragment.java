@@ -199,15 +199,16 @@ public class ExperiencesListFragment extends SherlockListFragment
 
 	@Override
 	public void onCollectionsAssigned(String id, List<String> colls) {
-		try {
-			if (EBHelper.getConfiguration(EBHelper.CONF_USER_ACCOUNT,
-					String.class) == null) {
-				EBHelper.askUserAccount(getActivity(), ACCOUNT_CREATION, true);
-			}
-		} catch (DataException e1) {
-			Log.e(ExperiencesListFragment.class.getName(),
-					"Error creating filestorage user account");
-		}
+		//TODO uncomment this to enable synchronization
+//		try {
+//			if (EBHelper.getConfiguration(EBHelper.CONF_USER_ACCOUNT,
+//					String.class) == null) {
+//				EBHelper.askUserAccount(getActivity(), ACCOUNT_CREATION, true);
+//			}
+//		} catch (DataException e1) {
+//			Log.e(ExperiencesListFragment.class.getName(),
+//					"Error creating filestorage user account");
+//		}
 		for (Experience e : experiencesList) {
 			if (e.getId().equals(id)) {
 				e.setCollectionIds(colls);
