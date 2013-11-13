@@ -50,6 +50,9 @@
         <uses-library android:name="com.google.android.maps" />
 
         <meta-data
+            android:name="eu.trentorise.smartcampus.account.AUTH_URL"
+            android:value="https://ac.smartcampuslab.it/aac" />
+        <meta-data
             android:name="eu.trentorise.smartcampus.account.ACCOUNT_TYPE"
             android:value="eu.trentorise.smartcampus.account" />
         <meta-data
