@@ -277,9 +277,10 @@ public class EBHelper {
 		// UserPreference
 		Collection<UserPreference> userPreferencesCollection = getInstance().storage
 				.getObjects(UserPreference.class);
-		if (userPreferencesCollection.isEmpty()) {
-			userPreferencesCollection = readUserPreference();
-		}
+		// TODO uncomment below to enable synchronization
+//		if (userPreferencesCollection.isEmpty()) {
+//			userPreferencesCollection = readUserPreference();
+//		}
 		// if not in remotestorage to
 		if (userPreferencesCollection.isEmpty()) {
 			UserPreference userPreference = new UserPreference();
