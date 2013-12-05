@@ -36,7 +36,7 @@ public class ExperienceStorageHelper implements BeanStorageHelper<Experience> {
 		e.setCollectionIds(Utils.convertJSONToObjects(cursor.getString(cursor.getColumnIndex("collectionIds")), String.class));
 		e.setContents(Utils.convertJSONToObjects(cursor.getString(cursor.getColumnIndex("contents")), Content.class));
 		e.setCreationTime(cursor.getLong(cursor.getColumnIndex("creationTime")));
-		e.setDescription(cursor.getString(cursor.getColumnIndex("description")));
+//		e.setDescription(cursor.getString(cursor.getColumnIndex("description")));
 		e.setEntityId(cursor.getString(cursor.getColumnIndex("entityId")));
 		e.setId(cursor.getString(cursor.getColumnIndex("id")));
 		e.setLocation(new double[]{cursor.getDouble(cursor.getColumnIndex("latitude")),cursor.getDouble(cursor.getColumnIndex("longitude"))});
@@ -64,7 +64,6 @@ public class ExperienceStorageHelper implements BeanStorageHelper<Experience> {
 		values.put("collectionIds", Utils.convertToJSON(bean.getCollectionIds()));
 		values.put("contents", Utils.convertToJSON(bean.getContents()));
 		values.put("creationTime", bean.getCreationTime());
-		values.put("description", bean.getDescription());
 		values.put("entityId", bean.getEntityId());
 		values.put("id", bean.getId());
 		values.put("title", bean.getTitle());

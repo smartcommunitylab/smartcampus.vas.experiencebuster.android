@@ -47,11 +47,12 @@
      <string name="title_activity_file"></string>
     
     <string name="ext_form_title_hint">Title…</string>
+
     <string name="exp_form_tags_hint">Tags…</string>
-    <string name="exp_form_descr_hint">Description…</string>
+    <string name="exp_form_descr_hint">Text…</string>
 
     <string name="expmenu_save">Save</string>
-    <string name="expmenu_done">Done</string>
+    <!-- <string name="expmenu_done">Done</string> -->
     <string name="expmenu_assign_collection">Assign folders</string>
     <string name="expmenu_share">Share</string>
     <string name="expmenu_export">Export</string>
@@ -108,4 +109,6 @@
     <string name="mainmenu_settings">Settings</string>
     <string name="token_required">Please login before proceeding with the application.</string>
     <string name="token_expired">App login expired.</string>
+    
+    <string name="no_title">No Title</string>
 </resources>

@@ -29,7 +29,7 @@
         android:menuCategory="system"
         android:orderInCategory="10"
         android:showAsAction="always"
-        android:title="@string/expmenu_done">
+        android:title="@string/expmenu_save">
     </item>
 
 </menu>

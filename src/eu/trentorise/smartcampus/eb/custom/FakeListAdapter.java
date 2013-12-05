@@ -51,7 +51,6 @@ public class FakeListAdapter extends ArrayAdapter<Fake> {
 
 			holder = new Holder();
 			holder.separator = (TextView) row.findViewById(R.id.separator);
-			holder.fakeText = (TextView) row.findViewById(R.id.description);
 
 			row.setTag(holder);
 		} else {
@@ -71,14 +70,12 @@ public class FakeListAdapter extends ArrayAdapter<Fake> {
 			holder.separator.setVisibility(View.GONE);
 		}
 
-		holder.fakeText.setText(fake.getText());
 
 		return row;
 	}
 
 	private static class Holder {
 		TextView separator;
-		TextView fakeText;
 	}
 
 }

@@ -23,30 +23,36 @@
         android:id="@+id/title_switcher"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_gravity="bottom" >
+        android:layout_gravity="bottom"
+        android:inAnimation="@anim/zoom_out" >
 
         <TextView
             android:id="@+id/title_tv"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="bottom"
+            android:minHeight="80dp"
             android:clickable="true"
             android:gravity="bottom"
-            android:hint="@string/ext_form_title_hint"
+            android:hint="@string/exp_form_descr_hint"
+            android:singleLine="false"
             android:paddingBottom="15dp"
             android:textAppearance="?android:attr/textAppearanceLarge" />
 
         <EditText
             android:id="@+id/title"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="bottom"
-            android:gravity="bottom"
-            android:hint="@string/ext_form_title_hint"
+            android:minHeight="80dp"
+            android:inputType="textMultiLine"
+            android:singleLine="false"
+            android:gravity="center_vertical"
+            android:hint="@string/exp_form_descr_hint"
             android:paddingBottom="15dp" />
     </ViewSwitcher>
-
-    <TextView
+<!-- TAGS -->
+<!--     <TextView
         android:id="@+id/tags_tv"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -54,7 +60,7 @@
         android:hint="@string/exp_form_tags_hint"
         android:paddingBottom="10dp"
         android:textAppearance="?android:attr/textAppearanceMedium"
-        android:textStyle="italic" />
+        android:textStyle="italic" /> -->
 
     <TextView
         android:id="@+id/collections_tv"
@@ -65,30 +71,5 @@
         android:paddingBottom="10dp"
         android:textStyle="italic|bold" />
 
-    <ViewSwitcher
-        android:id="@+id/descr_switcher"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-               android:layout_gravity="bottom"
-        android:paddingBottom="15dp" >
-
-        <TextView
-            android:id="@+id/description_tv"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:clickable="true"
-            android:layout_gravity="bottom"
-            android:gravity="bottom"
-            android:hint="@string/exp_form_descr_hint" />
-
-        <EditText
-            android:id="@+id/description"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="bottom"
-            android:gravity="bottom"
-            android:textAppearance="?android:attr/textAppearanceSmall"
-            android:hint="@string/exp_form_descr_hint" />
-    </ViewSwitcher>
 
 </LinearLayout>
