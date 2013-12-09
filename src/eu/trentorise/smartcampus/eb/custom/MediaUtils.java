@@ -51,7 +51,6 @@ public class MediaUtils {
 	
 	public static String getMediaAbsolutePath(Context ctx, Uri uri) {
 		String[] filePathColumn = { MediaStore.Images.Media.DATA };
-
 		Cursor cursor = ctx.getContentResolver().query(uri,
 				filePathColumn, null, null, null);
 		if (cursor == null || cursor.getCount() == 0) return null;

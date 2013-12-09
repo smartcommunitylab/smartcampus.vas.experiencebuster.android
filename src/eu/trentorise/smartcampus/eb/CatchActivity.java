@@ -15,8 +15,11 @@
  ******************************************************************************/
 package eu.trentorise.smartcampus.eb;
 
+import java.io.File;
+
 import android.accounts.AccountManager;
 import android.content.Intent;
+import android.content.pm.PackageManager.NameNotFoundException;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
@@ -29,6 +32,8 @@ import eu.trentorise.smartcampus.eb.Constants.CATCH_TYPES;
 import eu.trentorise.smartcampus.eb.custom.capture.CaptureHelper;
 import eu.trentorise.smartcampus.eb.custom.capture.CaptureHelper.ResultHandler;
 import eu.trentorise.smartcampus.eb.custom.capture.GrabbedContent;
+import eu.trentorise.smartcampus.eb.custom.capture.content.ImageContent;
+import eu.trentorise.smartcampus.eb.custom.capture.content.VideoContent;
 import eu.trentorise.smartcampus.eb.custom.data.EBHelper;
 import eu.trentorise.smartcampus.eb.fragments.BackListener;
 import eu.trentorise.smartcampus.eb.fragments.NearMeNowFragment;
@@ -72,6 +77,14 @@ public class CatchActivity extends SherlockFragmentActivity implements
 
 	@Override
 	protected void onResume() {
+		if(EBHelper.getLocationHelper()!=null){
+			try {
+				EBHelper.init(this.getApplicationContext());
+			} catch (NameNotFoundException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
 		EBHelper.getLocationHelper().start();
 		super.onResume();
 	}
