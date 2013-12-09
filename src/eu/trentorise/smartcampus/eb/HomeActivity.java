@@ -15,6 +15,8 @@
  ******************************************************************************/
 package eu.trentorise.smartcampus.eb;
 
+import java.util.ArrayList;
+
 import android.accounts.AccountManager;
 import android.app.Activity;
 import android.content.BroadcastReceiver;
@@ -22,13 +24,18 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
+import android.support.v4.app.ActionBarDrawerToggle;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v4.widget.DrawerLayout;
 import android.util.Log;
+import android.widget.ArrayAdapter;
+import android.widget.ExpandableListView;
+import android.widget.ListView;
 import android.widget.Toast;
 
 import com.actionbarsherlock.app.SherlockFragmentActivity;
-import com.actionbarsherlock.view.Menu;
 
 import eu.trentorise.smartcampus.ac.SCAccessProvider;
 import eu.trentorise.smartcampus.android.common.SCAsyncTask;
@@ -37,7 +44,7 @@ import eu.trentorise.smartcampus.eb.custom.AbstractAsyncTaskProcessor;
 import eu.trentorise.smartcampus.eb.custom.data.EBHelper;
 import eu.trentorise.smartcampus.eb.filestorage.FilestorageAccountActivity;
 import eu.trentorise.smartcampus.eb.fragments.BackListener;
-import eu.trentorise.smartcampus.eb.fragments.MainFragment;
+import eu.trentorise.smartcampus.eb.fragments.ExperiencesListFragment;
 import eu.trentorise.smartcampus.eb.fragments.NewCollectionDialogFragment.CollectionSavedHandler;
 import eu.trentorise.smartcampus.eb.fragments.experience.AssignCollectionFragment.AssignCollectionsCallback;
 import eu.trentorise.smartcampus.eb.fragments.experience.DeleteExperienceFragment.RemoveCallback;
@@ -54,6 +61,13 @@ public class HomeActivity extends SherlockFragmentActivity implements
 	private final static int FILESTORAGE_ACCOUNT_REGISTRATION = 10000;
 
 	protected final int mainlayout = android.R.id.content;
+
+	private DrawerLayout mDrawerLayout;
+	private ActionBarDrawerToggle mDrawerToggle;
+
+	private FragmentManager mFragmentManager;
+
+	private ListView mListView;
 
 	@Override
 	protected void onSaveInstanceState(Bundle outState) {
@@ -75,16 +89,17 @@ public class HomeActivity extends SherlockFragmentActivity implements
 		try {
 
 			// TODO uncomment this to enable synchronization
-//			// check filestorage account
-//			if (EBHelper.getConfiguration(EBHelper.CONF_SYNCHRO, Boolean.class)
-//					&& EBHelper.getConfiguration(EBHelper.CONF_USER_ACCOUNT,
-//							String.class) == null) {
-//				EBHelper.askUserAccount(this, FILESTORAGE_ACCOUNT_REGISTRATION,
-//						true);
-//			} else {
-				new SCAsyncTask<Void, Void, Void>(this,
-						new StartProcessor(this)).execute();
-//			}
+			// // check filestorage account
+			// if (EBHelper.getConfiguration(EBHelper.CONF_SYNCHRO,
+			// Boolean.class)
+			// && EBHelper.getConfiguration(EBHelper.CONF_USER_ACCOUNT,
+			// String.class) == null) {
+			// EBHelper.askUserAccount(this, FILESTORAGE_ACCOUNT_REGISTRATION,
+			// true);
+			// } else {
+			new SCAsyncTask<Void, Void, Void>(this, new StartProcessor(this))
+					.execute();
+			// }
 		} catch (Exception e1) {
 			EBHelper.endAppFailure(this, R.string.app_failure_setup);
 			return false;
@@ -96,6 +111,7 @@ public class HomeActivity extends SherlockFragmentActivity implements
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		// supportInvalidateOptionsMenu();
+		setContentView(R.layout.base);
 		getSupportActionBar().setDisplayShowTitleEnabled(false);
 		initDataManagement(savedInstanceState);
 		if (savedInstanceState == null) {
@@ -109,8 +125,28 @@ public class HomeActivity extends SherlockFragmentActivity implements
 		}
 		FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
 		Fragment frag = null;
-		frag = new MainFragment();
-		ft.replace(android.R.id.content, frag).commitAllowingStateLoss();
+
+		// frag = new MainFragment();
+		frag = new ExperiencesListFragment();
+
+		ft.replace(R.id.content_frame, frag).commitAllowingStateLoss();
+	}
+
+	private void setupNavDrawer() {
+
+		mFragmentManager = getSupportFragmentManager();
+		mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
+		// this is a class created to avoid an Android bug
+		// see the class for further infos.
+		mDrawerToggle = new ActionBarDrawerToggle(this, mDrawerLayout,
+				R.drawable.ic_drawer, R.string.app_name, R.string.app_name);
+
+		mDrawerLayout.setDrawerListener(mDrawerToggle);
+		mListView = (ListView) findViewById(R.id.drawer_list);
+
+		mListView.setAdapter(new ArrayAdapter<String>(this,
+				android.R.layout.simple_list_item_1, new ArrayList<String>()));
+
 	}
 
 	@Override
@@ -186,11 +222,11 @@ public class HomeActivity extends SherlockFragmentActivity implements
 	}
 
 	// TODO enable for synchronization configuration
-//	@Override
-//	public boolean onCreateOptionsMenu(Menu menu) {
-//		getSupportMenuInflater().inflate(R.menu.main_menu, menu);
-//		return true;
-//	}
+	// @Override
+	// public boolean onCreateOptionsMenu(Menu menu) {
+	// getSupportMenuInflater().inflate(R.menu.main_menu, menu);
+	// return true;
+	// }
 
 	private class StartProcessor extends AbstractAsyncTaskProcessor<Void, Void> {
 
