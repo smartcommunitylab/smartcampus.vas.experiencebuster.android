@@ -25,6 +25,7 @@ import java.util.Locale;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.location.Address;
@@ -39,6 +40,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.AdapterView.AdapterContextMenuInfo;
 import android.widget.AdapterView.OnItemClickListener;
@@ -199,6 +201,21 @@ public class EditExpFragment extends SherlockFragment
 				true);
 		getSherlockActivity().getSupportActionBar().setTitle(
 				R.string.title_expform);
+
+		if (getArguments() == null || !getArguments().containsKey(ARG_EXP))
+			getView().postDelayed(new Runnable() {
+
+				@Override
+				public void run() {
+					InputMethodManager keyboard = (InputMethodManager) getActivity()
+							.getSystemService(Context.INPUT_METHOD_SERVICE);
+					keyboard.showSoftInput(getView().findViewById(R.id.title),
+							0);
+
+					switchToEdit();
+					mTitleSwitch.editMode();
+				}
+			}, 100);
 	}
 
 	@Override
@@ -333,7 +350,7 @@ public class EditExpFragment extends SherlockFragment
 		case R.id.expmenu_save:
 			exp.setTitle(mTitleSwitch.getValue());
 
-			if (validate(exp,true)) {
+			if (validate(exp, true)) {
 				// TODO uncomment this to enable synchronization
 				// try {
 				// if (EBHelper.getConfiguration(EBHelper.CONF_SYNCHRO,
@@ -412,7 +429,7 @@ public class EditExpFragment extends SherlockFragment
 	private void switchToView() {
 		editMode = false;
 		mTitleSwitch.viewMode();
-		if(getSherlockActivity()!=null)
+		if (getSherlockActivity() != null)
 			getSherlockActivity().invalidateOptionsMenu();
 	}
 
@@ -423,11 +440,11 @@ public class EditExpFragment extends SherlockFragment
 		getSherlockActivity().invalidateOptionsMenu();
 	}
 
-	private boolean validate(Experience e,boolean show) {
+	private boolean validate(Experience e, boolean show) {
 		if (e.getTitle() == null || e.getTitle().trim().length() == 0) {
-			if(show)
-			Toast.makeText(getActivity(), R.string.alert_title_required,
-					Toast.LENGTH_SHORT).show();
+			if (show)
+				Toast.makeText(getActivity(), R.string.alert_title_required,
+						Toast.LENGTH_SHORT).show();
 			return false;
 		}
 		return true;
@@ -774,16 +791,16 @@ public class EditExpFragment extends SherlockFragment
 
 	@Override
 	public void onBack() {
-		
-		if(!adapter.isEmpty() && mTitleSwitch.getValue().isEmpty()){
+
+		if (!adapter.isEmpty() && mTitleSwitch.getValue().isEmpty()) {
 			exp.setTitle(getString(R.string.no_title));
-		}else if(!mTitleSwitch.getValue().isEmpty()){
+		} else if (!mTitleSwitch.getValue().isEmpty()) {
 			exp.setTitle(mTitleSwitch.getValue());
 		}
-		
-		if (validate(exp,false)) {
+
+		if (validate(exp, false)) {
 			new SaveTask().execute();
-		}else{
+		} else {
 			getFragmentManager().popBackStack();
 		}
 	}
