@@ -28,6 +28,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.res.AssetFileDescriptor;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Environment;
 import android.provider.MediaStore;
 import android.util.Log;
@@ -42,6 +43,7 @@ import eu.trentorise.smartcampus.eb.custom.capture.content.VideoContent;
 
 public class CaptureHelper {
 
+	private static final String TMP_IMAGE_NAME = "tmpImg.jpg";
 	public static final int MEDIA_TYPE_IMAGE = 1;
 	public static final int MEDIA_TYPE_VIDEO = 2;
 
@@ -116,7 +118,7 @@ public class CaptureHelper {
 								.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES),
 						Constants.EB_APP_MEDIA_FOLDER);
 				
-				intent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(new File(mediaStorageDir+File.separator + "newImg.jpg")));
+				intent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(new File(mediaStorageDir+File.separator + TMP_IMAGE_NAME)));
 				
 				resultHandler.startActivityForResult(
 						Intent.createChooser(intent, "Capture Image"),
@@ -126,12 +128,12 @@ public class CaptureHelper {
 			case VIDEO_CAMERA: {
 				Intent intent = new Intent(MediaStore.ACTION_VIDEO_CAPTURE);
 				intent.putExtra(MediaStore.EXTRA_VIDEO_QUALITY, 1);
-		
-				intent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(getOutputMediaFile("3gp")));
-				// intent.putExtra(MediaStore.EXTRA_SIZE_LIMIT,
-				// Constants.FILE_SIZE_LIMIT);
-				// Uri fileUri = getOutputMediaFileUri(MEDIA_TYPE_VIDEO);
-				// intent.putExtra(MediaStore.EXTRA_OUTPUT, fileUri);
+				
+				//TODO hotfix for nexus devices.
+				if(Build.MODEL.toLowerCase().contains("nexus"))
+					intent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(getOutputMediaFile("3gp")));
+				
+
 				resultHandler.startActivityForResult(
 						Intent.createChooser(intent, "Capture Video"),
 						RC_CAPTURE_VIDEO + shift);
@@ -186,7 +188,7 @@ public class CaptureHelper {
 								.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES),
 						Constants.EB_APP_MEDIA_FOLDER);
 				
-				File fi = new File(mediaStorageDir+File.separator  + "newImg.jpg");
+				File fi = new File(mediaStorageDir+File.separator  + TMP_IMAGE_NAME);
 				
 				try {
 					// imgUri = writeImageData(mContext, imgUri, "jpg");
@@ -196,7 +198,6 @@ public class CaptureHelper {
 							fi.getAbsolutePath(), null, null));
 					resultHandler.onResult(new ImageContent(writeMediaData(
 							mContext, imgUri, true)));
-					fi.delete();
 				} catch (Exception e) {
 					e.printStackTrace();
 					Log.e("CaptureHelper", "Error reading image");
@@ -208,14 +209,16 @@ public class CaptureHelper {
 		}
 		if (requestCode == RC_CAPTURE_VIDEO + shift) {
 			if (resultCode != 0) {
-				
+				Uri imgUri=data.getData();
 				
 				try {
 					// resultHandler.onResult(new
 					// VideoContent(imgUri.toString()));
-					resultHandler.onResult(new VideoContent(data.getData().toString().substring(6)));
-//					resultHandler.onResult(new VideoContent(writeMediaData(
-//							mContext, imgUri, true)));
+					if(Build.MODEL.toLowerCase().contains("nexus"))
+						resultHandler.onResult(new VideoContent(imgUri.toString().substring(6)));
+					else
+						resultHandler.onResult(new VideoContent(writeMediaData(
+								mContext, imgUri, true)));
 				} catch (Exception e) {
 					e.printStackTrace();
 					Log.e("CaptureHelper", "Error reading video");
