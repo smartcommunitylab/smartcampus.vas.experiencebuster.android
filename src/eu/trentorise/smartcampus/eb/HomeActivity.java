@@ -36,6 +36,7 @@ import android.widget.ListView;
 import android.widget.Toast;
 
 import com.actionbarsherlock.app.SherlockFragmentActivity;
+import com.actionbarsherlock.view.MenuItem;
 
 import eu.trentorise.smartcampus.ac.SCAccessProvider;
 import eu.trentorise.smartcampus.android.common.SCAsyncTask;
@@ -118,6 +119,13 @@ public class HomeActivity extends SherlockFragmentActivity implements
 			setUpContent();
 		}
 	}
+	
+
+	@Override
+	protected void onPostCreate(Bundle savedInstanceState) {
+		super.onPostCreate(savedInstanceState);
+		mDrawerToggle.syncState();
+	}
 
 	private void setUpContent() {
 		if (getSupportFragmentManager().getBackStackEntryCount() > 0) {
@@ -130,6 +138,8 @@ public class HomeActivity extends SherlockFragmentActivity implements
 		frag = new ExperiencesListFragment();
 
 		ft.replace(R.id.content_frame, frag).commitAllowingStateLoss();
+		
+		setupNavDrawer();
 	}
 
 	private void setupNavDrawer() {
@@ -207,11 +217,14 @@ public class HomeActivity extends SherlockFragmentActivity implements
 	}
 
 	@Override
-	public boolean onOptionsItemSelected(
-			com.actionbarsherlock.view.MenuItem item) {
+	public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
 		case android.R.id.home:
-			onBackPressed();
+			if (mDrawerLayout.isDrawerOpen(findViewById(R.id.drawer_wrapper))) {
+	            mDrawerLayout.closeDrawer(findViewById(R.id.drawer_wrapper));
+	        } else {
+	            mDrawerLayout.openDrawer(findViewById(R.id.drawer_wrapper));
+	        }
 			return true;
 		case R.id.mainmenu_settings:
 			startActivity(new Intent(this, SettingsActivity.class));
