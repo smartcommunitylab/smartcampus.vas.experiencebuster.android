@@ -36,6 +36,7 @@ import android.widget.ListView;
 import android.widget.Toast;
 
 import com.actionbarsherlock.app.SherlockFragmentActivity;
+import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuItem;
 
 import eu.trentorise.smartcampus.ac.SCAccessProvider;
@@ -46,6 +47,7 @@ import eu.trentorise.smartcampus.eb.custom.data.EBHelper;
 import eu.trentorise.smartcampus.eb.filestorage.FilestorageAccountActivity;
 import eu.trentorise.smartcampus.eb.fragments.BackListener;
 import eu.trentorise.smartcampus.eb.fragments.ExperiencesListFragment;
+import eu.trentorise.smartcampus.eb.fragments.MainFragment;
 import eu.trentorise.smartcampus.eb.fragments.NewCollectionDialogFragment.CollectionSavedHandler;
 import eu.trentorise.smartcampus.eb.fragments.experience.AssignCollectionFragment.AssignCollectionsCallback;
 import eu.trentorise.smartcampus.eb.fragments.experience.DeleteExperienceFragment.RemoveCallback;
@@ -120,6 +122,12 @@ public class HomeActivity extends SherlockFragmentActivity implements
 		}
 	}
 	
+	@Override
+	public boolean onCreateOptionsMenu(Menu menu) {
+		//getSupportMenuInflater().inflate(R.menu.main_menu, menu);
+		return super.onCreateOptionsMenu(menu);
+	}
+	
 
 	@Override
 	protected void onPostCreate(Bundle savedInstanceState) {
@@ -134,7 +142,7 @@ public class HomeActivity extends SherlockFragmentActivity implements
 		FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
 		Fragment frag = null;
 
-		// frag = new MainFragment();
+		//frag = new MainFragment();
 		frag = new ExperiencesListFragment();
 
 		ft.replace(R.id.content_frame, frag).commitAllowingStateLoss();

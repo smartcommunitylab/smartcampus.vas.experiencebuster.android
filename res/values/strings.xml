@@ -24,14 +24,14 @@
     
     <string name="mainmenu_grab">Grab experience</string>
     <string name="mainmenu_diary">Diary</string>
-    <string name="mainmenu_collections">Folders</string>
+    <string name="mainmenu_collections">categorys</string>
     <string name="mainmenu_search">Search</string>
     
     <string name="dialog_create">Create</string>
     <string name="dialog_save">Save</string>
     <string name="dialog_grab">Grab the experience with:</string>
-    <string name="dialog_collection_add">New folder</string>
-    <string name="dialog_collection_edit">Edit folder</string>
+    <string name="dialog_collection_add">New category</string>
+    <string name="dialog_collection_edit">Edit category</string>
     
     <string name="app_failure_security">Failed to retrieve authentication data</string>
     <string name="app_failure_setup">Failed to initialize appplication</string>
@@ -40,7 +40,7 @@
 
     <string name="title_grab_qrcode">Grab QR-code</string>
     <string name="title_expform">Experience</string>
-    <string name="title_collections">Folders</string>
+    <string name="title_collections">Categorys</string>
     <string name="title_diary">Diary</string>
     <string name="title_nearme">Near me now</string>
     <string name="title_search">Search</string>
@@ -53,7 +53,7 @@
 
     <string name="expmenu_save">Save</string>
     <!-- <string name="expmenu_done">Done</string> -->
-    <string name="expmenu_assign_collection">Assign folders</string>
+    <string name="expmenu_assign_collection">Assign categorys</string>
     <string name="expmenu_share">Share</string>
     <string name="expmenu_export">Export</string>
     <string name="expmenu_map">View on map</string>
@@ -71,9 +71,9 @@
     <string name="msg_location_undefined">Unable to detect current location.</string>
     
     <string name="alert_title_required">Specify title</string>
-    <string name="alert_folder_name_required">Specify folder name</string>
+    <string name="alert_folder_name_required">Specify category name</string>
     
-    <string name="error_collection_store">Failed to store folder</string>
+    <string name="error_collection_store">Failed to store category</string>
     <string name="error_exp_store">Failed to store experience</string>
     <string name="error_exp_delete">Failed to delete experience</string>
     
@@ -82,10 +82,10 @@
     
     <string name="exp_menu_header">Experience options</string>
     
-    <string name="coll_menu_header">Folder options</string>
-    <string name="collmenu_edit">Edit folder</string>
-    <string name="collmenu_remove">Remove folder</string>
-    <string name="msg_delete_coll_confirm">Are you sure you want to delete this folder?</string>
+    <string name="coll_menu_header">Category options</string>
+    <string name="collmenu_edit">Edit category</string>
+    <string name="collmenu_remove">Remove category</string>
+    <string name="msg_delete_coll_confirm">Are you sure you want to delete this category?</string>
     
     <string name="expcontentmenu_comment">Text</string>
     <string name="expcontentmenu_remove">Remove</string>
@@ -111,4 +111,6 @@
     <string name="token_expired">App login expired.</string>
     
     <string name="no_title">No Title</string>
+    
+    <string name="uncantorized">Uncantorized</string>
 </resources>

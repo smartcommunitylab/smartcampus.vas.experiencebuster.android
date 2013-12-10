@@ -27,7 +27,6 @@ import android.util.Log;
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
 import android.view.LayoutInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView.AdapterContextMenuInfo;
@@ -35,8 +34,13 @@ import android.widget.ListView;
 import android.widget.Toast;
 
 import com.actionbarsherlock.app.SherlockListFragment;
+import com.actionbarsherlock.view.Menu;
+import com.actionbarsherlock.view.MenuInflater;
+import com.actionbarsherlock.view.MenuItem;
 
+import eu.trentorise.smartcampus.eb.CatchActivity;
 import eu.trentorise.smartcampus.eb.R;
+import eu.trentorise.smartcampus.eb.SettingsActivity;
 import eu.trentorise.smartcampus.eb.custom.ExperiencesListAdapter;
 import eu.trentorise.smartcampus.eb.custom.data.EBHelper;
 import eu.trentorise.smartcampus.eb.fragments.experience.AssignCollectionFragment;
@@ -69,7 +73,7 @@ public class ExperiencesListFragment extends SherlockListFragment
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setHasOptionsMenu(true);
+		
 
 		if (savedInstanceState != null
 				&& savedInstanceState.containsKey(STATE_ITEMS)) {
@@ -83,6 +87,33 @@ public class ExperiencesListFragment extends SherlockListFragment
 		} else {
 			experiencesList = EBHelper.getExperiences(0, -1);
 		}
+		setHasOptionsMenu(true);
+	}
+
+	@Override
+	public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+		super.onCreateOptionsMenu(menu, inflater);
+		inflater.inflate(R.menu.exp_list_menu, menu);
+	}
+	
+	@Override
+	public void onPrepareOptionsMenu(Menu menu) {
+		super.onPrepareOptionsMenu(menu);
+	}
+
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		switch (item.getItemId()) {
+		case R.id.mainmenu_settings:
+			startActivity(new Intent(getActivity(), SettingsActivity.class));
+			break;
+		case R.id.expmenu_add:
+			startActivity(new Intent(getActivity(),CatchActivity.class));
+			break;
+		default:
+			return super.onOptionsItemSelected(item);
+		}
+		return true;
 	}
 
 	@Override
@@ -121,8 +152,10 @@ public class ExperiencesListFragment extends SherlockListFragment
 		if (filter == null) {
 			getSherlockActivity().getSupportActionBar().setTitle(
 					R.string.title_diary);
-		} else if (filter.getCollectionIds() != null && filter.getCollectionIds().length > 0) {
-			ExpCollection c = EBHelper.findCollection(filter.getCollectionIds()[0]);
+		} else if (filter.getCollectionIds() != null
+				&& filter.getCollectionIds().length > 0) {
+			ExpCollection c = EBHelper
+					.findCollection(filter.getCollectionIds()[0]);
 			if (c != null)
 				getSherlockActivity().getSupportActionBar().setTitle(
 						c.getName());
@@ -141,8 +174,9 @@ public class ExperiencesListFragment extends SherlockListFragment
 		menu.setHeaderTitle(R.string.exp_menu_header);
 		android.view.MenuInflater inflater = getSherlockActivity()
 				.getMenuInflater();
-		inflater.inflate(R.menu.exp_list_menu, menu);
-		MenuItem item = menu.findItem(R.id.expmenu_share);
+		inflater.inflate(R.menu.exp_list_context_menu, menu);
+		
+		android.view.MenuItem item = menu.findItem(R.id.expmenu_share);
 		if (item != null) {
 			AdapterContextMenuInfo info = (AdapterContextMenuInfo) item
 					.getMenuInfo();
@@ -199,16 +233,16 @@ public class ExperiencesListFragment extends SherlockListFragment
 
 	@Override
 	public void onCollectionsAssigned(String id, List<String> colls) {
-		//TODO uncomment this to enable synchronization
-//		try {
-//			if (EBHelper.getConfiguration(EBHelper.CONF_USER_ACCOUNT,
-//					String.class) == null) {
-//				EBHelper.askUserAccount(getActivity(), ACCOUNT_CREATION, true);
-//			}
-//		} catch (DataException e1) {
-//			Log.e(ExperiencesListFragment.class.getName(),
-//					"Error creating filestorage user account");
-//		}
+		// TODO uncomment this to enable synchronization
+		// try {
+		// if (EBHelper.getConfiguration(EBHelper.CONF_USER_ACCOUNT,
+		// String.class) == null) {
+		// EBHelper.askUserAccount(getActivity(), ACCOUNT_CREATION, true);
+		// }
+		// } catch (DataException e1) {
+		// Log.e(ExperiencesListFragment.class.getName(),
+		// "Error creating filestorage user account");
+		// }
 		for (Experience e : experiencesList) {
 			if (e.getId().equals(id)) {
 				e.setCollectionIds(colls);
