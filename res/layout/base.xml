@@ -22,19 +22,13 @@
         android:orientation="vertical"
         android:paddingTop="40dp" >
 
-        <TextView
-            android:id="@+id/drawer_uncantorized"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:padding="8dp"
-            android:text="@string/uncantorized"
-            android:textColor="@android:color/white" />
 
         <TextView
             android:id="@+id/drawer_add_category"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:minHeight="48dp"
+            android:gravity="center_vertical"
             android:padding="8dp"
             android:text="@string/dialog_collection_add"
             android:textColor="@android:color/white" />
@@ -54,6 +48,14 @@
             android:layout_height="3dp"
             android:layout_marginBottom="3dp"
             android:background="@color/sc_light_gray" />
+        
+        <TextView
+            android:id="@+id/drawer_uncantorized"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="8dp"
+            android:text="@string/uncantorized"
+            android:textColor="@android:color/white" />
 
         <ListView
             android:id="@+id/drawer_list"

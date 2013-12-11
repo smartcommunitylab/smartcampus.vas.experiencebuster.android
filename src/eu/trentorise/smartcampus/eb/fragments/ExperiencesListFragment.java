@@ -33,6 +33,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView.AdapterContextMenuInfo;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -74,6 +75,8 @@ public class ExperiencesListFragment extends SherlockListFragment
 	private ExperienceFilter filter;
 
 	private static final int ACCOUNT_CREATION = 10000;
+	
+	
 
 	@SuppressWarnings("unchecked")
 	@Override
@@ -90,7 +93,8 @@ public class ExperiencesListFragment extends SherlockListFragment
 					ARG_FILTER);
 			experiencesList = EBHelper.findExperiences(filter, 0, -1);
 		} else {
-			experiencesList = EBHelper.getExperiences(0, -1);
+			//experiencesList = EBHelper.getExperiences(0, -1);
+			experiencesList = new ArrayList<Experience>(1);
 		}
 		setHasOptionsMenu(true);
 
@@ -152,8 +156,7 @@ public class ExperiencesListFragment extends SherlockListFragment
 	}
 
 	private void prepareButtons() {
-		TextView add = (TextView) getActivity().findViewById(
-				R.id.drawer_add_category);
+		TextView add = (TextView) getActivity().findViewById(R.id.drawer_add_category);
 		add.setOnClickListener(new View.OnClickListener() {
 
 			@Override
@@ -195,6 +198,10 @@ public class ExperiencesListFragment extends SherlockListFragment
 				R.drawable.ic_launcher);
 		getSherlockActivity().getSupportActionBar().setDisplayHomeAsUpEnabled(
 				true);
+
+		experiencesList.clear();
+		experiencesList.addAll(EBHelper.getExperiences(0, -1));
+		((ArrayAdapter)getListView().getAdapter()).notifyDataSetChanged();
 	}
 
 	@Override

@@ -66,12 +66,11 @@ public class HomeActivity extends SherlockFragmentActivity implements
 
 	private final static int FILESTORAGE_ACCOUNT_REGISTRATION = 10000;
 
-	protected final int mainlayout = android.R.id.content;
+	protected final int mainlayout = R.id.content_frame;
 
 	private DrawerLayout mDrawerLayout;
 	private ActionBarDrawerToggle mDrawerToggle;
 
-	private FragmentManager mFragmentManager;
 
 	private ListView mListView;
 	private ArrayList<ExpCollection> collections;
@@ -165,9 +164,6 @@ public class HomeActivity extends SherlockFragmentActivity implements
 
 	private void setupNavDrawer() {
 		
-		
-
-		mFragmentManager = getSupportFragmentManager();
 		mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
 		// this is a class created to avoid an Android bug
 		// see the class for further infos.
@@ -201,7 +197,7 @@ public class HomeActivity extends SherlockFragmentActivity implements
 	@Override
 	public void onBackPressed() {
 		Fragment currentFragment = getSupportFragmentManager()
-				.findFragmentById(android.R.id.content);
+				.findFragmentById(R.id.content_frame);
 		// Checking if there is a fragment that it's listening for back button
 		if (currentFragment != null && currentFragment instanceof BackListener) {
 			((BackListener) currentFragment).onBack();
@@ -327,37 +323,37 @@ public class HomeActivity extends SherlockFragmentActivity implements
 	@Override
 	public CollectionSavedHandler getCollectionSavedHandler() {
 		return (CollectionSavedHandler) getSupportFragmentManager()
-				.findFragmentById(android.R.id.content);
+				.findFragmentById(R.id.content_frame);
 	}
 
 	@Override
 	public AssignCollectionsCallback getAssignCollectionsCallback() {
 		return (AssignCollectionsCallback) getSupportFragmentManager()
-				.findFragmentById(android.R.id.content);
+				.findFragmentById(R.id.content_frame);
 	}
 
 	@Override
 	public RemoveCallback getRemoveCallback() {
 		return (RemoveCallback) getSupportFragmentManager().findFragmentById(
-				android.R.id.content);
+				R.id.content_frame);
 	}
 
 	@Override
 	public NoteHandler getNoteHandler() {
 		return (NoteHandler) getSupportFragmentManager().findFragmentById(
-				android.R.id.content);
+				R.id.content_frame);
 	}
 
 	@Override
 	public PositionHandler getPositionHandler() {
 		return (PositionHandler) getSupportFragmentManager().findFragmentById(
-				android.R.id.content);
+				R.id.content_frame);
 	}
 
 	@Override
 	public OnTagsSelectedListener getTagListener() {
 		return (OnTagsSelectedListener) getSupportFragmentManager()
-				.findFragmentById(android.R.id.content);
+				.findFragmentById(R.id.content_frame);
 	}
 
 }

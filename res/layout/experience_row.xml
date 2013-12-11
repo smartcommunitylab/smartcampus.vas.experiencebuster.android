@@ -23,6 +23,9 @@
         android:id="@+id/separator"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:clickable="false"
+        android:focusable="false"
+        android:focusableInTouchMode="false"
         android:orientation="vertical"
         android:visibility="visible" >
 
@@ -30,13 +33,19 @@
             android:id="@+id/separator_text"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:clickable="false"
+            android:focusable="false"
+            android:focusableInTouchMode="false"
             android:gravity="center"
             android:textAppearance="?android:attr/textAppearanceLarge" />
 
         <View
             android:layout_width="match_parent"
             android:layout_height="1dp"
-            android:background="@android:color/darker_gray" />
+            android:background="@android:color/darker_gray"
+            android:clickable="false"
+            android:focusable="false"
+            android:focusableInTouchMode="false" />
     </LinearLayout>
 
     <LinearLayout
@@ -45,7 +54,7 @@
         android:orientation="vertical"
         android:paddingLeft="4dp"
         android:paddingRight="4dp"
-        android:paddingTop="4dp">
+        android:paddingTop="4dp" >
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -65,11 +74,13 @@
                     android:textAppearance="?android:attr/textAppearanceMedium"
                     android:textStyle="bold" />
 
-<!--                 <TextView
+                <!--
+                     <TextView
                     android:id="@+id/description"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:textAppearance="?android:attr/textAppearanceSmall" /> -->
+                    android:textAppearance="?android:attr/textAppearanceSmall" />
+                -->
 
                 <TextView
                     android:id="@+id/collections"
@@ -79,14 +90,14 @@
                     android:gravity="center_vertical"
                     android:textAppearance="?android:attr/textAppearanceSmall" />
             </LinearLayout>
-            
-            <ImageView 
+
+            <ImageView
                 android:id="@+id/preview"
-                android:clickable="false"
-                android:scaleType="centerCrop" 
                 android:layout_width="80dp"
                 android:layout_height="80dp"
-                android:contentDescription="@null"/>
+                android:clickable="false"
+                android:contentDescription="@null"
+                android:scaleType="centerCrop" />
         </LinearLayout>
 
         <LinearLayout

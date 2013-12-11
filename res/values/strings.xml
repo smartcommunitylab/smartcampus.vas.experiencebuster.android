@@ -30,7 +30,7 @@
     <string name="dialog_create">Create</string>
     <string name="dialog_save">Save</string>
     <string name="dialog_grab">Grab the experience with:</string>
-    <string name="dialog_collection_add">New category</string>
+    <string name="dialog_collection_add">Create new category</string>
     <string name="dialog_collection_edit">Edit category</string>
     
     <string name="app_failure_security">Failed to retrieve authentication data</string>
@@ -112,5 +112,5 @@
     
     <string name="no_title">No Title</string>
     
-    <string name="uncantorized">Uncantorized</string>
+    <string name="uncantorized">All</string>
 </resources>
