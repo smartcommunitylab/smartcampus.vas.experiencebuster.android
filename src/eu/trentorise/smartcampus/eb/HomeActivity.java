@@ -165,9 +165,7 @@ public class HomeActivity extends SherlockFragmentActivity implements
 
 	private void setupNavDrawer() {
 		
-		getSupportActionBar().setIcon(R.drawable.ic_launcher);
-		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-		getSupportActionBar().setDisplayShowTitleEnabled(true);
+		
 
 		mFragmentManager = getSupportFragmentManager();
 		mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);

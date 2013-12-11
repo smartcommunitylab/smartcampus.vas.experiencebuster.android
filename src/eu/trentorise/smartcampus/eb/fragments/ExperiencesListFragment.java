@@ -24,6 +24,7 @@ import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
+import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.util.Log;
 import android.view.ContextMenu;
@@ -73,14 +74,11 @@ public class ExperiencesListFragment extends SherlockListFragment
 	private ExperienceFilter filter;
 
 	private static final int ACCOUNT_CREATION = 10000;
-	
-	
 
 	@SuppressWarnings("unchecked")
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		
 
 		if (savedInstanceState != null
 				&& savedInstanceState.containsKey(STATE_ITEMS)) {
@@ -97,15 +95,13 @@ public class ExperiencesListFragment extends SherlockListFragment
 		setHasOptionsMenu(true);
 
 	}
-	
-	
 
 	@Override
 	public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
 		super.onCreateOptionsMenu(menu, inflater);
 		inflater.inflate(R.menu.exp_list_menu, menu);
 	}
-	
+
 	@Override
 	public void onPrepareOptionsMenu(Menu menu) {
 		super.onPrepareOptionsMenu(menu);
@@ -118,12 +114,13 @@ public class ExperiencesListFragment extends SherlockListFragment
 			startActivity(new Intent(getActivity(), SettingsActivity.class));
 			break;
 		case R.id.expmenu_add:
-			startActivity(new Intent(getActivity(),CatchActivity.class));
-			break;
+			FragmentManager fm = getFragmentManager();
+			DialogFragment f = new GrabDialogFragment();
+			f.show(fm, "grabdialog");
 		default:
-			return super.onOptionsItemSelected(item);
+			break;
 		}
-		return true;
+		return super.onOptionsItemSelected(item);
 	}
 
 	@Override
@@ -147,7 +144,7 @@ public class ExperiencesListFragment extends SherlockListFragment
 				new ArrayList<Experience>(experiencesList));
 		startActivityForResult(i, REQUEST_CODE_PAGER);
 	}
-	
+
 	@Override
 	public void onStart() {
 		super.onStart();
@@ -155,9 +152,10 @@ public class ExperiencesListFragment extends SherlockListFragment
 	}
 
 	private void prepareButtons() {
-		TextView add = (TextView) getActivity().findViewById(R.id.drawer_add_category);
+		TextView add = (TextView) getActivity().findViewById(
+				R.id.drawer_add_category);
 		add.setOnClickListener(new View.OnClickListener() {
-			
+
 			@Override
 			public void onClick(View v) {
 				FragmentManager fm = getFragmentManager();
@@ -167,18 +165,14 @@ public class ExperiencesListFragment extends SherlockListFragment
 		});
 	}
 
-
 	@Override
 	public void onResume() {
 		super.onResume();
 		registerForContextMenu(getListView());
 
-		// Showing/hiding back button
-		getSherlockActivity().getSupportActionBar().setHomeButtonEnabled(true);
-		getSherlockActivity().getSupportActionBar().setDisplayHomeAsUpEnabled(
-				true);
 		getSherlockActivity().getSupportActionBar().setDisplayShowTitleEnabled(
 				true);
+
 		if (filter == null) {
 			getSherlockActivity().getSupportActionBar().setTitle(
 					R.string.title_diary);
@@ -196,6 +190,11 @@ public class ExperiencesListFragment extends SherlockListFragment
 			getSherlockActivity().getSupportActionBar().setTitle(
 					R.string.title_search);
 		}
+
+		getSherlockActivity().getSupportActionBar().setIcon(
+				R.drawable.ic_launcher);
+		getSherlockActivity().getSupportActionBar().setDisplayHomeAsUpEnabled(
+				true);
 	}
 
 	@Override
@@ -205,7 +204,7 @@ public class ExperiencesListFragment extends SherlockListFragment
 		android.view.MenuInflater inflater = getSherlockActivity()
 				.getMenuInflater();
 		inflater.inflate(R.menu.exp_list_context_menu, menu);
-		
+
 		android.view.MenuItem item = menu.findItem(R.id.expmenu_share);
 		if (item != null) {
 			AdapterContextMenuInfo info = (AdapterContextMenuInfo) item
