@@ -31,6 +31,7 @@ import android.widget.Toast;
 
 import com.actionbarsherlock.app.SherlockDialogFragment;
 
+import eu.trentorise.smartcampus.eb.HomeActivity;
 import eu.trentorise.smartcampus.eb.R;
 import eu.trentorise.smartcampus.eb.custom.Utils;
 import eu.trentorise.smartcampus.eb.custom.data.EBHelper;
@@ -117,14 +118,17 @@ public class NewCollectionDialogFragment extends SherlockDialogFragment {
 				uup.setCollections(tmpList);
 				boolean success = EBHelper.updateUserPreference(ctx, uup);
 				if (success) {
-					CollectionSavedHandler c = ((DialogCallbackContainer)getActivity()).getCollectionSavedHandler();
-					if (c != null) {
-						c.onCollectionSaved(updated);
-					}
+					//CollectionSavedHandler c = ((DialogCallbackContainer)getActivity()).getCollectionSavedHandler();
+//					if (c != null) {
+//						c.onCollectionSaved(updated);
+//					}
 //					Fragment f = getFragmentManager().findFragmentById(getArguments().getInt(ARG_CONTAINER_ID));
 //					if (f instanceof CollectionSavedHandler) {
 //						((CollectionSavedHandler)f).onCollectionSaved(updated);
 //					}
+					if(ctx instanceof HomeActivity){
+						((HomeActivity)ctx).refreshMenuList();
+					}
 					dialog.dismiss();
 				}
 			}

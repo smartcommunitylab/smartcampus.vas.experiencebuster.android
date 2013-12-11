@@ -22,6 +22,7 @@
         android:icon="@drawable/ic_add"
         android:title="@string/mainmenu_grab"
         android:showAsAction="always"/>
+    
     <item
         android:id="@+id/expmenu_search"
         android:icon="@drawable/action_search"

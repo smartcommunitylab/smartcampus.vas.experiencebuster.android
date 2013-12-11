@@ -54,6 +54,8 @@ import eu.trentorise.smartcampus.eb.fragments.experience.DeleteExperienceFragmen
 import eu.trentorise.smartcampus.eb.fragments.experience.DialogCallbackContainer;
 import eu.trentorise.smartcampus.eb.fragments.experience.EditNoteFragment.NoteHandler;
 import eu.trentorise.smartcampus.eb.fragments.experience.EditPositionFragment.PositionHandler;
+import eu.trentorise.smartcampus.eb.model.ExpCollection;
+import eu.trentorise.smartcampus.eb.model.UserPreference;
 import eu.trentorise.smartcampus.protocolcarrier.exceptions.SecurityException;
 import eu.trentorise.smartcampus.storage.DataException;
 import eu.trentorise.smartcampus.storage.sync.service.SyncStorageService;
@@ -71,6 +73,7 @@ public class HomeActivity extends SherlockFragmentActivity implements
 	private FragmentManager mFragmentManager;
 
 	private ListView mListView;
+	private ArrayList<ExpCollection> collections;
 
 	@Override
 	protected void onSaveInstanceState(Bundle outState) {
@@ -132,7 +135,8 @@ public class HomeActivity extends SherlockFragmentActivity implements
 	@Override
 	protected void onPostCreate(Bundle savedInstanceState) {
 		super.onPostCreate(savedInstanceState);
-		mDrawerToggle.syncState();
+		if(mDrawerLayout!=null)
+			mDrawerToggle.syncState();
 	}
 
 	private void setUpContent() {
@@ -161,10 +165,26 @@ public class HomeActivity extends SherlockFragmentActivity implements
 
 		mDrawerLayout.setDrawerListener(mDrawerToggle);
 		mListView = (ListView) findViewById(R.id.drawer_list);
+		collections = new ArrayList<ExpCollection>();
+		mListView.setAdapter(new NavDrawerAdapter(this, collections));
 
-		mListView.setAdapter(new ArrayAdapter<String>(this,
-				android.R.layout.simple_list_item_1, new ArrayList<String>()));
-
+	}
+	
+	private void readCollections() {
+		UserPreference userPreference = EBHelper.getUserPreference();
+		if(collections==null)
+			collections = new ArrayList<ExpCollection>();
+		else
+			collections.clear();
+		if (userPreference.getCollections() != null) {
+			collections.addAll(userPreference.getCollections());
+		}
+	}
+	
+	public void refreshMenuList(){
+		readCollections();
+		if(mListView!=null)
+			((ArrayAdapter)mListView.getAdapter()).notifyDataSetChanged();
 	}
 
 	@Override
@@ -264,6 +284,8 @@ public class HomeActivity extends SherlockFragmentActivity implements
 
 		@Override
 		public void handleResult(Void result) {
+			readCollections();
+			refreshMenuList();
 		}
 
 	}

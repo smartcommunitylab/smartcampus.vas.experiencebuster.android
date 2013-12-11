@@ -307,7 +307,7 @@ public class EBHelper {
 	public static UserPreference getUserPreference() {
 		try {
 			return getInstance().preference;
-		} catch (DataException e) {
+		} catch (Exception e) {
 			Log.e(EBHelper.class.getName(), "" + e.getMessage());
 			return new UserPreference();
 		}

@@ -15,6 +15,7 @@
  ******************************************************************************/
 package eu.trentorise.smartcampus.eb.fragments;
 
+import java.sql.PreparedStatement;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -23,6 +24,7 @@ import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
+import android.support.v4.app.FragmentManager;
 import android.util.Log;
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
@@ -30,7 +32,9 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView.AdapterContextMenuInfo;
+import android.widget.Button;
 import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.actionbarsherlock.app.SherlockListFragment;
@@ -51,6 +55,7 @@ import eu.trentorise.smartcampus.eb.fragments.experience.ExperiencePager;
 import eu.trentorise.smartcampus.eb.model.ExpCollection;
 import eu.trentorise.smartcampus.eb.model.Experience;
 import eu.trentorise.smartcampus.eb.model.ExperienceFilter;
+import eu.trentorise.smartcampus.eb.model.UserPreference;
 import eu.trentorise.smartcampus.storage.DataException;
 
 public class ExperiencesListFragment extends SherlockListFragment
@@ -68,6 +73,8 @@ public class ExperiencesListFragment extends SherlockListFragment
 	private ExperienceFilter filter;
 
 	private static final int ACCOUNT_CREATION = 10000;
+	
+	
 
 	@SuppressWarnings("unchecked")
 	@Override
@@ -88,7 +95,10 @@ public class ExperiencesListFragment extends SherlockListFragment
 			experiencesList = EBHelper.getExperiences(0, -1);
 		}
 		setHasOptionsMenu(true);
+
 	}
+	
+	
 
 	@Override
 	public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
@@ -137,6 +147,26 @@ public class ExperiencesListFragment extends SherlockListFragment
 				new ArrayList<Experience>(experiencesList));
 		startActivityForResult(i, REQUEST_CODE_PAGER);
 	}
+	
+	@Override
+	public void onStart() {
+		super.onStart();
+		prepareButtons();
+	}
+
+	private void prepareButtons() {
+		TextView add = (TextView) getActivity().findViewById(R.id.drawer_add_category);
+		add.setOnClickListener(new View.OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				FragmentManager fm = getFragmentManager();
+				NewCollectionDialogFragment dialog = new NewCollectionDialogFragment();
+				dialog.show(fm, "dialog");
+			}
+		});
+	}
+
 
 	@Override
 	public void onResume() {
