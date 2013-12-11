@@ -23,6 +23,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.res.Configuration;
 import android.os.Bundle;
 import android.support.v4.app.ActionBarDrawerToggle;
 import android.support.v4.app.Fragment;
@@ -124,19 +125,26 @@ public class HomeActivity extends SherlockFragmentActivity implements
 			setUpContent();
 		}
 	}
-	
+
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
-		//getSupportMenuInflater().inflate(R.menu.main_menu, menu);
+		// getSupportMenuInflater().inflate(R.menu.main_menu, menu);
 		return super.onCreateOptionsMenu(menu);
 	}
-	
 
 	@Override
 	protected void onPostCreate(Bundle savedInstanceState) {
 		super.onPostCreate(savedInstanceState);
-		if(mDrawerLayout!=null)
+		if (mDrawerLayout != null)
 			mDrawerToggle.syncState();
+	}
+
+	@Override
+	public void onConfigurationChanged(Configuration newConfig) {
+		super.onConfigurationChanged(newConfig);
+		if(mDrawerLayout==null)
+			setupNavDrawer();
+		
 	}
 
 	private void setUpContent() {
@@ -146,15 +154,20 @@ public class HomeActivity extends SherlockFragmentActivity implements
 		FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
 		Fragment frag = null;
 
-		//frag = new MainFragment();
+		// frag = new MainFragment();
 		frag = new ExperiencesListFragment();
 
 		ft.replace(R.id.content_frame, frag).commitAllowingStateLoss();
-		
+
 		setupNavDrawer();
 	}
+	
 
 	private void setupNavDrawer() {
+		
+		getSupportActionBar().setIcon(R.drawable.ic_launcher);
+		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+		getSupportActionBar().setDisplayShowTitleEnabled(true);
 
 		mFragmentManager = getSupportFragmentManager();
 		mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -169,10 +182,10 @@ public class HomeActivity extends SherlockFragmentActivity implements
 		mListView.setAdapter(new NavDrawerAdapter(this, collections));
 
 	}
-	
+
 	private void readCollections() {
 		UserPreference userPreference = EBHelper.getUserPreference();
-		if(collections==null)
+		if (collections == null)
 			collections = new ArrayList<ExpCollection>();
 		else
 			collections.clear();
@@ -180,11 +193,11 @@ public class HomeActivity extends SherlockFragmentActivity implements
 			collections.addAll(userPreference.getCollections());
 		}
 	}
-	
-	public void refreshMenuList(){
+
+	public void refreshMenuList() {
 		readCollections();
-		if(mListView!=null)
-			((ArrayAdapter)mListView.getAdapter()).notifyDataSetChanged();
+		if (mListView != null)
+			((ArrayAdapter) mListView.getAdapter()).notifyDataSetChanged();
 	}
 
 	@Override
@@ -248,11 +261,14 @@ public class HomeActivity extends SherlockFragmentActivity implements
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
 		case android.R.id.home:
-			if (mDrawerLayout.isDrawerOpen(findViewById(R.id.drawer_wrapper))) {
-	            mDrawerLayout.closeDrawer(findViewById(R.id.drawer_wrapper));
-	        } else {
-	            mDrawerLayout.openDrawer(findViewById(R.id.drawer_wrapper));
-	        }
+			if (mDrawerLayout != null)
+				if (mDrawerLayout
+						.isDrawerOpen(findViewById(R.id.drawer_wrapper))) {
+					mDrawerLayout
+							.closeDrawer(findViewById(R.id.drawer_wrapper));
+				} else {
+					mDrawerLayout.openDrawer(findViewById(R.id.drawer_wrapper));
+				}
 			return true;
 		case R.id.mainmenu_settings:
 			startActivity(new Intent(this, SettingsActivity.class));
