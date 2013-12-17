@@ -23,6 +23,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import android.content.Context;
 import android.util.Log;
+import eu.trentorise.smartcampus.ac.AACException;
 import eu.trentorise.smartcampus.android.common.GlobalConfig;
 import eu.trentorise.smartcampus.eb.custom.data.Constants;
 import eu.trentorise.smartcampus.eb.custom.data.EBHelper;
@@ -50,11 +51,16 @@ import eu.trentorise.smartcampus.storage.sync.SyncStorageWithPaging;
  */
 public class FileSyncStorage extends SyncStorageWithPaging {
 
+	private static final String TAG = "FileSyncStorage";
+
 	private AndroidFilestorage filestorage;
+	private FileSyncDatasource fileToSync;
 
 	private static Map<String, BasicObject> expToDelete = new ConcurrentHashMap<String, BasicObject>();
 	private static List<String> contentToDelete = new ArrayList<String>();
 	private static Map<String, String> fileStoraging = new ConcurrentHashMap<String, String>();
+
+	private static final int MAX_TENTATIVE = 5;
 
 	/**
 	 * @param context
@@ -67,7 +73,7 @@ public class FileSyncStorage extends SyncStorageWithPaging {
 	public FileSyncStorage(Context context, String appToken, String dbName,
 			int dbVersion, StorageConfiguration config) {
 		super(context, appToken, dbName, dbVersion, config);
-
+		fileToSync = new FileSyncDatasource(context);
 		try {
 			filestorage = new AndroidFilestorage(GlobalConfig.getAppUrl(context
 					.getApplicationContext()) + Constants.FILE_SERVICE,
@@ -128,9 +134,10 @@ public class FileSyncStorage extends SyncStorageWithPaging {
 		}
 	}
 
-	public synchronized SyncData synchroFile(String authToken, boolean syncFiles, String host, String service) throws StorageConfigurationException,
-			SecurityException, ConnectionException, DataException,
-			ProtocolException {
+	public synchronized SyncData synchroFile(String authToken,
+			boolean syncFiles, String host, String service)
+			throws StorageConfigurationException, SecurityException,
+			ConnectionException, DataException, ProtocolException {
 		if (syncFiles) {
 			SyncData syncData = helper.getDataToSync(getSyncVersion());
 			try {
@@ -139,10 +146,118 @@ public class FileSyncStorage extends SyncStorageWithPaging {
 				throw new ProtocolException(e.getMessage());
 			}
 		}
-		return super.synchronize(authToken, host, service);
+		SyncData data = super.synchronize(authToken, host, service);
+
+		// launch file synchro
+		syncFiles();
+		return data;
 	}
 
-	private boolean synchroFile(SyncData data, String authToken) throws DataException, FilestorageException {
+	private void syncFiles() {
+		List<SyncFile> syncFiles = fileToSync.getEntryToProcess();
+		boolean forceSynchro = false;
+		for (SyncFile syncFile : syncFiles) {
+			try {
+				if (syncFile.getTentative() < MAX_TENTATIVE) {
+					Resource res = eu.trentorise.smartcampus.eb.custom.Utils
+							.getResource(mContext, syncFile.getPath());
+					if (res != null) {
+						String userAccountId = EBHelper.getConfiguration(
+								EBHelper.CONF_USER_ACCOUNT, String.class);
+						if (userAccountId != null) /*
+													 * && EBHelper.
+													 * checkFileSizeConstraints
+													 * (res)
+													 */{
+							Metadata meta = filestorage.storeResourceByUser(
+									res.getContent(), res.getName(),
+									res.getContentType(),
+									EBHelper.getAuthToken(), userAccountId,
+									false);
+							Experience exp = EBHelper
+									.findLocalExperienceById(syncFile
+											.getIdExp());
+							if (exp != null) {
+								for (Content c : exp.getContents()) {
+									if (c.isStorable()
+											&& c.getId().equals(
+													syncFile.getIdContent())) {
+										c.setValue(meta.getResourceId());
+										Log.i(TAG,
+												String.format(
+														"Setted value %s for content %s",
+														meta.getResourceId(),
+														c.getId()));
+										if (EBHelper.saveExperience(null, exp,
+												false) == null) {
+											fileToSync
+													.updateStatus(
+															syncFile,
+															FileSyncDbHelper.ST_FAIL_DB);
+										} else {
+											fileToSync.removeEntry(syncFile
+													.getIdEntry());
+										}
+
+									}
+								}
+							}
+							forceSynchro = true;
+						}
+					} else {
+						Log.i(TAG,
+								String.format(
+										"Exp %s, content %s problem loading local resource %s",
+										syncFile.getIdExp(),
+										syncFile.getIdContent(),
+										syncFile.getPath()));
+						fileToSync.updateStatus(syncFile,
+								FileSyncDbHelper.ST_FAIL_RESOURCE);
+					}
+				} else {
+					Log.i(TAG,
+							String.format(
+									"Exp %s, content %s reachs max tentative %d of upload",
+									syncFile.getIdExp(),
+									syncFile.getIdContent(),
+									syncFile.getTentative()));
+					fileToSync.removeEntry(syncFile.getIdEntry());
+				}
+			} catch (DataException e) {
+				Log.e(TAG,
+						String.format(
+								"Error getting configuration, synchronizing exp %s content %s",
+								syncFile.getIdExp(), syncFile.getIdContent()));
+				fileToSync.updateStatus(syncFile,
+						FileSyncDbHelper.ST_FAIL_SERVICE);
+			} catch (FilestorageException e) {
+				Log.e(TAG, String.format(
+						"Service error synchronizing exp %s content %s",
+						syncFile.getIdExp(), syncFile.getIdContent()));
+				fileToSync.updateStatus(syncFile,
+						FileSyncDbHelper.ST_FAIL_SERVICE);
+			} catch (AACException e) {
+				Log.e(TAG, String.format(
+						"Authentication error synchronizing exp %s content %s",
+						syncFile.getIdExp(), syncFile.getIdContent()));
+				fileToSync.updateStatus(syncFile,
+						FileSyncDbHelper.ST_FAIL_SERVICE);
+			} catch (Exception e) {
+				Log.e(TAG, String.format(
+						"General error synchronizing exp %s content %s",
+						syncFile.getIdExp(), syncFile.getIdContent()));
+				fileToSync.updateStatus(syncFile,
+						FileSyncDbHelper.ST_FAIL_SERVICE);
+			}
+		}
+
+		if (forceSynchro) {
+			EBHelper.synchronize(false);
+		}
+	}
+
+	private boolean synchroFile(SyncData data, String authToken)
+			throws DataException, FilestorageException {
 
 		// save new resources
 		if (data.getUpdated().get(Experience.class.getCanonicalName()) != null) {
@@ -153,51 +268,61 @@ public class FileSyncStorage extends SyncStorageWithPaging {
 				boolean toUpdate = false;
 				for (Content c : exp.getContents()) {
 					if (c.isStorable()) {
-						try {
-							// replace the file content is not necessary because
-							// lifelog doesn't support it
-							if ((c.getValue() == null || c.getValue().length() == 0)
-									&& !fileStoraging.containsKey(c
-											.getLocalValue())) {
-								Resource res = eu.trentorise.smartcampus.eb.custom.Utils
-										.getResource(mContext,
-												c.getLocalValue());
-								String userAccountId = EBHelper
-										.getConfiguration(
-												EBHelper.CONF_USER_ACCOUNT,
-												String.class);
-								if (userAccountId != null
-										&& EBHelper
-												.checkFileSizeConstraints(res)) {
-									Metadata meta = filestorage
-											.storeResourceByUser(
-													res.getContent(),
-													res.getName(),
-													res.getContentType(),
-													authToken, userAccountId,
-													false);
-									fileStoraging.put(c.getLocalValue(),
-											meta.getResourceId());
-									c.setValue(meta.getResourceId());
-									toUpdate = true;
-								}
-							}
 
-							if ((c.getValue() == null || c.getValue().length() == 0)
-									&& fileStoraging.containsKey(c
-											.getLocalValue())) {
-								c.setValue(fileStoraging.get(c.getLocalValue()));
-								toUpdate = true;
-							}
-						} catch (DataException e) {
-							Log.e(getClass().getName(), "Exception storing file content");
-							e.printStackTrace();
-							throw e;
-						} catch (FilestorageException e) {
-							Log.e(getClass().getName(), "Exception storing file content");
-							e.printStackTrace();
-							throw e;
+						if (!c.isUploaded()) {
+							fileToSync.insertEntry(exp.getId(), c.getId(),
+									c.getLocalValue());
 						}
+						// try {
+						// // replace the file content is not necessary because
+						// // lifelog doesn't support it
+						// if ((c.getValue() == null || c.getValue().length() ==
+						// 0)
+						// && !fileStoraging.containsKey(c
+						// .getLocalValue())) {
+						// Resource res =
+						// eu.trentorise.smartcampus.eb.custom.Utils
+						// .getResource(mContext,
+						// c.getLocalValue());
+						// String userAccountId = EBHelper
+						// .getConfiguration(
+						// EBHelper.CONF_USER_ACCOUNT,
+						// String.class);
+						// if (userAccountId != null
+						// && EBHelper
+						// .checkFileSizeConstraints(res)) {
+						// Metadata meta = filestorage
+						// .storeResourceByUser(
+						// res.getContent(),
+						// res.getName(),
+						// res.getContentType(),
+						// authToken, userAccountId,
+						// false);
+						// fileStoraging.put(c.getLocalValue(),
+						// meta.getResourceId());
+						// c.setValue(meta.getResourceId());
+						// toUpdate = true;
+						// }
+						// }
+						//
+						// if ((c.getValue() == null || c.getValue().length() ==
+						// 0)
+						// && fileStoraging.containsKey(c
+						// .getLocalValue())) {
+						// c.setValue(fileStoraging.get(c.getLocalValue()));
+						// toUpdate = true;
+						// }
+						// } catch (DataException e) {
+						// Log.e(getClass().getName(),
+						// "Exception storing file content");
+						// e.printStackTrace();
+						// throw e;
+						// } catch (FilestorageException e) {
+						// Log.e(getClass().getName(),
+						// "Exception storing file content");
+						// e.printStackTrace();
+						// throw e;
+						// }
 					}
 				}
 				if (toUpdate) {

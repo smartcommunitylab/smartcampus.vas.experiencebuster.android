@@ -43,6 +43,7 @@ import eu.trentorise.smartcampus.android.common.tagging.SemanticSuggestion;
 import eu.trentorise.smartcampus.android.common.tagging.SuggestionHelper;
 import eu.trentorise.smartcampus.eb.R;
 import eu.trentorise.smartcampus.eb.filestorage.FilestorageAccountActivity;
+import eu.trentorise.smartcampus.eb.model.Content;
 import eu.trentorise.smartcampus.eb.model.ExpCollection;
 import eu.trentorise.smartcampus.eb.model.Experience;
 import eu.trentorise.smartcampus.eb.model.ExperienceFilter;
@@ -92,7 +93,7 @@ public class EBHelper {
 
 	private UserPreference preference = null;
 	private boolean loaded = false;
-	
+
 	private static BasicProfile bp = null;
 
 	public static void init(Context mContext) throws NameNotFoundException {
@@ -126,12 +127,14 @@ public class EBHelper {
 
 	/**
 	 * To call from non UI thread only!
+	 * 
 	 * @return
 	 */
 	public static BasicProfile readBasicProfile() {
 		if (bp == null) {
 			try {
-				BasicProfileService bps = new BasicProfileService(GlobalConfig.getAppUrl(getInstance().mContext)+"/aac");
+				BasicProfileService bps = new BasicProfileService(
+						GlobalConfig.getAppUrl(getInstance().mContext) + "/aac");
 				bp = bps.getBasicProfile(getAuthToken());
 			} catch (Exception e) {
 				e.printStackTrace();
@@ -139,7 +142,7 @@ public class EBHelper {
 		}
 		return bp;
 	}
-	
+
 	public static synchronized void synchronize(boolean synchronizeFile) {
 		if (isSynchronizationActive()) {
 			Bundle bundle = new Bundle();
@@ -150,15 +153,15 @@ public class EBHelper {
 	}
 
 	public static boolean isSynchronizationActive() {
-		return false;
+		// return false;
 		// TODO uncomment below to enable synchronization
-//		try {
-//			return EBHelper.getConfiguration(CONF_SYNCHRO, Boolean.class);
-//		} catch (Exception e) {
-//			Log.e(EBHelper.class.getName(),
-//					"Error getting synchro configuration. Synchronization is not active!");
-//			return false;
-//		}
+		try {
+			return EBHelper.getConfiguration(CONF_SYNCHRO, Boolean.class);
+		} catch (Exception e) {
+			Log.e(EBHelper.class.getName(),
+					"Error getting synchro configuration. Synchronization is not active!");
+			return false;
+		}
 	}
 
 	public static <T> boolean saveConfiguration(String configuration,
@@ -278,9 +281,9 @@ public class EBHelper {
 		Collection<UserPreference> userPreferencesCollection = getInstance().storage
 				.getObjects(UserPreference.class);
 		// TODO uncomment below to enable synchronization
-//		if (userPreferencesCollection.isEmpty()) {
-//			userPreferencesCollection = readUserPreference();
-//		}
+		// if (userPreferencesCollection.isEmpty()) {
+		// userPreferencesCollection = readUserPreference();
+		// }
 		// if not in remotestorage to
 		if (userPreferencesCollection.isEmpty()) {
 			UserPreference userPreference = new UserPreference();
@@ -288,7 +291,8 @@ public class EBHelper {
 			getInstance().preference = getInstance().storage
 					.create(userPreference);
 		} else {
-			getInstance().preference = userPreferencesCollection.iterator().next();
+			getInstance().preference = userPreferencesCollection.iterator()
+					.next();
 		}
 		synchronize(true);
 	}
@@ -346,7 +350,8 @@ public class EBHelper {
 		List<String> params = new ArrayList<String>();
 
 		assert experienceFilter != null;
-		if (experienceFilter.getCollectionIds() != null && experienceFilter.getCollectionIds().length > 0) {
+		if (experienceFilter.getCollectionIds() != null
+				&& experienceFilter.getCollectionIds().length > 0) {
 			query += (query.length() > 0 ? " AND " : "")
 					+ "collectionIds LIKE '%\""
 					+ experienceFilter.getCollectionIds()[0] + "\"%'";
@@ -378,26 +383,58 @@ public class EBHelper {
 		if (res == null) {
 			try {
 				ExperienceFilter filter = new ExperienceFilter();
-				filter.setEntityIds(new String[]{id});
-				Collection<Experience> coll = getRemote(getInstance().mContext, getAuthToken()).searchObjects(filter, Experience.class);
-				if (coll != null && coll.size() > 0) return coll.iterator().next();
+				filter.setEntityIds(new String[] { id });
+				Collection<Experience> coll = getRemote(getInstance().mContext,
+						getAuthToken()).searchObjects(filter, Experience.class);
+				if (coll != null && coll.size() > 0)
+					return coll.iterator().next();
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
 		} else {
 			BasicProfile profile = readBasicProfile();
-			if (profile != null) res.setSocialUserId(profile.getSocialId());
+			if (profile != null)
+				res.setSocialUserId(profile.getSocialId());
 		}
 		return res;
 	}
-	
-	public static Experience findLocalExperienceByEntityId(String id) {
-		String query = "entityId = '"+id+"'";
-		
+
+	public static Content findLocalContent(String idExp, String idContent) {
+		Experience exp = findLocalExperienceById(idExp);
+		if (exp != null) {
+			for (Content c : exp.getContents()) {
+				if (c.isStorable() && c.getId().equals(idContent)) {
+					return c;
+				}
+			}
+		}
+		return null;
+	}
+
+	public static Experience findLocalExperienceById(String id) {
+		String query = "id = '" + id + "'";
+
 		Collection<Experience> collection = null;
 		try {
-			collection = getInstance().storage.query(Experience.class, query, null);
-			if (collection != null && collection.size() == 1) return collection.iterator().next();
+			collection = getInstance().storage.query(Experience.class, query,
+					null);
+			if (collection != null && collection.size() == 1)
+				return collection.iterator().next();
+		} catch (Exception e) {
+			Log.e(EBHelper.class.getName(), "" + e.getMessage());
+		}
+		return null;
+	}
+
+	public static Experience findLocalExperienceByEntityId(String id) {
+		String query = "entityId = '" + id + "'";
+
+		Collection<Experience> collection = null;
+		try {
+			collection = getInstance().storage.query(Experience.class, query,
+					null);
+			if (collection != null && collection.size() == 1)
+				return collection.iterator().next();
 		} catch (Exception e) {
 			Log.e(EBHelper.class.getName(), "" + e.getMessage());
 		}
@@ -444,8 +481,8 @@ public class EBHelper {
 		}
 	}
 
-	public static List<NearMeObject> getNearMeNowSuggestions(double[] location, boolean filterEvents, boolean filterLocations) throws Exception 
-	{
+	public static List<NearMeObject> getNearMeNowSuggestions(double[] location,
+			boolean filterEvents, boolean filterLocations) throws Exception {
 		eu.trentorise.smartcampus.territoryservice.model.ObjectFilter filter = new eu.trentorise.smartcampus.territoryservice.model.ObjectFilter();
 		filter.setSkip(0);
 		filter.setLimit(100);
@@ -454,7 +491,8 @@ public class EBHelper {
 		filter.setCenter(location);
 		filter.setRadius(0.01);
 
-		TerritoryService territoryService = new TerritoryService(GlobalConfig.getAppUrl(getInstance().mContext) + TERRITORY_URL);
+		TerritoryService territoryService = new TerritoryService(
+				GlobalConfig.getAppUrl(getInstance().mContext) + TERRITORY_URL);
 
 		List<BaseDTObject> objects = new ArrayList<BaseDTObject>();
 		if (filterLocations) {
@@ -472,27 +510,29 @@ public class EBHelper {
 			filter.setFromTime(c.getTimeInMillis());
 			objects.addAll(territoryService.getEvents(filter, getAuthToken()));
 		}
-		
-		
+
 		List<NearMeObject> nearMeObjects = new ArrayList<NearMeObject>();
 		for (BaseDTObject object : objects) {
 			NearMeObject nmo = new NearMeObject();
 			nmo.setTitle(object.getTitle());
 			nmo.setDescription(object.getDescription());
 			if (object.getFromTime() != null && object.getFromTime() > 0) {
-				if (Math.abs(System.currentTimeMillis()-object.getFromTime())>24*60*60*1000) {
+				if (Math.abs(System.currentTimeMillis() - object.getFromTime()) > 24 * 60 * 60 * 1000) {
 					nmo.setFromTime(c.getTimeInMillis());
-				}else {
+				} else {
 					nmo.setFromTime(object.getFromTime());
 				}
 			}
-			if (object instanceof POIObject && ((POIObject) object).getPoi() != null) {
+			if (object instanceof POIObject
+					&& ((POIObject) object).getPoi() != null) {
 				POIData data = ((POIObject) object).getPoi();
 				String s = "";
-				if (data.getStreet() != null) s += data.getStreet()+" ";
-				if (data.getCity() != null) s += data.getCity() + " ";
+				if (data.getStreet() != null)
+					s += data.getStreet() + " ";
+				if (data.getCity() != null)
+					s += data.getCity() + " ";
 				nmo.setAddress(s);
-			} 
+			}
 			nearMeObjects.add(nmo);
 		}
 
@@ -513,24 +553,29 @@ public class EBHelper {
 				return c;
 		return null;
 	}
-	
+
 	public static void share(Experience exp, Activity ctx) {
 		Entity obj = new Entity();
 		obj.setEntityId(exp.getEntityId());
 		obj.setTitle(exp.getTitle());
 		obj.setEntityType(eu.trentorise.smartcampus.eb.Constants.ENTITY_TYPE_EXPERIENCE);
 		Intent intent = new Intent();
-		intent.setAction(ctx.getString(eu.trentorise.smartcampus.android.common.R.string.share_intent_action));
-		intent.putExtra(ctx.getString(eu.trentorise.smartcampus.android.common.R.string.share_entity_arg_entity), obj);
+		intent.setAction(ctx
+				.getString(eu.trentorise.smartcampus.android.common.R.string.share_intent_action));
+		intent.putExtra(
+				ctx.getString(eu.trentorise.smartcampus.android.common.R.string.share_entity_arg_entity),
+				obj);
 		AppHelper.startActivityForApp(intent, ctx);
 	}
-	
+
 	/**
 	 * To call from non UI thread only!
+	 * 
 	 * @return
 	 */
 	public static boolean isOwnExperience(Experience e) {
-		if (e == null) return false;
+		if (e == null)
+			return false;
 		BasicProfile profile = readBasicProfile();
 		if (profile == null) {
 			return false;

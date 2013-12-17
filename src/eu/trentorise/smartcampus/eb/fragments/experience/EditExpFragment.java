@@ -49,7 +49,6 @@ import com.actionbarsherlock.app.SherlockFragment;
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuItem;
 
-import eu.trentorise.smartcampus.android.common.GlobalConfig;
 import eu.trentorise.smartcampus.android.common.SCAsyncTask;
 import eu.trentorise.smartcampus.android.common.tagging.SemanticSuggestion;
 import eu.trentorise.smartcampus.android.common.tagging.TaggingDialog.OnTagsSelectedListener;
@@ -77,7 +76,6 @@ import eu.trentorise.smartcampus.eb.model.Experience;
 import eu.trentorise.smartcampus.protocolcarrier.exceptions.ConnectionException;
 import eu.trentorise.smartcampus.protocolcarrier.exceptions.SecurityException;
 import eu.trentorise.smartcampus.storage.DataException;
-import eu.trentorise.smartcampus.storage.sync.SyncData;
 
 @SuppressLint("NewApi")
 public class EditExpFragment extends SherlockFragment
@@ -337,19 +335,19 @@ public class EditExpFragment extends SherlockFragment
 			exp.setDescription(mDescrSwitch.getValue());
 			if (validate(exp)) {
 				// TODO uncomment this to enable synchronization
-//				try {
-//					if (EBHelper.getConfiguration(EBHelper.CONF_SYNCHRO,
-//							Boolean.class)
-//							&& EBHelper.getConfiguration(
-//									EBHelper.CONF_USER_ACCOUNT, String.class) == null) {
-//						EBHelper.askUserAccount(this, ACCOUNT_CREATION, false);
-//					} else {
+				try {
+					if (EBHelper.getConfiguration(EBHelper.CONF_SYNCHRO,
+							Boolean.class)
+							&& EBHelper.getConfiguration(
+									EBHelper.CONF_USER_ACCOUNT, String.class) == null) {
+						EBHelper.askUserAccount(this, ACCOUNT_CREATION, false);
+					} else {
 						new SaveTask().execute();
-//					}
-//				} catch (DataException e) {
-//					Log.e(EditExpFragment.class.getName(),
-//							"Error creating filestorage account");
-//				}
+					}
+				} catch (DataException e) {
+					Log.e(EditExpFragment.class.getName(),
+							"Error creating filestorage account");
+				}
 			}
 			break;
 		case R.id.expmenu_attach_audio:
@@ -399,12 +397,12 @@ public class EditExpFragment extends SherlockFragment
 		case R.id.expmenu_share:
 			EBHelper.share(exp, getActivity());
 			break;
-//		case R.id.expmenu_map:
-//		case R.id.expmenu_export:
-//			Toast.makeText(getActivity(), R.string.not_implemented,
-//					Toast.LENGTH_SHORT).show();
-//			 // TODO
-//			break;
+		// case R.id.expmenu_map:
+		// case R.id.expmenu_export:
+		// Toast.makeText(getActivity(), R.string.not_implemented,
+		// Toast.LENGTH_SHORT).show();
+		// // TODO
+		// break;
 		default:
 			break;
 		}
@@ -580,40 +578,45 @@ public class EditExpFragment extends SherlockFragment
 
 							if (expId == null) {
 								// save locally
-								exp = EBHelper.saveExperience(getActivity(), exp, false);
+								exp = EBHelper.saveExperience(getActivity(),
+										exp, true);
 								// if synchronized, force server sync
-								if (EBHelper.isSynchronizationActive()) {
-									// sync data with server without files sync
-									EBHelper
-											.getSyncStorage()
-											.synchroFile(
-													EBHelper.getAuthToken(), 
-													false,
-													GlobalConfig
-															.getAppUrl(getActivity()
-																	.getApplicationContext()),
-													eu.trentorise.smartcampus.eb.custom.data.Constants.SYNC_SERVICE);
-									exp = EBHelper.getSyncStorage().getObjectById(exp.getId(), Experience.class);
-									// touch object to enable file synchronization
-									EBHelper.saveExperience(getActivity(), exp, false);
-									// call async synchronization of files
-									EBHelper.synchronize(true);
-//									if (data.getUpdated()
-//											.get(Experience.class
-//													.getCanonicalName()) != null) {
-//										for (Object o : data.getUpdated().get(
-//												Experience.class
-//														.getCanonicalName())) {
-//											Experience updatedExp = eu.trentorise.smartcampus.android.common.Utils
-//													.convertObjectToData(
-//															Experience.class, o);
-//											if (updatedExp.getId().equals(
-//													exp.getId())) {
-//												return updatedExp;
-//											}
-//										}
-//									}
-								}
+								// if (EBHelper.isSynchronizationActive()) {
+								// // sync data with server without files sync
+								// EBHelper.getSyncStorage()
+								// .synchroFile(
+								// EBHelper.getAuthToken(),
+								// false,
+								// GlobalConfig
+								// .getAppUrl(getActivity()
+								// .getApplicationContext()),
+								// eu.trentorise.smartcampus.eb.custom.data.Constants.SYNC_SERVICE);
+								// exp = EBHelper.getSyncStorage()
+								// .getObjectById(exp.getId(),
+								// Experience.class);
+								// touch object to enable file
+								// synchronization
+								// EBHelper.saveExperience(getActivity(), exp,
+								// false);
+								// call async synchronization of files
+								// EBHelper.synchronize(true);
+								// if (data.getUpdated()
+								// .get(Experience.class
+								// .getCanonicalName()) != null) {
+								// for (Object o : data.getUpdated().get(
+								// Experience.class
+								// .getCanonicalName())) {
+								// Experience updatedExp =
+								// eu.trentorise.smartcampus.android.common.Utils
+								// .convertObjectToData(
+								// Experience.class, o);
+								// if (updatedExp.getId().equals(
+								// exp.getId())) {
+								// return updatedExp;
+								// }
+								// }
+								// }
+								// }
 							} else {
 								exp = EBHelper.saveExperience(getActivity(),
 										exp, true);

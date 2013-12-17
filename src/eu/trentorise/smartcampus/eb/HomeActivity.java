@@ -75,16 +75,16 @@ public class HomeActivity extends SherlockFragmentActivity implements
 		try {
 
 			// TODO uncomment this to enable synchronization
-//			// check filestorage account
-//			if (EBHelper.getConfiguration(EBHelper.CONF_SYNCHRO, Boolean.class)
-//					&& EBHelper.getConfiguration(EBHelper.CONF_USER_ACCOUNT,
-//							String.class) == null) {
-//				EBHelper.askUserAccount(this, FILESTORAGE_ACCOUNT_REGISTRATION,
-//						true);
-//			} else {
+			// // check filestorage account
+			if (EBHelper.getConfiguration(EBHelper.CONF_SYNCHRO, Boolean.class)
+					&& EBHelper.getConfiguration(EBHelper.CONF_USER_ACCOUNT,
+							String.class) == null) {
+				EBHelper.askUserAccount(this, FILESTORAGE_ACCOUNT_REGISTRATION,
+						true);
+			} else {
 				new SCAsyncTask<Void, Void, Void>(this,
 						new StartProcessor(this)).execute();
-//			}
+			}
 		} catch (Exception e1) {
 			EBHelper.endAppFailure(this, R.string.app_failure_setup);
 			return false;
@@ -186,11 +186,11 @@ public class HomeActivity extends SherlockFragmentActivity implements
 	}
 
 	// TODO enable for synchronization configuration
-//	@Override
-//	public boolean onCreateOptionsMenu(Menu menu) {
-//		getSupportMenuInflater().inflate(R.menu.main_menu, menu);
-//		return true;
-//	}
+	@Override
+	public boolean onCreateOptionsMenu(Menu menu) {
+		getSupportMenuInflater().inflate(R.menu.main_menu, menu);
+		return true;
+	}
 
 	private class StartProcessor extends AbstractAsyncTaskProcessor<Void, Void> {
 

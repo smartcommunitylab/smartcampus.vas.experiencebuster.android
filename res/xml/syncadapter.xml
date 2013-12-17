@@ -20,5 +20,5 @@
 <sync-adapter xmlns:android="http://schemas.android.com/apk/res/android"
     android:contentAuthority="eu.trentorise.smartcampus.eb"
     android:accountType="eu.trentorise.smartcampus.account"
-    android:supportsUploading="false"
+    android:supportsUploading="true" 
 />
