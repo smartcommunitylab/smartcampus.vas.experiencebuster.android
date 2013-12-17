@@ -22,6 +22,7 @@ import android.support.v4.app.FragmentTransaction;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.animation.ScaleAnimation;
 import android.view.inputmethod.InputMethodManager;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
@@ -56,6 +57,17 @@ public class SearchFragment extends SherlockListFragment {
 		getSherlockActivity().getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 		getSherlockActivity().getSupportActionBar().setDisplayShowTitleEnabled(true);
 		getSherlockActivity().getSupportActionBar().setTitle(R.string.title_search);
+		
+		getView().postDelayed(new Runnable() {
+
+			@Override
+			public void run() {
+				ScaleAnimation anim = new ScaleAnimation(0.1f, 1, 1, 1);
+				anim.setDuration(200);
+				getView().findViewById(R.id.search).startAnimation(anim);
+				getView().findViewById(R.id.search).requestFocus();
+			}
+		}, 10);
 	}
 
 	@Override

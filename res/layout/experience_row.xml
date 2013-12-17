@@ -90,6 +90,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:drawableLeft="@drawable/ic_collection"
+                    android:drawablePadding="3dp"
                     android:gravity="center_vertical"
                     android:textAppearance="?android:attr/textAppearanceSmall" />
             </LinearLayout>

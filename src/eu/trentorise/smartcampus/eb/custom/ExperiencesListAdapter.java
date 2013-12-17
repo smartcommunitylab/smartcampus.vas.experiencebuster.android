@@ -25,6 +25,8 @@ import android.os.Build;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
+import android.view.animation.TranslateAnimation;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -55,7 +57,6 @@ public class ExperiencesListAdapter extends ArrayAdapter<Experience> {
 	public View getView(int position, View convertView, ViewGroup parent) {
 		View row = convertView;
 		ImgHolder holder = null;
-
 		if (row == null) {
 			LayoutInflater inflater = ((Activity) context).getLayoutInflater();
 			row = inflater.inflate(layoutResourceId, parent, false);

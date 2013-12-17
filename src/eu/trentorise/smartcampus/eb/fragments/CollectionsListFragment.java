@@ -134,7 +134,6 @@ public class CollectionsListFragment extends SherlockListFragment implements Col
 		ft.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE);
 		ft.addToBackStack(null);
 		ft.commit();
-
 	}
 	
 	@Override

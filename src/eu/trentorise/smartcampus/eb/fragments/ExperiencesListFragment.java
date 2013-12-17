@@ -15,7 +15,6 @@
  ******************************************************************************/
 package eu.trentorise.smartcampus.eb.fragments;
 
-import java.sql.PreparedStatement;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -24,7 +23,6 @@ import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
-import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.util.Log;
@@ -33,9 +31,9 @@ import android.view.ContextMenu.ContextMenuInfo;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.TranslateAnimation;
 import android.widget.AdapterView.AdapterContextMenuInfo;
 import android.widget.ArrayAdapter;
-import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -45,7 +43,7 @@ import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuInflater;
 import com.actionbarsherlock.view.MenuItem;
 
-import eu.trentorise.smartcampus.eb.CatchActivity;
+import eu.trentorise.smartcampus.eb.HomeActivity.RefreshCallback;
 import eu.trentorise.smartcampus.eb.R;
 import eu.trentorise.smartcampus.eb.SettingsActivity;
 import eu.trentorise.smartcampus.eb.custom.ExperiencesListAdapter;
@@ -58,13 +56,13 @@ import eu.trentorise.smartcampus.eb.fragments.experience.ExperiencePager;
 import eu.trentorise.smartcampus.eb.model.ExpCollection;
 import eu.trentorise.smartcampus.eb.model.Experience;
 import eu.trentorise.smartcampus.eb.model.ExperienceFilter;
-import eu.trentorise.smartcampus.eb.model.UserPreference;
 import eu.trentorise.smartcampus.storage.DataException;
 
 public class ExperiencesListFragment extends SherlockListFragment
 		implements
 		RemoveCallback,
-		eu.trentorise.smartcampus.eb.fragments.experience.AssignCollectionFragment.AssignCollectionsCallback {
+		eu.trentorise.smartcampus.eb.fragments.experience.AssignCollectionFragment.AssignCollectionsCallback,
+		RefreshCallback {
 
 	public static final String ARG_FILTER = "filter";
 
@@ -82,19 +80,19 @@ public class ExperiencesListFragment extends SherlockListFragment
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 
-//		if (savedInstanceState != null
-//				&& savedInstanceState.containsKey(STATE_ITEMS)) {
-//			experiencesList = (List<Experience>) savedInstanceState
-//					.getSerializable(STATE_ITEMS);
-//		} else if (getArguments() != null
-//				&& getArguments().containsKey(ARG_FILTER)) {
-//			filter = (ExperienceFilter) getArguments().getSerializable(
-//					ARG_FILTER);
-//			experiencesList = EBHelper.findExperiences(filter, 0, -1);
-//		} else {
-//			// experiencesList = EBHelper.getExperiences(0, -1);
-			experiencesList = new ArrayList<Experience>(1);
-//		}
+		// if (savedInstanceState != null
+		// && savedInstanceState.containsKey(STATE_ITEMS)) {
+		// experiencesList = (List<Experience>) savedInstanceState
+		// .getSerializable(STATE_ITEMS);
+		// } else if (getArguments() != null
+		// && getArguments().containsKey(ARG_FILTER)) {
+		// filter = (ExperienceFilter) getArguments().getSerializable(
+		// ARG_FILTER);
+		// experiencesList = EBHelper.findExperiences(filter, 0, -1);
+		// } else {
+		// // experiencesList = EBHelper.getExperiences(0, -1);
+		experiencesList = new ArrayList<Experience>(1);
+		// }
 		setHasOptionsMenu(true);
 
 	}
@@ -125,6 +123,7 @@ public class ExperiencesListFragment extends SherlockListFragment
 			FragmentTransaction ft = getFragmentManager().beginTransaction();
 			ft.replace(R.id.content_frame, new SearchFragment(), "search");
 			ft.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE);
+			ft.addToBackStack(null);
 			ft.commit();
 			break;
 		default:
@@ -159,6 +158,18 @@ public class ExperiencesListFragment extends SherlockListFragment
 	public void onStart() {
 		super.onStart();
 		prepareButtons();
+		getListView().clearAnimation();
+		getView().postDelayed(new Runnable() {
+			
+			@Override
+			public void run() {
+				TranslateAnimation animation = new TranslateAnimation(0, 0, 200, 0);
+				animation.setDuration(300);
+				animation.setFillBefore(true);
+				getListView().startAnimation(animation);
+			}
+		},50);
+		
 	}
 
 	private void prepareButtons() {
@@ -183,6 +194,16 @@ public class ExperiencesListFragment extends SherlockListFragment
 		getSherlockActivity().getSupportActionBar().setDisplayShowTitleEnabled(
 				true);
 
+		experiencesList.clear();
+
+		if (getArguments() != null && getArguments().containsKey(ARG_FILTER)) {
+			filter = (ExperienceFilter) getArguments().getSerializable(
+					ARG_FILTER);
+			experiencesList = EBHelper.findExperiences(filter, 0, -1);
+		} else {
+			filter = null;
+			experiencesList.addAll(EBHelper.getExperiences(0, -1));
+		}
 		if (filter == null) {
 			getSherlockActivity().getSupportActionBar().setTitle(
 					R.string.title_diary);
@@ -205,15 +226,6 @@ public class ExperiencesListFragment extends SherlockListFragment
 				R.drawable.ic_launcher);
 		getSherlockActivity().getSupportActionBar().setDisplayHomeAsUpEnabled(
 				true);
-		
-		experiencesList.clear();
-		if (getArguments() != null && getArguments().containsKey(ARG_FILTER)) {
-			filter = (ExperienceFilter) getArguments().getSerializable(
-					ARG_FILTER);
-			experiencesList = EBHelper.findExperiences(filter, 0, -1);
-		} else {
-			experiencesList.addAll(EBHelper.getExperiences(0, -1));
-		}
 
 		((ArrayAdapter) getListView().getAdapter()).notifyDataSetChanged();
 	}
@@ -332,6 +344,19 @@ public class ExperiencesListFragment extends SherlockListFragment
 			}
 		}
 		super.onActivityResult(reqCode, resCode, data);
+	}
+
+	@Override
+	public void refresh(String s) {
+		experiencesList.clear();
+		if (s != null) {
+			ExperienceFilter ef = new ExperienceFilter();
+			ef.setCollectionIds(new String[] { s });
+			experiencesList = EBHelper.findExperiences(ef, 0, -1);
+		}
+		else
+			experiencesList.addAll(EBHelper.getExperiences(0, -1));
+		((ArrayAdapter) getListView().getAdapter()).notifyDataSetChanged();
 	}
 
 }

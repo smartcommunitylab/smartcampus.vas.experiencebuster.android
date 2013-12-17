@@ -33,6 +33,7 @@ import com.actionbarsherlock.app.SherlockFragmentActivity;
 
 import eu.trentorise.smartcampus.android.common.tagging.TaggingDialog.OnTagsSelectedListener;
 import eu.trentorise.smartcampus.eb.R;
+import eu.trentorise.smartcampus.eb.fragments.BackListener;
 import eu.trentorise.smartcampus.eb.fragments.NewCollectionDialogFragment.CollectionSavedHandler;
 import eu.trentorise.smartcampus.eb.fragments.experience.AssignCollectionFragment.AssignCollectionsCallback;
 import eu.trentorise.smartcampus.eb.fragments.experience.DeleteExperienceFragment.RemoveCallback;
@@ -41,7 +42,7 @@ import eu.trentorise.smartcampus.eb.fragments.experience.EditPositionFragment.Po
 import eu.trentorise.smartcampus.eb.model.Experience;
 
 public class ExperiencePager extends SherlockFragmentActivity implements
-		DialogCallbackContainer {
+		DialogCallbackContainer{
 
 	private static final String ARG_POSITION = "position";
 	public static final String ARG_COLLECTION = "coll";
@@ -202,4 +203,5 @@ public class ExperiencePager extends SherlockFragmentActivity implements
 			return collection.size();
 		}
 	}
+
 }

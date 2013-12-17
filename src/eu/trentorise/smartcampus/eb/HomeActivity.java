@@ -31,6 +31,9 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.widget.DrawerLayout;
 import android.util.Log;
+import android.view.View;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
 import android.widget.ExpandableListView;
 import android.widget.ListView;
@@ -56,13 +59,18 @@ import eu.trentorise.smartcampus.eb.fragments.experience.DialogCallbackContainer
 import eu.trentorise.smartcampus.eb.fragments.experience.EditNoteFragment.NoteHandler;
 import eu.trentorise.smartcampus.eb.fragments.experience.EditPositionFragment.PositionHandler;
 import eu.trentorise.smartcampus.eb.model.ExpCollection;
+import eu.trentorise.smartcampus.eb.model.ExperienceFilter;
 import eu.trentorise.smartcampus.eb.model.UserPreference;
 import eu.trentorise.smartcampus.protocolcarrier.exceptions.SecurityException;
 import eu.trentorise.smartcampus.storage.DataException;
 import eu.trentorise.smartcampus.storage.sync.service.SyncStorageService;
 
 public class HomeActivity extends SherlockFragmentActivity implements
-		DialogCallbackContainer {
+		DialogCallbackContainer, OnItemClickListener {
+
+	public interface RefreshCallback {
+		public void refresh(String s);
+	}
 
 	private final static int FILESTORAGE_ACCOUNT_REGISTRATION = 10000;
 
@@ -70,7 +78,6 @@ public class HomeActivity extends SherlockFragmentActivity implements
 
 	private DrawerLayout mDrawerLayout;
 	private ActionBarDrawerToggle mDrawerToggle;
-
 
 	private ListView mListView;
 	private ArrayList<ExpCollection> collections;
@@ -141,9 +148,9 @@ public class HomeActivity extends SherlockFragmentActivity implements
 	@Override
 	public void onConfigurationChanged(Configuration newConfig) {
 		super.onConfigurationChanged(newConfig);
-		if(mDrawerLayout==null)
+		if (mDrawerLayout == null)
 			setupNavDrawer();
-		
+
 	}
 
 	private void setUpContent() {
@@ -159,11 +166,23 @@ public class HomeActivity extends SherlockFragmentActivity implements
 		ft.replace(R.id.content_frame, frag).commitAllowingStateLoss();
 
 		setupNavDrawer();
+		
+		findViewById(R.id.drawer_uncantorized).setOnClickListener(new View.OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				Fragment currentFragment = getSupportFragmentManager()
+						.findFragmentById(R.id.content_frame);
+				if (currentFragment != null
+						&& currentFragment instanceof RefreshCallback) {
+					((RefreshCallback) currentFragment).refresh(null);
+				}
+			}
+		});
 	}
-	
 
 	private void setupNavDrawer() {
-		
+
 		mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
 		// this is a class created to avoid an Android bug
 		// see the class for further infos.
@@ -174,7 +193,7 @@ public class HomeActivity extends SherlockFragmentActivity implements
 		mListView = (ListView) findViewById(R.id.drawer_list);
 		collections = new ArrayList<ExpCollection>();
 		mListView.setAdapter(new NavDrawerAdapter(this, collections));
-
+		mListView.setOnItemClickListener(this);
 	}
 
 	private void readCollections() {
@@ -199,8 +218,9 @@ public class HomeActivity extends SherlockFragmentActivity implements
 		Fragment currentFragment = getSupportFragmentManager()
 				.findFragmentById(R.id.content_frame);
 		// Checking if there is a fragment that it's listening for back button
-		if (currentFragment != null && currentFragment instanceof BackListener) {
-			((BackListener) currentFragment).onBack();
+		if (currentFragment != null && currentFragment instanceof RefreshCallback) {
+			((RefreshCallback) currentFragment).refresh(null);
+			mDrawerLayout.closeDrawer(findViewById(R.id.drawer_wrapper));
 		}
 
 		super.onBackPressed();
@@ -354,6 +374,34 @@ public class HomeActivity extends SherlockFragmentActivity implements
 	public OnTagsSelectedListener getTagListener() {
 		return (OnTagsSelectedListener) getSupportFragmentManager()
 				.findFragmentById(R.id.content_frame);
+	}
+
+	@Override
+	public void onItemClick(AdapterView<?> arg0, View arg1, int position,
+			long arg3) {
+		// FragmentTransaction ft =
+		// getSupportFragmentManager().beginTransaction();
+		// Fragment f = new ExperiencesListFragment();
+		// Bundle b = new Bundle();
+		// ExperienceFilter filter = new ExperienceFilter();
+		// filter.setCollectionIds(new String[] { collections.get(position)
+		// .getId() });
+		// b.putSerializable(ExperiencesListFragment.ARG_FILTER, filter);
+		// f.setArguments(b);
+		// ft.replace(R.id.content_frame, f);
+		// ft.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE);
+		// ft.addToBackStack(null);
+		// ft.commit();
+		Fragment currentFragment = getSupportFragmentManager()
+				.findFragmentById(R.id.content_frame);
+		// Checking if there is a fragment that it's listening for back button
+		if (currentFragment != null
+				&& currentFragment instanceof RefreshCallback) {
+			((RefreshCallback) currentFragment).refresh(collections.get(
+					position).getId());
+			mDrawerLayout.closeDrawer(findViewById(R.id.drawer_wrapper));
+		}
+		
 	}
 
 }
