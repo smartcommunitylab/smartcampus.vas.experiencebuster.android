@@ -93,7 +93,7 @@ public class SearchFragment extends SherlockListFragment {
 			}
 			b.putSerializable(ExperiencesListFragment.ARG_FILTER, filter);
 			f.setArguments(b);
-			ft.replace(android.R.id.content, f);
+			ft.replace(R.id.content_frame, f);
 			ft.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE);
 			ft.addToBackStack(null);
 			ft.commit();

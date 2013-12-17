@@ -36,6 +36,8 @@ import eu.trentorise.smartcampus.eb.model.Experience;
 
 @SuppressLint("NewApi")
 public class ExperiencesListAdapter extends ArrayAdapter<Experience> {
+	
+	private static final int MAX_TITLE_LENGTH = 60;
 
 	private Context context;
 	private int layoutResourceId;
@@ -89,8 +91,11 @@ public class ExperiencesListAdapter extends ArrayAdapter<Experience> {
 		} else {
 			holder.separator.setVisibility(View.GONE);
 		}
-
-		holder.title.setText(experience.getTitle());
+		String title = experience.getTitle();
+		if(title.length()>MAX_TITLE_LENGTH-1)
+			holder.title.setText(title.substring(0,MAX_TITLE_LENGTH)+"...");
+		else
+			holder.title.setText(title);
 //		if (experience != null && experience.getDescription().length() > 0) {
 //			holder.description.setText(experience.getDescription());
 //		} else {

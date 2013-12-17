@@ -47,6 +47,7 @@
             android:layout_gravity="bottom"
             android:minHeight="80dp"
             android:inputType="textMultiLine"
+            android:maxLines="10"
             android:singleLine="false"
             android:gravity="center_vertical"
             android:hint="@string/exp_form_descr_hint"

@@ -51,10 +51,9 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:minHeight="48dp"
         android:orientation="vertical"
-        android:paddingLeft="4dp"
-        android:paddingRight="4dp"
-        android:paddingTop="4dp" >
+        android:paddingLeft="4dp" >
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -64,6 +63,8 @@
             <LinearLayout
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
+                android:paddingTop="4dp"
+                
                 android:layout_weight="1"
                 android:orientation="vertical" >
 
@@ -71,7 +72,9 @@
                     android:id="@+id/title"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:gravity="center_vertical"
                     android:textAppearance="?android:attr/textAppearanceMedium"
+                    android:maxLength="140"
                     android:textStyle="bold" />
 
                 <!--
@@ -103,7 +106,8 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:paddingBottom="5dp" >
+            android:paddingBottom="5dp"
+            android:visibility="gone" >
 
             <TextView
                 android:id="@+id/place"

@@ -26,6 +26,7 @@ import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.util.Log;
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
@@ -75,27 +76,25 @@ public class ExperiencesListFragment extends SherlockListFragment
 	private ExperienceFilter filter;
 
 	private static final int ACCOUNT_CREATION = 10000;
-	
-	
 
 	@SuppressWarnings("unchecked")
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 
-		if (savedInstanceState != null
-				&& savedInstanceState.containsKey(STATE_ITEMS)) {
-			experiencesList = (List<Experience>) savedInstanceState
-					.getSerializable(STATE_ITEMS);
-		} else if (getArguments() != null
-				&& getArguments().containsKey(ARG_FILTER)) {
-			filter = (ExperienceFilter) getArguments().getSerializable(
-					ARG_FILTER);
-			experiencesList = EBHelper.findExperiences(filter, 0, -1);
-		} else {
-			//experiencesList = EBHelper.getExperiences(0, -1);
+//		if (savedInstanceState != null
+//				&& savedInstanceState.containsKey(STATE_ITEMS)) {
+//			experiencesList = (List<Experience>) savedInstanceState
+//					.getSerializable(STATE_ITEMS);
+//		} else if (getArguments() != null
+//				&& getArguments().containsKey(ARG_FILTER)) {
+//			filter = (ExperienceFilter) getArguments().getSerializable(
+//					ARG_FILTER);
+//			experiencesList = EBHelper.findExperiences(filter, 0, -1);
+//		} else {
+//			// experiencesList = EBHelper.getExperiences(0, -1);
 			experiencesList = new ArrayList<Experience>(1);
-		}
+//		}
 		setHasOptionsMenu(true);
 
 	}
@@ -121,6 +120,13 @@ public class ExperiencesListFragment extends SherlockListFragment
 			FragmentManager fm = getFragmentManager();
 			DialogFragment f = new GrabDialogFragment();
 			f.show(fm, "grabdialog");
+			break;
+		case R.id.expmenu_search:
+			FragmentTransaction ft = getFragmentManager().beginTransaction();
+			ft.replace(R.id.content_frame, new SearchFragment(), "search");
+			ft.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE);
+			ft.commit();
+			break;
 		default:
 			break;
 		}
@@ -156,7 +162,8 @@ public class ExperiencesListFragment extends SherlockListFragment
 	}
 
 	private void prepareButtons() {
-		TextView add = (TextView) getActivity().findViewById(R.id.drawer_add_category);
+		TextView add = (TextView) getActivity().findViewById(
+				R.id.drawer_add_category);
 		add.setOnClickListener(new View.OnClickListener() {
 
 			@Override
@@ -198,10 +205,17 @@ public class ExperiencesListFragment extends SherlockListFragment
 				R.drawable.ic_launcher);
 		getSherlockActivity().getSupportActionBar().setDisplayHomeAsUpEnabled(
 				true);
-
+		
 		experiencesList.clear();
-		experiencesList.addAll(EBHelper.getExperiences(0, -1));
-		((ArrayAdapter)getListView().getAdapter()).notifyDataSetChanged();
+		if (getArguments() != null && getArguments().containsKey(ARG_FILTER)) {
+			filter = (ExperienceFilter) getArguments().getSerializable(
+					ARG_FILTER);
+			experiencesList = EBHelper.findExperiences(filter, 0, -1);
+		} else {
+			experiencesList.addAll(EBHelper.getExperiences(0, -1));
+		}
+
+		((ArrayAdapter) getListView().getAdapter()).notifyDataSetChanged();
 	}
 
 	@Override
