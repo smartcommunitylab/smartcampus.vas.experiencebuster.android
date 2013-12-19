@@ -73,7 +73,7 @@ public class HomeActivity extends SherlockFragmentActivity implements
 		DialogCallbackContainer, OnItemClickListener,OnItemLongClickListener {
 
 	public interface RefreshCallback {
-		public void refresh(String id,String name);
+		public void refresh(String id,String name,boolean animate);
 	}
 
 	private final static int FILESTORAGE_ACCOUNT_REGISTRATION = 10000;
@@ -176,13 +176,7 @@ public class HomeActivity extends SherlockFragmentActivity implements
 
 					@Override
 					public void onClick(View v) {
-						Fragment currentFragment = getSupportFragmentManager()
-								.findFragmentById(R.id.content_frame);
-						if (currentFragment != null
-								&& currentFragment instanceof RefreshCallback) {
-							((RefreshCallback) currentFragment).refresh(null,null);
-						}
-						mDrawerLayout.closeDrawer(findViewById(R.id.drawer_wrapper));
+						refreshFragment(null,null,true);
 					}
 				});
 	}
@@ -386,15 +380,8 @@ public class HomeActivity extends SherlockFragmentActivity implements
 	@Override
 	public void onItemClick(AdapterView<?> arg0, View arg1, int position,
 			long arg3) {
-		Fragment currentFragment = getSupportFragmentManager()
-				.findFragmentById(R.id.content_frame);
-		// Checking if there is a fragment that it's listening for back button
-		if (currentFragment != null
-				&& currentFragment instanceof RefreshCallback) {
-			((RefreshCallback) currentFragment).refresh(collections.get(
-					position).getId(),collections.get(position).getName());
-			mDrawerLayout.closeDrawer(findViewById(R.id.drawer_wrapper));
-		}
+		refreshFragment(collections.get(
+					position).getId(),collections.get(position).getName(),true);
 
 	}
 
@@ -412,6 +399,7 @@ public class HomeActivity extends SherlockFragmentActivity implements
             	if (EBHelper.updateUserPreference(HomeActivity.this, EBHelper.getUserPreference())) {
 	            	collections.remove(arg2);
 	            	((ArrayAdapter)mListView.getAdapter()).notifyDataSetChanged();
+	            	refreshFragment(null,null,false);
             	} else {
 	            	EBHelper.getUserPreference().getCollections().add(arg2,coll);
             	}
@@ -420,6 +408,16 @@ public class HomeActivity extends SherlockFragmentActivity implements
         .setNegativeButton(android.R.string.no, null)
         .show();
 		return false;
+	}
+
+	private void refreshFragment(String id,String name,boolean animate) {
+		Fragment currentFragment = getSupportFragmentManager()
+				.findFragmentById(R.id.content_frame);
+		if (currentFragment != null
+				&& currentFragment instanceof RefreshCallback) {
+			((RefreshCallback) currentFragment).refresh(id,name,animate);
+		}
+		mDrawerLayout.closeDrawer(findViewById(R.id.drawer_wrapper));
 	}
 
 

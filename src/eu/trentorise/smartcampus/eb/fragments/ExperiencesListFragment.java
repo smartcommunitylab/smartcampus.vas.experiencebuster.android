@@ -15,6 +15,7 @@
  ******************************************************************************/
 package eu.trentorise.smartcampus.eb.fragments;
 
+import java.security.acl.LastOwnerException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -71,11 +72,10 @@ public class ExperiencesListFragment extends SherlockListFragment
 	private static final int REQUEST_CODE_PAGER = 35;
 
 	private List<Experience> experiencesList;
-	private ExperienceFilter filter;
+	private static ExperienceFilter filter;
 
 	private static final int ACCOUNT_CREATION = 10000;
 
-	private static boolean SHOW_ALL = true;
 
 	@SuppressWarnings("unchecked")
 	@Override
@@ -127,7 +127,11 @@ public class ExperiencesListFragment extends SherlockListFragment
 			ft.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE);
 			ft.addToBackStack(null);
 			ft.commit();
-			SHOW_ALL=false;
+			
+			//this is just to manage the back button
+			//because the search can show a subset of items
+			filter= new ExperienceFilter();
+			
 			break;
 		default:
 			break;
@@ -208,11 +212,9 @@ public class ExperiencesListFragment extends SherlockListFragment
 			filter = (ExperienceFilter) getArguments().getSerializable(
 					ARG_FILTER);
 			experiencesList = EBHelper.findExperiences(filter, 0, -1);
-			SHOW_ALL=false;
 		} else {
 			filter = null;
 			experiencesList.addAll(EBHelper.getExperiences(0, -1));
-			SHOW_ALL=true;
 		}
 		if (filter == null) {
 			getSherlockActivity().getSupportActionBar().setTitle(
@@ -357,35 +359,40 @@ public class ExperiencesListFragment extends SherlockListFragment
 	}
 
 	@Override
-	public void refresh(String id,String name) {
+	public void refresh(String id,String name,boolean animate) {
 		experiencesList.clear();
 		if (id != null) {
 			ExperienceFilter ef = new ExperienceFilter();
 			ef.setCollectionIds(new String[] { id });
+			filter=ef;
 			experiencesList = EBHelper.findExperiences(ef, 0, -1);
 			getSherlockActivity().getSupportActionBar().setTitle(name);
-			SHOW_ALL = false;
 		} else {
 				experiencesList=EBHelper.getExperiences(0, -1);
 				getSherlockActivity().getSupportActionBar().setTitle(getString(R.string.mainmenu_diary));
-			SHOW_ALL = true;
+			filter=null;
 		}
 		this.setListAdapter(new ExperiencesListAdapter(getSherlockActivity(),
 				R.layout.experience_row, experiencesList));
 		((ArrayAdapter) getListView().getAdapter()).notifyDataSetChanged();
-		animateList();
+		if(animate)
+			animateList();
 	}
 
 	@Override
 	public void onBack() {
-		if (!SHOW_ALL) {
-			experiencesList = EBHelper.getExperiences(0, -1);
+		if (filter!=null) {
+			if(!filter.isEmpty())
+				experiencesList = EBHelper.findExperiences(filter, 0, -1);
+			else{
+				experiencesList = EBHelper.getExperiences(0, -1);
+				filter=null;
+			}
 			this.setListAdapter(new ExperiencesListAdapter(getSherlockActivity(),
 					R.layout.experience_row, experiencesList));
 			((ArrayAdapter) getListView().getAdapter()).notifyDataSetChanged();
 			getSherlockActivity().getSupportActionBar().setTitle(getString(R.string.mainmenu_diary));
 			animateList();
-			SHOW_ALL=true;
 		} else {
 			getActivity().finish();
 		}
