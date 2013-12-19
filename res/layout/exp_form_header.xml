@@ -73,6 +73,7 @@
         android:drawableLeft="@drawable/ic_collection"
         android:gravity="center_vertical"
         android:paddingBottom="10dp"
+        android:drawablePadding="3dp"
         android:textStyle="italic|bold" />
 
 

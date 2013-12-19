@@ -62,7 +62,7 @@ public class ExperiencesListFragment extends SherlockListFragment
 		implements
 		RemoveCallback,
 		eu.trentorise.smartcampus.eb.fragments.experience.AssignCollectionFragment.AssignCollectionsCallback,
-		RefreshCallback {
+		RefreshCallback, BackListener {
 
 	public static final String ARG_FILTER = "filter";
 
@@ -74,6 +74,8 @@ public class ExperiencesListFragment extends SherlockListFragment
 	private ExperienceFilter filter;
 
 	private static final int ACCOUNT_CREATION = 10000;
+
+	private static boolean SHOW_ALL = true;
 
 	@SuppressWarnings("unchecked")
 	@Override
@@ -125,6 +127,7 @@ public class ExperiencesListFragment extends SherlockListFragment
 			ft.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE);
 			ft.addToBackStack(null);
 			ft.commit();
+			SHOW_ALL=false;
 			break;
 		default:
 			break;
@@ -158,18 +161,23 @@ public class ExperiencesListFragment extends SherlockListFragment
 	public void onStart() {
 		super.onStart();
 		prepareButtons();
+		animateList();
+
+	}
+
+	private void animateList() {
 		getListView().clearAnimation();
 		getView().postDelayed(new Runnable() {
-			
+
 			@Override
 			public void run() {
-				TranslateAnimation animation = new TranslateAnimation(0, 0, 200, 0);
+				TranslateAnimation animation = new TranslateAnimation(0, 0,
+						200, 0);
 				animation.setDuration(300);
 				animation.setFillBefore(true);
 				getListView().startAnimation(animation);
 			}
-		},50);
-		
+		}, 50);
 	}
 
 	private void prepareButtons() {
@@ -200,9 +208,11 @@ public class ExperiencesListFragment extends SherlockListFragment
 			filter = (ExperienceFilter) getArguments().getSerializable(
 					ARG_FILTER);
 			experiencesList = EBHelper.findExperiences(filter, 0, -1);
+			SHOW_ALL=false;
 		} else {
 			filter = null;
 			experiencesList.addAll(EBHelper.getExperiences(0, -1));
+			SHOW_ALL=true;
 		}
 		if (filter == null) {
 			getSherlockActivity().getSupportActionBar().setTitle(
@@ -347,16 +357,38 @@ public class ExperiencesListFragment extends SherlockListFragment
 	}
 
 	@Override
-	public void refresh(String s) {
+	public void refresh(String id,String name) {
 		experiencesList.clear();
-		if (s != null) {
+		if (id != null) {
 			ExperienceFilter ef = new ExperienceFilter();
-			ef.setCollectionIds(new String[] { s });
+			ef.setCollectionIds(new String[] { id });
 			experiencesList = EBHelper.findExperiences(ef, 0, -1);
+			getSherlockActivity().getSupportActionBar().setTitle(name);
+			SHOW_ALL = false;
+		} else {
+				experiencesList=EBHelper.getExperiences(0, -1);
+				getSherlockActivity().getSupportActionBar().setTitle(getString(R.string.mainmenu_diary));
+			SHOW_ALL = true;
 		}
-		else
-			experiencesList.addAll(EBHelper.getExperiences(0, -1));
+		this.setListAdapter(new ExperiencesListAdapter(getSherlockActivity(),
+				R.layout.experience_row, experiencesList));
 		((ArrayAdapter) getListView().getAdapter()).notifyDataSetChanged();
+		animateList();
+	}
+
+	@Override
+	public void onBack() {
+		if (!SHOW_ALL) {
+			experiencesList = EBHelper.getExperiences(0, -1);
+			this.setListAdapter(new ExperiencesListAdapter(getSherlockActivity(),
+					R.layout.experience_row, experiencesList));
+			((ArrayAdapter) getListView().getAdapter()).notifyDataSetChanged();
+			getSherlockActivity().getSupportActionBar().setTitle(getString(R.string.mainmenu_diary));
+			animateList();
+			SHOW_ALL=true;
+		} else {
+			getActivity().finish();
+		}
 	}
 
 }

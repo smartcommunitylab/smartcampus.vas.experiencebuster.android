@@ -69,7 +69,7 @@ public class HomeActivity extends SherlockFragmentActivity implements
 		DialogCallbackContainer, OnItemClickListener {
 
 	public interface RefreshCallback {
-		public void refresh(String s);
+		public void refresh(String id,String name);
 	}
 
 	private final static int FILESTORAGE_ACCOUNT_REGISTRATION = 10000;
@@ -166,19 +166,21 @@ public class HomeActivity extends SherlockFragmentActivity implements
 		ft.replace(R.id.content_frame, frag).commitAllowingStateLoss();
 
 		setupNavDrawer();
-		
-		findViewById(R.id.drawer_uncantorized).setOnClickListener(new View.OnClickListener() {
-			
-			@Override
-			public void onClick(View v) {
-				Fragment currentFragment = getSupportFragmentManager()
-						.findFragmentById(R.id.content_frame);
-				if (currentFragment != null
-						&& currentFragment instanceof RefreshCallback) {
-					((RefreshCallback) currentFragment).refresh(null);
-				}
-			}
-		});
+
+		findViewById(R.id.drawer_uncantorized).setOnClickListener(
+				new View.OnClickListener() {
+
+					@Override
+					public void onClick(View v) {
+						Fragment currentFragment = getSupportFragmentManager()
+								.findFragmentById(R.id.content_frame);
+						if (currentFragment != null
+								&& currentFragment instanceof RefreshCallback) {
+							((RefreshCallback) currentFragment).refresh(null,null);
+						}
+						mDrawerLayout.closeDrawer(findViewById(R.id.drawer_wrapper));
+					}
+				});
 	}
 
 	private void setupNavDrawer() {
@@ -218,12 +220,12 @@ public class HomeActivity extends SherlockFragmentActivity implements
 		Fragment currentFragment = getSupportFragmentManager()
 				.findFragmentById(R.id.content_frame);
 		// Checking if there is a fragment that it's listening for back button
-		if (currentFragment != null && currentFragment instanceof RefreshCallback) {
-			((RefreshCallback) currentFragment).refresh(null);
-			mDrawerLayout.closeDrawer(findViewById(R.id.drawer_wrapper));
+		if (currentFragment != null && currentFragment instanceof BackListener) {
+			((BackListener) currentFragment).onBack();
+		}else{
+			super.onBackPressed();
 		}
-
-		super.onBackPressed();
+		mDrawerLayout.closeDrawer(findViewById(R.id.drawer_wrapper));
 	}
 
 	@Override
@@ -379,29 +381,16 @@ public class HomeActivity extends SherlockFragmentActivity implements
 	@Override
 	public void onItemClick(AdapterView<?> arg0, View arg1, int position,
 			long arg3) {
-		// FragmentTransaction ft =
-		// getSupportFragmentManager().beginTransaction();
-		// Fragment f = new ExperiencesListFragment();
-		// Bundle b = new Bundle();
-		// ExperienceFilter filter = new ExperienceFilter();
-		// filter.setCollectionIds(new String[] { collections.get(position)
-		// .getId() });
-		// b.putSerializable(ExperiencesListFragment.ARG_FILTER, filter);
-		// f.setArguments(b);
-		// ft.replace(R.id.content_frame, f);
-		// ft.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE);
-		// ft.addToBackStack(null);
-		// ft.commit();
 		Fragment currentFragment = getSupportFragmentManager()
 				.findFragmentById(R.id.content_frame);
 		// Checking if there is a fragment that it's listening for back button
 		if (currentFragment != null
 				&& currentFragment instanceof RefreshCallback) {
 			((RefreshCallback) currentFragment).refresh(collections.get(
-					position).getId());
+					position).getId(),collections.get(position).getName());
 			mDrawerLayout.closeDrawer(findViewById(R.id.drawer_wrapper));
 		}
-		
+
 	}
 
 }
