@@ -19,8 +19,10 @@ import java.util.ArrayList;
 
 import android.accounts.AccountManager;
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.res.Configuration;
@@ -32,8 +34,10 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v4.widget.DrawerLayout;
 import android.util.Log;
 import android.view.View;
+import android.view.View.OnLongClickListener;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
+import android.widget.AdapterView.OnItemLongClickListener;
 import android.widget.ArrayAdapter;
 import android.widget.ExpandableListView;
 import android.widget.ListView;
@@ -66,7 +70,7 @@ import eu.trentorise.smartcampus.storage.DataException;
 import eu.trentorise.smartcampus.storage.sync.service.SyncStorageService;
 
 public class HomeActivity extends SherlockFragmentActivity implements
-		DialogCallbackContainer, OnItemClickListener {
+		DialogCallbackContainer, OnItemClickListener,OnItemLongClickListener {
 
 	public interface RefreshCallback {
 		public void refresh(String id,String name);
@@ -189,13 +193,14 @@ public class HomeActivity extends SherlockFragmentActivity implements
 		// this is a class created to avoid an Android bug
 		// see the class for further infos.
 		mDrawerToggle = new ActionBarDrawerToggle(this, mDrawerLayout,
-				R.drawable.ic_drawer, R.string.app_name, R.string.app_name);
+				R.drawable.ic_navigation_drawer, R.string.app_name, R.string.app_name);
 
 		mDrawerLayout.setDrawerListener(mDrawerToggle);
 		mListView = (ListView) findViewById(R.id.drawer_list);
 		collections = new ArrayList<ExpCollection>();
 		mListView.setAdapter(new NavDrawerAdapter(this, collections));
 		mListView.setOnItemClickListener(this);
+		mListView.setOnItemLongClickListener(this);
 	}
 
 	private void readCollections() {
@@ -392,5 +397,30 @@ public class HomeActivity extends SherlockFragmentActivity implements
 		}
 
 	}
+
+	@Override
+	public boolean onItemLongClick(AdapterView<?> arg0, View arg1,final  int arg2,
+			long arg3) {
+		final ExpCollection coll = EBHelper.getUserPreference().getCollections().get(arg2);
+		new AlertDialog.Builder(this)
+        .setMessage(R.string.msg_delete_coll_confirm)
+        .setCancelable(false)
+        .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+            @SuppressWarnings("unchecked")
+			public void onClick(DialogInterface dialog, int id) {
+            	EBHelper.getUserPreference().getCollections().remove(coll);
+            	if (EBHelper.updateUserPreference(HomeActivity.this, EBHelper.getUserPreference())) {
+	            	collections.remove(arg2);
+	            	((ArrayAdapter)mListView.getAdapter()).notifyDataSetChanged();
+            	} else {
+	            	EBHelper.getUserPreference().getCollections().add(arg2,coll);
+            	}
+            }
+        })
+        .setNegativeButton(android.R.string.no, null)
+        .show();
+		return false;
+	}
+
 
 }
