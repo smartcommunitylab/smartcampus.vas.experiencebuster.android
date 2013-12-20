@@ -19,4 +19,5 @@
     <color name="sc_gray">#666666</color>
     <color name="sc_dark_gray">#333333</color>
     <color name="sc_light_gray">#ededed</color>
+    <color name="sc_remove_red">#FF0000</color>
 </resources>
