@@ -15,7 +15,6 @@
  ******************************************************************************/
 package eu.trentorise.smartcampus.eb.fragments;
 
-import java.security.acl.LastOwnerException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -164,7 +163,6 @@ public class ExperiencesListFragment extends SherlockListFragment
 	@Override
 	public void onStart() {
 		super.onStart();
-		prepareButtons();
 		animateList();
 
 	}
@@ -182,20 +180,6 @@ public class ExperiencesListFragment extends SherlockListFragment
 				getListView().startAnimation(animation);
 			}
 		}, 50);
-	}
-
-	private void prepareButtons() {
-		TextView add = (TextView) getActivity().findViewById(
-				R.id.drawer_add_category);
-		add.setOnClickListener(new View.OnClickListener() {
-
-			@Override
-			public void onClick(View v) {
-				FragmentManager fm = getFragmentManager();
-				NewCollectionDialogFragment dialog = new NewCollectionDialogFragment();
-				dialog.show(fm, "dialog");
-			}
-		});
 	}
 
 	@Override

@@ -60,10 +60,33 @@
         <ListView
             android:id="@+id/drawer_list"
             android:layout_width="240dp"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             android:choiceMode="singleChoice"
             android:divider="@android:color/transparent"
             android:dividerHeight="0dp" />
+        
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="3dp"
+            android:layout_marginBottom="3dp"
+            android:background="@color/sc_light_gray" />
+
+        <TextView
+            android:id="@+id/drawer_tutorial"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="8dp"
+            android:text="@string/tutorial"
+            android:textColor="@android:color/white" />
+        
+        <TextView
+            android:id="@+id/drawer_settings"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="8dp"
+            android:text="@string/mainmenu_settings"
+            android:textColor="@android:color/white" />
+        
     </LinearLayout>
 
 </android.support.v4.widget.DrawerLayout>
