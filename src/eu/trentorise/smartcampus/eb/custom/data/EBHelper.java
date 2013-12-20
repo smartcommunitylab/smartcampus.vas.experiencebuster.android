@@ -33,6 +33,9 @@ import android.os.Bundle;
 import android.os.RemoteException;
 import android.preference.PreferenceManager;
 import android.util.Log;
+import android.view.View;
+import android.view.animation.ScaleAnimation;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Toast;
 import eu.trentorise.smartcampus.ac.AACException;
 import eu.trentorise.smartcampus.ac.SCAccessProvider;
@@ -536,5 +539,32 @@ public class EBHelper {
 			return false;
 		}
 		return profile.getSocialId().equals(e.getSocialUserId());
+	}
+	
+	public static void applyScaleAnimationOnView(final View v){
+		v.postDelayed(new Runnable() {
+
+			@Override
+			public void run() {
+				ScaleAnimation anim = new ScaleAnimation(0.1f, 1, 1, 1);
+				anim.setDuration(200);
+				v.startAnimation(anim);
+				v.requestFocus();
+			}
+		}, 10);
+	}
+	
+	public static void openKeyboard(final Context ctx,final View v){
+		v.postDelayed(new Runnable() {
+			
+			@Override
+			public void run() {
+				InputMethodManager keyboard = (InputMethodManager) ctx
+						.getSystemService(Context.INPUT_METHOD_SERVICE);
+				keyboard.showSoftInput(v,
+						0);
+			}
+		}, 10);
+		
 	}
 }

@@ -207,11 +207,7 @@ public class EditExpFragment extends SherlockFragment
 
 				@Override
 				public void run() {
-					InputMethodManager keyboard = (InputMethodManager) getActivity()
-							.getSystemService(Context.INPUT_METHOD_SERVICE);
-					keyboard.showSoftInput(getView().findViewById(R.id.title),
-							0);
-
+					EBHelper.openKeyboard(getActivity(), getView().findViewById(R.id.title));
 					switchToEdit();
 					mTitleSwitch.editMode();
 				}

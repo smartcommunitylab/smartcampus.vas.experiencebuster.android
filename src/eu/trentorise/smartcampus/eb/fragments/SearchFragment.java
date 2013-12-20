@@ -33,6 +33,7 @@ import android.widget.Toast;
 import com.actionbarsherlock.app.SherlockListFragment;
 
 import eu.trentorise.smartcampus.eb.R;
+import eu.trentorise.smartcampus.eb.custom.data.EBHelper;
 import eu.trentorise.smartcampus.eb.model.ExperienceFilter;
 
 public class SearchFragment extends SherlockListFragment {
@@ -58,16 +59,8 @@ public class SearchFragment extends SherlockListFragment {
 		getSherlockActivity().getSupportActionBar().setDisplayShowTitleEnabled(true);
 		getSherlockActivity().getSupportActionBar().setTitle(R.string.title_search);
 		
-		getView().postDelayed(new Runnable() {
-
-			@Override
-			public void run() {
-				ScaleAnimation anim = new ScaleAnimation(0.1f, 1, 1, 1);
-				anim.setDuration(200);
-				getView().findViewById(R.id.search).startAnimation(anim);
-				getView().findViewById(R.id.search).requestFocus();
-			}
-		}, 10);
+		EBHelper.applyScaleAnimationOnView(getView().findViewById(R.id.search));
+		EBHelper.openKeyboard(getActivity(), getView().findViewById(R.id.search));
 	}
 
 	@Override

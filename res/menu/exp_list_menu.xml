@@ -25,7 +25,7 @@
     
     <item
         android:id="@+id/expmenu_search"
-        android:icon="@drawable/action_search"
+        android:icon="@drawable/ic_search"
         android:showAsAction="always"
         android:title="@string/mainmenu_search"/>
 

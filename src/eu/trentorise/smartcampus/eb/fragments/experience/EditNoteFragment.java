@@ -77,6 +77,8 @@ public class EditNoteFragment extends SherlockDialogFragment {
 
 		return builder.create();	
 	}
+	
+	
 
 	public static Bundle prepare(String note, int i) {
 		Bundle b = new Bundle();
