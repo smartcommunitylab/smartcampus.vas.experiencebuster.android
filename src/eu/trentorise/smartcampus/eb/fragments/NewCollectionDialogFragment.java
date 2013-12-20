@@ -134,6 +134,8 @@ public class NewCollectionDialogFragment extends SherlockDialogFragment {
 			}
 		};
 		dialog.show();
+		EBHelper.applyScaleAnimationOnView(newCollectionEditText);
+		EBHelper.openKeyboard(getActivity(), newCollectionEditText);
 		dialog.getButton(DialogInterface.BUTTON_POSITIVE).setOnClickListener(onSaveBtnListener);
 		return dialog;
 	}

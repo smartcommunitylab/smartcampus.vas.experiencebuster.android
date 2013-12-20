@@ -37,16 +37,19 @@
             android:clickable="false"
             android:focusable="false"
             android:focusableInTouchMode="false"
-            android:gravity="center"
+            android:gravity="left"
+            android:textColor="@android:color/white"
+            android:padding="3dp"
+            android:background="@color/appcolor"
             android:textAppearance="?android:attr/textAppearanceLarge" />
 
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:background="@android:color/darker_gray"
-            android:clickable="false"
-            android:focusable="false"
-            android:focusableInTouchMode="false" />
+<!--         <View -->
+<!--             android:layout_width="match_parent" -->
+<!--             android:layout_height="1dp" -->
+<!--             android:background="@android:color/darker_gray" -->
+<!--             android:clickable="false" -->
+<!--             android:focusable="false" -->
+<!--             android:focusableInTouchMode="false" /> -->
     </LinearLayout>
 
     <LinearLayout
@@ -75,8 +78,7 @@
                     android:layout_height="wrap_content"
                     android:gravity="center_vertical"
                     android:textAppearance="?android:attr/textAppearanceMedium"
-                    android:maxLength="140"
-                    android:textStyle="bold" />
+                    android:maxLength="140"/>
 
                 <!--
                      <TextView

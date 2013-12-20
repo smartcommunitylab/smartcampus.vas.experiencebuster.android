@@ -34,6 +34,9 @@ import android.os.RemoteException;
 import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.View;
+import android.view.animation.AccelerateInterpolator;
+import android.view.animation.AlphaAnimation;
+import android.view.animation.Animation;
 import android.view.animation.ScaleAnimation;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Toast;
@@ -546,14 +549,26 @@ public class EBHelper {
 
 			@Override
 			public void run() {
-				ScaleAnimation anim = new ScaleAnimation(0.1f, 1, 1, 1);
-				anim.setDuration(200);
+				ScaleAnimation anim = new ScaleAnimation(0, 1, 1, 1);
+				anim.setDuration(350);
 				v.startAnimation(anim);
 				v.requestFocus();
 			}
 		}, 10);
 	}
 	
+	public static void applyAlphaAnimationOnView(final View v){
+		v.post(new Runnable() {
+			
+			@Override
+			public void run() {
+				Animation fadeIn = new AlphaAnimation(0, 1);
+			    fadeIn.setInterpolator(new AccelerateInterpolator()); //add this
+			    fadeIn.setDuration(350);
+			    v.startAnimation(fadeIn);
+			}
+		});
+	}
 	public static void openKeyboard(final Context ctx,final View v){
 		v.postDelayed(new Runnable() {
 			

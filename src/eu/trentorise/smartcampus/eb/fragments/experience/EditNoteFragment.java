@@ -27,6 +27,7 @@ import android.widget.EditText;
 import com.actionbarsherlock.app.SherlockDialogFragment;
 
 import eu.trentorise.smartcampus.eb.R;
+import eu.trentorise.smartcampus.eb.custom.data.EBHelper;
 
 public class EditNoteFragment extends SherlockDialogFragment {
 
@@ -49,9 +50,9 @@ public class EditNoteFragment extends SherlockDialogFragment {
 		builder.setTitle(R.string.exp_notes_title);
 		final View v = LayoutInflater.from(getActivity()).inflate(R.layout.edit_exp_note, null);
 		builder.setView(v);
-
+		final EditText et = (EditText)v.findViewById(R.id.exp_note_dialog_note);
 		if (text != null) {
-			EditText et = (EditText)v.findViewById(R.id.exp_note_dialog_note);
+			
 			et.setText(text);
 		}
 		
@@ -66,7 +67,6 @@ public class EditNoteFragment extends SherlockDialogFragment {
 		builder.setPositiveButton(android.R.string.ok, new OnClickListener() {
 			@Override
 			public void onClick(DialogInterface dialog, int which) {
-				EditText et = (EditText)v.findViewById(R.id.exp_note_dialog_note);
 				NoteHandler c = ((DialogCallbackContainer)getActivity()).getNoteHandler();
 				c.onNote(et.getText() != null ? et.getText().toString() : null, getArguments().getInt(ARG_IDX));
 //
@@ -74,7 +74,8 @@ public class EditNoteFragment extends SherlockDialogFragment {
 				dialog.dismiss();
 			}
 		});
-
+		EBHelper.applyScaleAnimationOnView(et);
+		EBHelper.openKeyboard(getActivity(), et);
 		return builder.create();	
 	}
 	

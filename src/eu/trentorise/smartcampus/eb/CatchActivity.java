@@ -29,6 +29,7 @@ import com.actionbarsherlock.app.SherlockFragmentActivity;
 import eu.trentorise.smartcampus.ac.SCAccessProvider;
 import eu.trentorise.smartcampus.android.common.tagging.TaggingDialog.OnTagsSelectedListener;
 import eu.trentorise.smartcampus.eb.Constants.CATCH_TYPES;
+import eu.trentorise.smartcampus.eb.HomeActivity.RefreshCallback;
 import eu.trentorise.smartcampus.eb.custom.capture.CaptureHelper;
 import eu.trentorise.smartcampus.eb.custom.capture.CaptureHelper.ResultHandler;
 import eu.trentorise.smartcampus.eb.custom.capture.GrabbedContent;
@@ -191,8 +192,8 @@ public class CatchActivity extends SherlockFragmentActivity implements
 		if (currentFragment != null && currentFragment instanceof BackListener) {
 			((BackListener) currentFragment).onBack();
 		}
-
 		super.onBackPressed();
+		
 	}
 
 	@Override

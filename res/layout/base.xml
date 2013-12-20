@@ -71,21 +71,6 @@
             android:layout_marginBottom="3dp"
             android:background="@color/sc_light_gray" />
 
-        <TextView
-            android:id="@+id/drawer_tutorial"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:padding="8dp"
-            android:text="@string/tutorial"
-            android:textColor="@android:color/white" />
-        
-        <TextView
-            android:id="@+id/drawer_settings"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:padding="8dp"
-            android:text="@string/mainmenu_settings"
-            android:textColor="@android:color/white" />
         
     </LinearLayout>
 

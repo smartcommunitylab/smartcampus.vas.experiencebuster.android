@@ -38,6 +38,8 @@ import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.AdapterView.OnItemLongClickListener;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -72,10 +74,10 @@ import eu.trentorise.smartcampus.storage.DataException;
 import eu.trentorise.smartcampus.storage.sync.service.SyncStorageService;
 
 public class HomeActivity extends SherlockFragmentActivity implements
-		DialogCallbackContainer, OnItemClickListener,OnItemLongClickListener {
+		DialogCallbackContainer, OnItemClickListener, OnItemLongClickListener {
 
 	public interface RefreshCallback {
-		public void refresh(String id,String name,boolean animate);
+		public void refresh(String id, String name, boolean animate);
 	}
 
 	private final static int FILESTORAGE_ACCOUNT_REGISTRATION = 10000;
@@ -180,17 +182,16 @@ public class HomeActivity extends SherlockFragmentActivity implements
 
 					@Override
 					public void onClick(View v) {
-						refreshFragment(null,null,true);
+						refreshFragment(null, null, true);
 					}
 				});
-		
+
 		mTutorialHelper = new ListViewTutorialHelper(this, mTutorialProvider);
 		prepareButtons();
 	}
-	
+
 	private void prepareButtons() {
-		TextView add = (TextView) findViewById(
-				R.id.drawer_add_category);
+		TextView add = (TextView) findViewById(R.id.drawer_add_category);
 		add.setOnClickListener(new View.OnClickListener() {
 
 			@Override
@@ -200,23 +201,12 @@ public class HomeActivity extends SherlockFragmentActivity implements
 				dialog.show(fm, "dialog");
 			}
 		});
-		
-		TextView settings = (TextView) findViewById(R.id.drawer_settings);
-		settings.setOnClickListener(new View.OnClickListener() {
-			@Override
-			public void onClick(View v) {
-				startActivity(new Intent(HomeActivity.this, SettingsActivity.class));
-			}
-		});
-		TextView tutorial = (TextView) findViewById(R.id.drawer_tutorial);
-		tutorial.setOnClickListener(new View.OnClickListener() {
-			@Override
-			public void onClick(View v) {
-				mTutorialHelper.showTutorials();
-			}
-		});
-	}
 
+	}
+	
+	public void showTutorial(){
+		mTutorialHelper.showTutorials();
+	}
 
 	private void setupNavDrawer() {
 
@@ -224,7 +214,8 @@ public class HomeActivity extends SherlockFragmentActivity implements
 		// this is a class created to avoid an Android bug
 		// see the class for further infos.
 		mDrawerToggle = new ActionBarDrawerToggle(this, mDrawerLayout,
-				R.drawable.ic_navigation_drawer, R.string.app_name, R.string.app_name);
+				R.drawable.ic_navigation_drawer, R.string.app_name,
+				R.string.app_name);
 
 		mDrawerLayout.setDrawerListener(mDrawerToggle);
 		mListView = (ListView) findViewById(R.id.drawer_list);
@@ -258,7 +249,7 @@ public class HomeActivity extends SherlockFragmentActivity implements
 		// Checking if there is a fragment that it's listening for back button
 		if (currentFragment != null && currentFragment instanceof BackListener) {
 			((BackListener) currentFragment).onBack();
-		}else{
+		} else {
 			super.onBackPressed();
 		}
 		mDrawerLayout.closeDrawer(findViewById(R.id.drawer_wrapper));
@@ -274,8 +265,8 @@ public class HomeActivity extends SherlockFragmentActivity implements
 						AccountManager.KEY_AUTHTOKEN);
 				EBHelper.endAppFailure(this, R.string.app_failure_security);
 				initData();
-				new SCAsyncTask<Void, Void, Void>(this, new StartProcessor(this))
-				.execute();
+				new SCAsyncTask<Void, Void, Void>(this,
+						new StartProcessor(this)).execute();
 			} else if (resultCode == RESULT_CANCELED) {
 				EBHelper.endAppFailure(this, R.string.token_required);
 			}
@@ -326,6 +317,11 @@ public class HomeActivity extends SherlockFragmentActivity implements
 		case R.id.mainmenu_settings:
 			startActivity(new Intent(this, SettingsActivity.class));
 		default:
+			if (mDrawerLayout
+					.isDrawerOpen(findViewById(R.id.drawer_wrapper))) {
+				mDrawerLayout
+						.closeDrawer(findViewById(R.id.drawer_wrapper));
+			}
 			return super.onOptionsItemSelected(item);
 		}
 
@@ -418,70 +414,78 @@ public class HomeActivity extends SherlockFragmentActivity implements
 	@Override
 	public void onItemClick(AdapterView<?> arg0, View arg1, int position,
 			long arg3) {
-		refreshFragment(collections.get(
-					position).getId(),collections.get(position).getName(),true);
+		refreshFragment(collections.get(position).getId(),
+				collections.get(position).getName(), true);
 
 	}
 
 	@Override
-	public boolean onItemLongClick(AdapterView<?> arg0, View arg1,final  int arg2,
-			long arg3) {
-		final ExpCollection coll = EBHelper.getUserPreference().getCollections().get(arg2);
-		new AlertDialog.Builder(this)
-        .setMessage(R.string.msg_delete_coll_confirm)
-        .setCancelable(false)
-        .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
-            @SuppressWarnings("unchecked")
-			public void onClick(DialogInterface dialog, int id) {
-            	EBHelper.getUserPreference().getCollections().remove(coll);
-            	if (EBHelper.updateUserPreference(HomeActivity.this, EBHelper.getUserPreference())) {
-	            	collections.remove(arg2);
-	            	((ArrayAdapter)mListView.getAdapter()).notifyDataSetChanged();
-	            	refreshFragment(null,null,false);
-            	} else {
-	            	EBHelper.getUserPreference().getCollections().add(arg2,coll);
-            	}
-            }
-        })
-        .setNegativeButton(android.R.string.no, null)
-        .show();
-		return false;
+	public boolean onItemLongClick(AdapterView<?> arg0, View arg1,
+			final int arg2, long arg3) {
+		final ExpCollection coll = EBHelper.getUserPreference()
+				.getCollections().get(arg2);
+
+		new AlertDialog.Builder(HomeActivity.this)
+				.setMessage(R.string.msg_delete_coll_confirm)
+				.setCancelable(false)
+				.setPositiveButton(android.R.string.yes,
+						new DialogInterface.OnClickListener() {
+							public void onClick(DialogInterface dialog, int id) {
+								EBHelper.getUserPreference().getCollections()
+										.remove(coll);
+								if (EBHelper.updateUserPreference(
+										HomeActivity.this,
+										EBHelper.getUserPreference())) {
+									collections.remove(arg2);
+									((ArrayAdapter) mListView.getAdapter())
+											.notifyDataSetChanged();
+									refreshFragment(null, null, false);
+								} else {
+									EBHelper.getUserPreference()
+											.getCollections().add(arg2, coll);
+								}
+							}
+						}).setNegativeButton(android.R.string.no, null).show();
+		return true;
 	}
 
-	private void refreshFragment(String id,String name,boolean animate) {
+	private void refreshFragment(String id, String name, boolean animate) {
 		Fragment currentFragment = getSupportFragmentManager()
 				.findFragmentById(R.id.content_frame);
 		if (currentFragment != null
 				&& currentFragment instanceof RefreshCallback) {
-			((RefreshCallback) currentFragment).refresh(id,name,animate);
+			((RefreshCallback) currentFragment).refresh(id, name, animate);
 		}
 		mDrawerLayout.closeDrawer(findViewById(R.id.drawer_wrapper));
 	}
 
 	private TutorialProvider mTutorialProvider = new TutorialProvider() {
-		
-		TutorialItem[] tutorial = new TutorialItem[] {
-				new TutorialItem("grab", null, 0, R.string.t_title_grab, R.string.t_msg_grab),
-				new TutorialItem("search", null, 0, R.string.t_title_search, R.string.t_msg_search),
-				new TutorialItem("categories", null, 0, R.string.t_title_cat, R.string.t_msg_cat),
-				new TutorialItem("settings", null, 0, R.string.t_title_settings, R.string.t_msg_settings), };
 
-		
+		TutorialItem[] tutorial = new TutorialItem[] {
+				new TutorialItem("grab", null, 0, R.string.t_title_grab,
+						R.string.t_msg_grab),
+				new TutorialItem("search", null, 0, R.string.t_title_search,
+						R.string.t_msg_search),
+				new TutorialItem("categories", null, 0, R.string.t_title_cat,
+						R.string.t_msg_cat),
+				new TutorialItem("settings", null, 0,
+						R.string.t_title_settings, R.string.t_msg_settings), };
+
 		@Override
 		public int size() {
 			return tutorial.length;
 		}
-		
+
 		@Override
 		public void onTutorialFinished() {
 			mDrawerLayout.closeDrawer(findViewById(R.id.drawer_wrapper));
 		}
-		
+
 		@Override
 		public void onTutorialCancelled() {
 			mDrawerLayout.closeDrawer(findViewById(R.id.drawer_wrapper));
 		}
-		
+
 		@Override
 		public TutorialItem getItemAt(int pos) {
 			View v = null;
@@ -497,8 +501,8 @@ public class HomeActivity extends SherlockFragmentActivity implements
 				v = mDrawerLayout.findViewById(R.id.drawer_add_category);
 				break;
 			case 3:
-				mDrawerLayout.openDrawer(findViewById(R.id.drawer_wrapper));
-				v = mDrawerLayout.findViewById(R.id.drawer_settings);
+				mDrawerLayout.closeDrawer(findViewById(R.id.drawer_wrapper));
+				v = findViewById(R.id.expmenu_settings);
 				break;
 			default:
 				break;

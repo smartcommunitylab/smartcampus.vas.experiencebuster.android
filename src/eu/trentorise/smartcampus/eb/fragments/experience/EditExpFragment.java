@@ -207,7 +207,8 @@ public class EditExpFragment extends SherlockFragment
 
 				@Override
 				public void run() {
-					EBHelper.openKeyboard(getActivity(), getView().findViewById(R.id.title));
+					EBHelper.openKeyboard(getActivity(), getView()
+							.findViewById(R.id.title));
 					switchToEdit();
 					mTitleSwitch.editMode();
 				}
@@ -796,9 +797,9 @@ public class EditExpFragment extends SherlockFragment
 
 		if (validate(exp, false)) {
 			new SaveTask().execute();
-		} else {
-			getFragmentManager().popBackStack();
 		}
+		getFragmentManager().popBackStack();
+
 	}
 
 }

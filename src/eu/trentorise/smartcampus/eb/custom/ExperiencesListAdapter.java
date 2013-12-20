@@ -85,7 +85,7 @@ public class ExperiencesListAdapter extends ArrayAdapter<Experience> {
 				|| ((long) (experience.getCreationTime() / (1000 * 60 * 60 * 24))) != ((long) (previousExperience
 						.getCreationTime() / (1000 * 60 * 60 * 24)))) {
 			String headerDateString = formatDateForHeader(
-					experience.getCreationTime()).toUpperCase();
+					experience.getCreationTime());
 			((TextView) holder.separator.findViewById(R.id.separator_text))
 					.setText(headerDateString);
 			holder.separator.setVisibility(View.VISIBLE);

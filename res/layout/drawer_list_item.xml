@@ -13,24 +13,16 @@
   See the License for the specific language governing permissions and
   limitations under the License.
 -->
-<!-- <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-    android:background="#111"
-    android:gravity="center_vertical"
-    android:padding="5dp" > -->
+<!--  <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android" -->
+<!--     android:layout_width="match_parent" -->
+<!--     android:layout_height="wrap_content" -->
+<!--     android:gravity="center_vertical" -->
+<!--     android:padding="5dp" -->
+<!--     android:background="@drawable/selectable_background_experiencebuster" -->
+<!--     android:orientation="horizontal" -->
+<!--     android:weightSum="1" >  -->
 
-<!--     <ImageView
-        android:id="@+id/drawer_item_logo"
-        android:layout_width="50dp"
-        android:layout_height="50dp"
-        android:layout_marginLeft="5dp"
-        android:layout_marginRight="20dp"
-        android:layout_marginTop="5dp"
-        android:gravity="center_vertical"
-        android:src="@drawable/ic_launcher" >
-    </ImageView> -->
-
+    
     <TextView
         xmlns:android="http://schemas.android.com/apk/res/android"
         android:id="@+id/drawer_item"
@@ -43,6 +35,17 @@
         android:paddingLeft="16dp"
         android:paddingRight="16dp"
         android:textColor="#fff"
-        android:background="@drawable/selectable_background_experiencebuster_red" />
-
+        android:text="hello!"/>
+    
+<!--     <ImageView -->
+<!--         android:id="@+id/drawer_item_remove" -->
+<!--         android:layout_width="wrap_content" -->
+<!--         android:layout_height="wrap_content" -->
+<!--         android:layout_weight="0.2" -->
+<!--         android:gravity="center_vertical" -->
+<!--         android:background="@color/sc_remove_red" -->
+<!--         android:src="@drawable/ic_action_content_discard" -->
+<!--         android:visibility="invisible" > -->
+<!--     </ImageView>  -->
+    
 <!-- </LinearLayout> -->

@@ -42,8 +42,11 @@ import com.actionbarsherlock.app.SherlockListFragment;
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuInflater;
 import com.actionbarsherlock.view.MenuItem;
+import com.github.espiandev.showcaseview.TutorialItem;
+import com.github.espiandev.showcaseview.TutorialHelper.TutorialProvider;
 
 import eu.trentorise.smartcampus.eb.HomeActivity.RefreshCallback;
+import eu.trentorise.smartcampus.eb.HomeActivity;
 import eu.trentorise.smartcampus.eb.R;
 import eu.trentorise.smartcampus.eb.SettingsActivity;
 import eu.trentorise.smartcampus.eb.custom.ExperiencesListAdapter;
@@ -63,6 +66,8 @@ public class ExperiencesListFragment extends SherlockListFragment
 		RemoveCallback,
 		eu.trentorise.smartcampus.eb.fragments.experience.AssignCollectionFragment.AssignCollectionsCallback,
 		RefreshCallback, BackListener {
+	
+	
 
 	public static final String ARG_FILTER = "filter";
 
@@ -130,7 +135,14 @@ public class ExperiencesListFragment extends SherlockListFragment
 			//this is just to manage the back button
 			//because the search can show a subset of items
 			filter= new ExperienceFilter();
-			
+			break;
+		case R.id.expmenu_settings:
+			startActivity(new Intent(getActivity(),
+					SettingsActivity.class));
+			break;
+		case R.id.expmenu_tutorial:
+			if(getActivity() instanceof HomeActivity)
+				((HomeActivity)getActivity()).showTutorial();
 			break;
 		default:
 			break;
@@ -150,6 +162,7 @@ public class ExperiencesListFragment extends SherlockListFragment
 			Bundle savedInstanceState) {
 		this.setListAdapter(new ExperiencesListAdapter(getSherlockActivity(),
 				R.layout.experience_row, experiencesList));
+		
 		return inflater.inflate(R.layout.explist, null);
 	}
 
@@ -163,8 +176,10 @@ public class ExperiencesListFragment extends SherlockListFragment
 	@Override
 	public void onStart() {
 		super.onStart();
+		this.getListView().setDivider(getResources().getDrawable(R.drawable.border));
+		this.getListView().setDividerHeight(1);
 		animateList();
-
+		
 	}
 
 	private void animateList() {
@@ -381,5 +396,4 @@ public class ExperiencesListFragment extends SherlockListFragment
 			getActivity().finish();
 		}
 	}
-
 }
