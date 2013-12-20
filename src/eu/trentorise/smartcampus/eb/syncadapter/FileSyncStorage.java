@@ -62,6 +62,8 @@ public class FileSyncStorage extends SyncStorageWithPaging {
 
 	private static final int MAX_TENTATIVE = 5;
 
+	private Context ctx;
+
 	/**
 	 * @param context
 	 * @param appToken
@@ -73,6 +75,7 @@ public class FileSyncStorage extends SyncStorageWithPaging {
 	public FileSyncStorage(Context context, String appToken, String dbName,
 			int dbVersion, StorageConfiguration config) {
 		super(context, appToken, dbName, dbVersion, config);
+		ctx = context;
 		fileToSync = new FileSyncDatasource(context);
 		try {
 			filestorage = new AndroidFilestorage(GlobalConfig.getAppUrl(context
@@ -169,11 +172,14 @@ public class FileSyncStorage extends SyncStorageWithPaging {
 													 * checkFileSizeConstraints
 													 * (res)
 													 */{
-							Metadata meta = filestorage.storeResourceByUser(
-									res.getContent(), res.getName(),
-									res.getContentType(),
+							Metadata meta = filestorage.storeOnDropbox(
+									res.getResourcefile(),
 									EBHelper.getAuthToken(), userAccountId,
-									false);
+									false, ctx);
+							// Metadata meta = filestorage.storeResourceByUser(
+							// res.getResourcefile(),
+							// EBHelper.getAuthToken(), userAccountId,
+							// false);
 							Experience exp = EBHelper
 									.findLocalExperienceById(syncFile
 											.getIdExp());
@@ -230,13 +236,15 @@ public class FileSyncStorage extends SyncStorageWithPaging {
 								syncFile.getIdExp(), syncFile.getIdContent()));
 				fileToSync.updateStatus(syncFile,
 						FileSyncDbHelper.ST_FAIL_SERVICE);
-			} catch (FilestorageException e) {
-				Log.e(TAG, String.format(
-						"Service error synchronizing exp %s content %s",
-						syncFile.getIdExp(), syncFile.getIdContent()));
-				fileToSync.updateStatus(syncFile,
-						FileSyncDbHelper.ST_FAIL_SERVICE);
-			} catch (AACException e) {
+			}
+			/*
+			 * catch (FilestorageException e) { Log.e(TAG, String.format(
+			 * "Service error synchronizing exp %s content %s",
+			 * syncFile.getIdExp(), syncFile.getIdContent()));
+			 * fileToSync.updateStatus(syncFile,
+			 * FileSyncDbHelper.ST_FAIL_SERVICE); }
+			 */
+			catch (AACException e) {
 				Log.e(TAG, String.format(
 						"Authentication error synchronizing exp %s content %s",
 						syncFile.getIdExp(), syncFile.getIdContent()));

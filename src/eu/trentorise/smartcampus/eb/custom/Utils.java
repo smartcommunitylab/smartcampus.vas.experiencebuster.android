@@ -15,9 +15,7 @@
  ******************************************************************************/
 package eu.trentorise.smartcampus.eb.custom;
 
-import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.List;
 import java.util.Locale;
@@ -25,7 +23,6 @@ import java.util.UUID;
 
 import android.content.Context;
 import android.location.Address;
-import android.util.Log;
 import android.webkit.MimeTypeMap;
 
 import com.google.android.maps.GeoPoint;
@@ -85,8 +82,8 @@ public class Utils {
 		byte[] buffer = new byte[512];
 		String contentType = null;
 		File res = new File(uri);
-		FileInputStream fis;
-		ByteArrayOutputStream bout = new ByteArrayOutputStream();
+		// FileInputStream fis;
+		// ByteArrayOutputStream bout = new ByteArrayOutputStream();
 		String ext = MimeTypeMap.getFileExtensionFromUrl(uri);
 		String name = getFilename(uri, true);
 		Resource resource = null;
@@ -94,19 +91,20 @@ public class Utils {
 			contentType = MimeTypeMap.getSingleton().getMimeTypeFromExtension(
 					ext);
 		}
-		try {
-			fis = new FileInputStream(res);
-			int readed = -1;
-			while ((readed = fis.read(buffer, 0, buffer.length)) != -1) {
-				bout.write(buffer, 0, readed);
-			}
-			resource = new Resource(bout.toByteArray(), contentType, name);
-			Log.i(TAG, String.format("Loaded resource %s of type %s", name,
-					contentType));
-		} catch (IOException e) {
-			Log.i(TAG, String.format("Problem loading resource %s of type %s",
-					name, contentType));
-		}
+		// try {
+		// fis = new FileInputStream(res);
+		// int readed = -1;
+		// while ((readed = fis.read(buffer, 0, buffer.length)) != -1) {
+		// bout.write(buffer, 0, readed);
+		// }
+		// resource = new Resource(bout.toByteArray(), contentType, name);
+		// Log.i(TAG, String.format("Loaded resource %s of type %s", name,
+		// contentType));
+		// } catch (IOException e) {
+		// Log.i(TAG, String.format("Problem loading resource %s of type %s",
+		// name, contentType));
+		// }
+		resource = new Resource(res, ext, name);
 		return resource;
 	}
 

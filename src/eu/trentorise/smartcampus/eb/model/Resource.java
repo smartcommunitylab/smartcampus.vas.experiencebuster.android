@@ -15,16 +15,26 @@
  ******************************************************************************/
 package eu.trentorise.smartcampus.eb.model;
 
+import java.io.File;
+
 /**
  * @author mirko perillo
  * 
  */
 public class Resource {
+	private File resourcefile;
 	private byte[] content;
 	private String contentType;
 	private String name;
 
 	public Resource() {
+	}
+
+	public Resource(File resourcefile, String contentType, String name) {
+		super();
+		this.resourcefile = resourcefile;
+		this.contentType = contentType;
+		this.name = name;
 	}
 
 	public Resource(byte[] content, String contentType, String name) {
@@ -56,6 +66,14 @@ public class Resource {
 
 	public void setName(String name) {
 		this.name = name;
+	}
+
+	public File getResourcefile() {
+		return resourcefile;
+	}
+
+	public void setResourcefile(File resourcefile) {
+		this.resourcefile = resourcefile;
 	}
 
 }
