@@ -15,6 +15,9 @@
  ******************************************************************************/
 package eu.trentorise.smartcampus.eb;
 
+import com.actionbarsherlock.app.SherlockPreferenceActivity;
+import com.actionbarsherlock.view.MenuItem;
+
 import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
 import android.content.Context;
@@ -28,7 +31,7 @@ import android.widget.Toast;
 import eu.trentorise.smartcampus.eb.custom.data.EBHelper;
 
 @SuppressLint("NewApi")
-public class SettingsActivity extends PreferenceActivity {
+public class SettingsActivity extends SherlockPreferenceActivity {
 
 	private static int prefs = R.xml.preferences;
 
@@ -47,7 +50,7 @@ public class SettingsActivity extends PreferenceActivity {
 					.replace(android.R.id.content, new PrefFragment()).commit();
 
 		}
-
+		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 	}
 
 	@TargetApi(Build.VERSION_CODES.HONEYCOMB)
@@ -61,6 +64,14 @@ public class SettingsActivity extends PreferenceActivity {
 							new PreferenceChecker(getActivity()));
 		}
 
+	}
+	
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		if(item.getItemId()==android.R.id.home){
+			this.finish();
+		}
+		return super.onOptionsItemSelected(item);
 	}
 }
 

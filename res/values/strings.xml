@@ -17,7 +17,7 @@
 <resources>
 
     <string name="empty" />
-    <string name="content_empty">No items.</string>
+    <string name="content_empty">There\'s nothing here.\n =(</string>
     <string name="app_name">LifeLog</string>
 
     <string name="not_implemented">Coming soon!</string>
