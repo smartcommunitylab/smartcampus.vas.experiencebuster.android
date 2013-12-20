@@ -550,7 +550,7 @@ public class EBHelper {
 			@Override
 			public void run() {
 				ScaleAnimation anim = new ScaleAnimation(0, 1, 1, 1);
-				anim.setDuration(350);
+				anim.setDuration(320);
 				v.startAnimation(anim);
 				v.requestFocus();
 			}
