@@ -34,18 +34,21 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v4.widget.DrawerLayout;
 import android.util.Log;
 import android.view.View;
-import android.view.View.OnLongClickListener;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.AdapterView.OnItemLongClickListener;
 import android.widget.ArrayAdapter;
-import android.widget.ExpandableListView;
 import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.actionbarsherlock.app.SherlockFragmentActivity;
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuItem;
+import com.github.espiandev.showcaseview.ListViewTutorialHelper;
+import com.github.espiandev.showcaseview.TutorialHelper;
+import com.github.espiandev.showcaseview.TutorialHelper.TutorialProvider;
+import com.github.espiandev.showcaseview.TutorialItem;
 
 import eu.trentorise.smartcampus.ac.SCAccessProvider;
 import eu.trentorise.smartcampus.android.common.SCAsyncTask;
@@ -55,7 +58,7 @@ import eu.trentorise.smartcampus.eb.custom.data.EBHelper;
 import eu.trentorise.smartcampus.eb.filestorage.FilestorageAccountActivity;
 import eu.trentorise.smartcampus.eb.fragments.BackListener;
 import eu.trentorise.smartcampus.eb.fragments.ExperiencesListFragment;
-import eu.trentorise.smartcampus.eb.fragments.MainFragment;
+import eu.trentorise.smartcampus.eb.fragments.NewCollectionDialogFragment;
 import eu.trentorise.smartcampus.eb.fragments.NewCollectionDialogFragment.CollectionSavedHandler;
 import eu.trentorise.smartcampus.eb.fragments.experience.AssignCollectionFragment.AssignCollectionsCallback;
 import eu.trentorise.smartcampus.eb.fragments.experience.DeleteExperienceFragment.RemoveCallback;
@@ -63,7 +66,6 @@ import eu.trentorise.smartcampus.eb.fragments.experience.DialogCallbackContainer
 import eu.trentorise.smartcampus.eb.fragments.experience.EditNoteFragment.NoteHandler;
 import eu.trentorise.smartcampus.eb.fragments.experience.EditPositionFragment.PositionHandler;
 import eu.trentorise.smartcampus.eb.model.ExpCollection;
-import eu.trentorise.smartcampus.eb.model.ExperienceFilter;
 import eu.trentorise.smartcampus.eb.model.UserPreference;
 import eu.trentorise.smartcampus.protocolcarrier.exceptions.SecurityException;
 import eu.trentorise.smartcampus.storage.DataException;
@@ -85,6 +87,8 @@ public class HomeActivity extends SherlockFragmentActivity implements
 
 	private ListView mListView;
 	private ArrayList<ExpCollection> collections;
+
+	private TutorialHelper mTutorialHelper = null;
 
 	@Override
 	protected void onSaveInstanceState(Bundle outState) {
@@ -179,7 +183,40 @@ public class HomeActivity extends SherlockFragmentActivity implements
 						refreshFragment(null,null,true);
 					}
 				});
+		
+		mTutorialHelper = new ListViewTutorialHelper(this, mTutorialProvider);
+		prepareButtons();
 	}
+	
+	private void prepareButtons() {
+		TextView add = (TextView) findViewById(
+				R.id.drawer_add_category);
+		add.setOnClickListener(new View.OnClickListener() {
+
+			@Override
+			public void onClick(View v) {
+				FragmentManager fm = getSupportFragmentManager();
+				NewCollectionDialogFragment dialog = new NewCollectionDialogFragment();
+				dialog.show(fm, "dialog");
+			}
+		});
+		
+		TextView settings = (TextView) findViewById(R.id.drawer_settings);
+		settings.setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				startActivity(new Intent(HomeActivity.this, SettingsActivity.class));
+			}
+		});
+		TextView tutorial = (TextView) findViewById(R.id.drawer_tutorial);
+		tutorial.setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				mTutorialHelper.showTutorials();
+			}
+		});
+	}
+
 
 	private void setupNavDrawer() {
 
@@ -230,12 +267,15 @@ public class HomeActivity extends SherlockFragmentActivity implements
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 		super.onActivityResult(requestCode, resultCode, data);
+		mTutorialHelper.onTutorialActivityResult(requestCode, resultCode, data);
 		if (requestCode == SCAccessProvider.SC_AUTH_ACTIVITY_REQUEST_CODE) {
 			if (resultCode == RESULT_OK) {
 				String token = data.getExtras().getString(
 						AccountManager.KEY_AUTHTOKEN);
 				EBHelper.endAppFailure(this, R.string.app_failure_security);
 				initData();
+				new SCAsyncTask<Void, Void, Void>(this, new StartProcessor(this))
+				.execute();
 			} else if (resultCode == RESULT_CANCELED) {
 				EBHelper.endAppFailure(this, R.string.token_required);
 			}
@@ -267,8 +307,6 @@ public class HomeActivity extends SherlockFragmentActivity implements
 							"Error saving filestorage account");
 				}
 			}
-			new SCAsyncTask<Void, Void, Void>(this, new StartProcessor(this))
-					.execute();
 		}
 	}
 
@@ -420,5 +458,58 @@ public class HomeActivity extends SherlockFragmentActivity implements
 		mDrawerLayout.closeDrawer(findViewById(R.id.drawer_wrapper));
 	}
 
+	private TutorialProvider mTutorialProvider = new TutorialProvider() {
+		
+		TutorialItem[] tutorial = new TutorialItem[] {
+				new TutorialItem("grab", null, 0, R.string.t_title_grab, R.string.t_msg_grab),
+				new TutorialItem("search", null, 0, R.string.t_title_search, R.string.t_msg_search),
+				new TutorialItem("categories", null, 0, R.string.t_title_cat, R.string.t_msg_cat),
+				new TutorialItem("settings", null, 0, R.string.t_title_settings, R.string.t_msg_settings), };
+
+		
+		@Override
+		public int size() {
+			return tutorial.length;
+		}
+		
+		@Override
+		public void onTutorialFinished() {
+			mDrawerLayout.closeDrawer(findViewById(R.id.drawer_wrapper));
+		}
+		
+		@Override
+		public void onTutorialCancelled() {
+			mDrawerLayout.closeDrawer(findViewById(R.id.drawer_wrapper));
+		}
+		
+		@Override
+		public TutorialItem getItemAt(int pos) {
+			View v = null;
+			switch (pos) {
+			case 0:
+				v = findViewById(R.id.expmenu_add);
+				break;
+			case 1:
+				v = findViewById(R.id.expmenu_search);
+				break;
+			case 2:
+				mDrawerLayout.openDrawer(findViewById(R.id.drawer_wrapper));
+				v = mDrawerLayout.findViewById(R.id.drawer_add_category);
+				break;
+			case 3:
+				mDrawerLayout.openDrawer(findViewById(R.id.drawer_wrapper));
+				v = mDrawerLayout.findViewById(R.id.drawer_settings);
+				break;
+			default:
+				break;
+			}
+			if (v != null) {
+				tutorial[pos].position = new int[2];
+				v.getLocationOnScreen(tutorial[pos].position);
+				tutorial[pos].width = v.getWidth();
+			}
+			return tutorial[pos];
+		}
+	};
 
 }
