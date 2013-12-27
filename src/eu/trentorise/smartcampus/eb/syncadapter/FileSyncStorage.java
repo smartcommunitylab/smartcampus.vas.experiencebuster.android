@@ -149,7 +149,7 @@ public class FileSyncStorage extends SyncStorageWithPaging {
 				throw new ProtocolException(e.getMessage());
 			}
 		}
-		SyncData data = super.synchronize(authToken, host, service);
+		SyncData data = synchronize(authToken, host, service);
 
 		// launch file synchro
 		syncFiles();
@@ -260,7 +260,15 @@ public class FileSyncStorage extends SyncStorageWithPaging {
 		}
 
 		if (forceSynchro) {
-			EBHelper.synchronize(false);
+			try {
+				synchronize(
+						EBHelper.getAuthToken(),
+						GlobalConfig.getAppUrl(mContext),
+						eu.trentorise.smartcampus.eb.custom.data.Constants.SYNC_SERVICE);
+			} catch (Exception e) {
+				Log.e(TAG, "exception synchronizing update fid");
+			}
+			// EBHelper.synchronize(false);
 		}
 	}
 
@@ -273,7 +281,7 @@ public class FileSyncStorage extends SyncStorageWithPaging {
 					Experience.class.getCanonicalName())) {
 				Experience exp = eu.trentorise.smartcampus.android.common.Utils
 						.convertObjectToData(Experience.class, o);
-				boolean toUpdate = false;
+				// boolean toUpdate = false;
 				for (Content c : exp.getContents()) {
 					if (c.isStorable()) {
 
@@ -333,9 +341,9 @@ public class FileSyncStorage extends SyncStorageWithPaging {
 						// }
 					}
 				}
-				if (toUpdate) {
-					EBHelper.saveExperience(null, exp, false);
-				}
+				// if (toUpdate) {
+				// EBHelper.saveExperience(null, exp, false);
+				// }
 			}
 		}
 
