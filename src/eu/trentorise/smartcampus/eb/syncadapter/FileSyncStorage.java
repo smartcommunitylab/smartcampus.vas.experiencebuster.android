@@ -58,7 +58,6 @@ public class FileSyncStorage extends SyncStorageWithPaging {
 
 	private static Map<String, BasicObject> expToDelete = new ConcurrentHashMap<String, BasicObject>();
 	private static List<String> contentToDelete = new ArrayList<String>();
-	private static Map<String, String> fileStoraging = new ConcurrentHashMap<String, String>();
 
 	private static final int MAX_TENTATIVE = 5;
 
@@ -105,36 +104,43 @@ public class FileSyncStorage extends SyncStorageWithPaging {
 
 	public <T extends BasicObject> void update(T input, boolean upsert)
 			throws DataException, StorageConfigurationException {
-		updateContent(input);
+
+		if (input instanceof Experience) {
+			Experience update = (Experience) input;
+			Experience saved = EBHelper.findLocalExperienceById(input.getId());
+			if (saved != null) {
+				List<Content> updateContents = update.getContents();
+				for (Content content : saved.getContents()) {
+					int index = updateContents.indexOf(content);
+					if (index > -1 && content.getValue() != null) {
+						updateContents.get(index).setValue(content.getValue());
+					}
+				}
+			}
+		}
 		super.update(input, upsert);
 	}
 
 	public <T extends BasicObject> void update(T input, boolean upsert,
 			boolean sync) throws DataException, StorageConfigurationException {
-		updateContent(input);
+		if (input instanceof Experience) {
+			Experience update = (Experience) input;
+			Experience saved = EBHelper.findLocalExperienceById(input.getId());
+			if (saved != null) {
+				List<Content> updateContents = update.getContents();
+				for (Content content : saved.getContents()) {
+					int index = updateContents.indexOf(content);
+					if (index > -1 && content.getValue() != null) {
+						updateContents.get(index).setValue(content.getValue());
+					}
+				}
+			}
+		}
 		super.update(input, upsert, sync);
 	};
 
 	public void removeContent(Content c) {
-		if (c != null
-				&& (c.getValue() != null || fileStoraging.containsKey(c
-						.getLocalValue()))) {
-			String resourceId = c.getValue() != null ? c.getValue()
-					: fileStoraging.get(c.getLocalValue());
-			contentToDelete.add(resourceId);
-		}
-	}
-
-	private <T extends BasicObject> void updateContent(T input) {
-		if (input instanceof Experience) {
-			Experience exp = (Experience) input;
-			for (Content c : exp.getContents()) {
-				if ((c.getValue() == null || c.getValue().length() == 0)
-						&& fileStoraging.containsKey(c.getLocalValue())) {
-					c.setValue(fileStoraging.get(c.getLocalValue()));
-				}
-			}
-		}
+		contentToDelete.add(c.getValue());
 	}
 
 	public synchronized SyncData synchroFile(String authToken,
@@ -176,10 +182,6 @@ public class FileSyncStorage extends SyncStorageWithPaging {
 									res.getResourcefile(),
 									EBHelper.getAuthToken(), userAccountId,
 									false, ctx);
-							// Metadata meta = filestorage.storeResourceByUser(
-							// res.getResourcefile(),
-							// EBHelper.getAuthToken(), userAccountId,
-							// false);
 							Experience exp = EBHelper
 									.findLocalExperienceById(syncFile
 											.getIdExp());
@@ -236,15 +238,7 @@ public class FileSyncStorage extends SyncStorageWithPaging {
 								syncFile.getIdExp(), syncFile.getIdContent()));
 				fileToSync.updateStatus(syncFile,
 						FileSyncDbHelper.ST_FAIL_SERVICE);
-			}
-			/*
-			 * catch (FilestorageException e) { Log.e(TAG, String.format(
-			 * "Service error synchronizing exp %s content %s",
-			 * syncFile.getIdExp(), syncFile.getIdContent()));
-			 * fileToSync.updateStatus(syncFile,
-			 * FileSyncDbHelper.ST_FAIL_SERVICE); }
-			 */
-			catch (AACException e) {
+			} catch (AACException e) {
 				Log.e(TAG, String.format(
 						"Authentication error synchronizing exp %s content %s",
 						syncFile.getIdExp(), syncFile.getIdContent()));
@@ -268,7 +262,6 @@ public class FileSyncStorage extends SyncStorageWithPaging {
 			} catch (Exception e) {
 				Log.e(TAG, "exception synchronizing update fid");
 			}
-			// EBHelper.synchronize(false);
 		}
 	}
 
@@ -289,61 +282,8 @@ public class FileSyncStorage extends SyncStorageWithPaging {
 							fileToSync.insertEntry(exp.getId(), c.getId(),
 									c.getLocalValue());
 						}
-						// try {
-						// // replace the file content is not necessary because
-						// // lifelog doesn't support it
-						// if ((c.getValue() == null || c.getValue().length() ==
-						// 0)
-						// && !fileStoraging.containsKey(c
-						// .getLocalValue())) {
-						// Resource res =
-						// eu.trentorise.smartcampus.eb.custom.Utils
-						// .getResource(mContext,
-						// c.getLocalValue());
-						// String userAccountId = EBHelper
-						// .getConfiguration(
-						// EBHelper.CONF_USER_ACCOUNT,
-						// String.class);
-						// if (userAccountId != null
-						// && EBHelper
-						// .checkFileSizeConstraints(res)) {
-						// Metadata meta = filestorage
-						// .storeResourceByUser(
-						// res.getContent(),
-						// res.getName(),
-						// res.getContentType(),
-						// authToken, userAccountId,
-						// false);
-						// fileStoraging.put(c.getLocalValue(),
-						// meta.getResourceId());
-						// c.setValue(meta.getResourceId());
-						// toUpdate = true;
-						// }
-						// }
-						//
-						// if ((c.getValue() == null || c.getValue().length() ==
-						// 0)
-						// && fileStoraging.containsKey(c
-						// .getLocalValue())) {
-						// c.setValue(fileStoraging.get(c.getLocalValue()));
-						// toUpdate = true;
-						// }
-						// } catch (DataException e) {
-						// Log.e(getClass().getName(),
-						// "Exception storing file content");
-						// e.printStackTrace();
-						// throw e;
-						// } catch (FilestorageException e) {
-						// Log.e(getClass().getName(),
-						// "Exception storing file content");
-						// e.printStackTrace();
-						// throw e;
-						// }
 					}
 				}
-				// if (toUpdate) {
-				// EBHelper.saveExperience(null, exp, false);
-				// }
 			}
 		}
 
