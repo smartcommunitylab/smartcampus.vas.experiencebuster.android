@@ -32,8 +32,6 @@ import eu.trentorise.smartcampus.eb.custom.data.EBHelper;
 import eu.trentorise.smartcampus.eb.model.Resource;
 
 public class Utils {
-	private static final String TAG = "Utils";
-
 	public static String getShortAddressString(Address a) {
 		String res = a.getLocality();
 		if (res == null || res.length() == 0)
@@ -79,18 +77,18 @@ public class Utils {
 	}
 
 	public static Resource getResource(Context ctx, String uri) {
-		byte[] buffer = new byte[512];
-		String contentType = null;
+//		byte[] buffer = new byte[512];
+//		String contentType = null;
 		File res = new File(uri);
 		// FileInputStream fis;
 		// ByteArrayOutputStream bout = new ByteArrayOutputStream();
 		String ext = MimeTypeMap.getFileExtensionFromUrl(uri);
 		String name = getFilename(uri, true);
 		Resource resource = null;
-		if (ext != null) {
-			contentType = MimeTypeMap.getSingleton().getMimeTypeFromExtension(
-					ext);
-		}
+//		if (ext != null) {
+//			contentType = MimeTypeMap.getSingleton().getMimeTypeFromExtension(
+//					ext);
+//		}
 		// try {
 		// fis = new FileInputStream(res);
 		// int readed = -1;

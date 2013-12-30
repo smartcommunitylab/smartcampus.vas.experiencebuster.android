@@ -14,22 +14,33 @@
   See the License for the specific language governing permissions and
   limitations under the License.
 -->
-<menu xmlns:android="http://schemas.android.com/apk/res/android" >
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+   >
 
     <item
-        android:id="@+id/expmenu_remove"
-        android:title="@string/expmenu_remove"/>
+        android:id="@+id/expmenu_add"
+        android:icon="@drawable/ic_add"
+        android:showAsAction="always"
+        android:title="@string/mainmenu_grab"/>
     <item
-        android:id="@+id/expmenu_share"
-        android:title="@string/expmenu_share"/>
-<!--     <item -->
-<!--         android:id="@+id/expmenu_export" -->
-<!--         android:title="@string/expmenu_export"/> -->
+        android:id="@+id/expmenu_search"
+        android:icon="@drawable/ic_search"
+        android:showAsAction="always"
+        android:title="@string/mainmenu_search"/>
     <item
-        android:id="@+id/expmenu_assign_collection"
-        android:title="@string/expmenu_assign_collection"/>
-<!--     <item -->
-<!--         android:id="@+id/expmenu_map" -->
-<!--         android:title="@string/expmenu_map"/> -->
+        android:id="@+id/expmenu_menu"
+        android:icon="@drawable/ic_menu_overflow"
+        android:showAsAction="always"
+        android:title="@string/mainmenu_settings">
+        <menu android:id="@+id/inner_menu">
+            
+            <item
+                android:id="@+id/expmenu_tutorial"
+                android:title="@string/tutorial"/>
+            <item
+                android:id="@+id/expmenu_settings"
+                android:title="@string/mainmenu_settings"/>
+        </menu>
+    </item>
 
 </menu>

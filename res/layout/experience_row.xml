@@ -17,12 +17,16 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="vertical" >
+    android:orientation="vertical"
+    android:background="@drawable/selectable_background_experiencebuster" >
 
     <LinearLayout
         android:id="@+id/separator"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:clickable="false"
+        android:focusable="false"
+        android:focusableInTouchMode="false"
         android:orientation="vertical"
         android:visibility="visible" >
 
@@ -30,22 +34,30 @@
             android:id="@+id/separator_text"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:gravity="center"
+            android:clickable="false"
+            android:focusable="false"
+            android:focusableInTouchMode="false"
+            android:gravity="left"
+            android:textColor="@android:color/white"
+            android:padding="3dp"
+            android:background="@color/appcolor"
             android:textAppearance="?android:attr/textAppearanceLarge" />
 
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:background="@android:color/darker_gray" />
+<!--         <View -->
+<!--             android:layout_width="match_parent" -->
+<!--             android:layout_height="1dp" -->
+<!--             android:background="@android:color/darker_gray" -->
+<!--             android:clickable="false" -->
+<!--             android:focusable="false" -->
+<!--             android:focusableInTouchMode="false" /> -->
     </LinearLayout>
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:minHeight="48dp"
         android:orientation="vertical"
-        android:paddingLeft="4dp"
-        android:paddingRight="4dp"
-        android:paddingTop="4dp">
+        android:paddingLeft="6dp" >
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -54,7 +66,9 @@
 
             <LinearLayout
                 android:layout_width="0dp"
-                android:layout_height="wrap_content"
+                android:layout_height="match_parent"
+                android:paddingTop="4dp"
+                android:gravity="center"
                 android:layout_weight="1"
                 android:orientation="vertical" >
 
@@ -62,37 +76,43 @@
                     android:id="@+id/title"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:gravity="center_vertical"
                     android:textAppearance="?android:attr/textAppearanceMedium"
-                    android:textStyle="bold" />
+                    android:maxLength="140"/>
 
-                <TextView
+                <!--
+                     <TextView
                     android:id="@+id/description"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:textAppearance="?android:attr/textAppearanceSmall" />
+                -->
 
                 <TextView
                     android:id="@+id/collections"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:drawableLeft="@drawable/ic_collection"
+                    android:drawablePadding="3dp"
+                    android:padding="3dp"
                     android:gravity="center_vertical"
                     android:textAppearance="?android:attr/textAppearanceSmall" />
             </LinearLayout>
-            
-            <ImageView 
+
+            <ImageView
                 android:id="@+id/preview"
-                android:clickable="false"
-                android:scaleType="centerCrop" 
                 android:layout_width="80dp"
                 android:layout_height="80dp"
-                android:contentDescription="@null"/>
+                android:clickable="false"
+                android:contentDescription="@null"
+                android:scaleType="centerCrop" />
         </LinearLayout>
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:paddingBottom="5dp" >
+            android:paddingBottom="5dp"
+            android:visibility="gone" >
 
             <TextView
                 android:id="@+id/place"

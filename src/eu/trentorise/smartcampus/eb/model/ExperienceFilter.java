@@ -66,4 +66,8 @@ public class ExperienceFilter implements Serializable {
 	public void setEntityIds(String[] entityIds) {
 		this.entityIds = entityIds;
 	}
+	
+	public boolean isEmpty(){
+		return collectionIds==null||entityIds==null||place==null||text==null;
+	}
 }

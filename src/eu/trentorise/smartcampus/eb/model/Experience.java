@@ -24,7 +24,6 @@ import eu.trentorise.smartcampus.storage.BasicObject;
 public class Experience extends BasicObject {
 	private static final long serialVersionUID = -6529043503348542953L;
 	private String title;
-	private String description;
 	private String socialUserId;
 	private String entityId;
 	private List<Concept> tags;
@@ -45,13 +44,6 @@ public class Experience extends BasicObject {
 		this.title = title;
 	}
 
-	public String getDescription() {
-		return description;
-	}
-
-	public void setDescription(String description) {
-		this.description = description;
-	}
 
 	public String getSocialUserId() {
 		return socialUserId;
@@ -130,7 +122,6 @@ public class Experience extends BasicObject {
 			}
 		}
 		experience.setCreationTime(creationTime);
-		experience.setDescription(description);
 		experience.setEntityId(entityId);
 		experience.setId(getId());
 		experience.setLocation(getLocation());

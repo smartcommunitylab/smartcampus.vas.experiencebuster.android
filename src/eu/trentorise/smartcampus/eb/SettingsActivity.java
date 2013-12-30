@@ -17,18 +17,23 @@ package eu.trentorise.smartcampus.eb;
 
 import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
-import android.content.Context;
+import android.app.Activity;
+import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 import android.preference.Preference;
 import android.preference.Preference.OnPreferenceChangeListener;
-import android.preference.PreferenceActivity;
 import android.preference.PreferenceFragment;
 import android.widget.Toast;
+
+import com.actionbarsherlock.app.SherlockPreferenceActivity;
+import com.actionbarsherlock.view.MenuItem;
+
 import eu.trentorise.smartcampus.eb.custom.data.EBHelper;
+import eu.trentorise.smartcampus.storage.DataException;
 
 @SuppressLint("NewApi")
-public class SettingsActivity extends PreferenceActivity {
+public class SettingsActivity extends SherlockPreferenceActivity {
 
 	private static int prefs = R.xml.preferences;
 
@@ -47,7 +52,7 @@ public class SettingsActivity extends PreferenceActivity {
 					.replace(android.R.id.content, new PrefFragment()).commit();
 
 		}
-
+		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 	}
 
 	@TargetApi(Build.VERSION_CODES.HONEYCOMB)
@@ -62,13 +67,27 @@ public class SettingsActivity extends PreferenceActivity {
 		}
 
 	}
+	
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		if(item.getItemId()==android.R.id.home){
+			this.finish();
+		}
+		return super.onOptionsItemSelected(item);
+	}
+	
+	@Override
+	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+		EBHelper.handleAccountActivityResult(this, requestCode, resultCode, data);
+		super.onActivityResult(requestCode, resultCode, data);
+	}
 }
 
 class PreferenceChecker implements OnPreferenceChangeListener {
 
-	Context ctx;
+	Activity ctx;
 
-	public PreferenceChecker(Context ctx) {
+	public PreferenceChecker(Activity ctx) {
 		this.ctx = ctx;
 	}
 
@@ -86,6 +105,16 @@ class PreferenceChecker implements OnPreferenceChangeListener {
 			} catch (NumberFormatException e) {
 				Toast.makeText(ctx, "Value must be a number",
 						Toast.LENGTH_SHORT).show();
+			}
+		} else if (preference.getKey().equals(EBHelper.CONF_SYNCHRO)) {
+			Boolean value = (Boolean) newValue;
+			if (value) {
+				try {
+					EBHelper.ensureAccount(ctx);
+					return true;
+				} catch (DataException e) {
+					Toast.makeText(ctx, R.string.error_account, Toast.LENGTH_SHORT).show();
+				}
 			}
 		}
 		return false;

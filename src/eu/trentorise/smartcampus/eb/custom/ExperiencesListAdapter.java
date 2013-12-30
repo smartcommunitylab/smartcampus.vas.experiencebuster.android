@@ -37,6 +37,8 @@ import eu.trentorise.smartcampus.eb.model.Experience;
 @SuppressLint("NewApi")
 public class ExperiencesListAdapter extends ArrayAdapter<Experience> {
 
+	private static final int MAX_TITLE_LENGTH = 60;
+
 	private Context context;
 	private int layoutResourceId;
 	private List<Experience> contentsList;
@@ -61,7 +63,6 @@ public class ExperiencesListAdapter extends ArrayAdapter<Experience> {
 			holder = new ImgHolder();
 			holder.separator = (View) row.findViewById(R.id.separator);
 			holder.title = (TextView) row.findViewById(R.id.title);
-			holder.description = (TextView) row.findViewById(R.id.description);
 			holder.collections = (TextView) row.findViewById(R.id.collections);
 			holder.place = (TextView) row.findViewById(R.id.place);
 			holder.date = (TextView) row.findViewById(R.id.date);
@@ -82,20 +83,23 @@ public class ExperiencesListAdapter extends ArrayAdapter<Experience> {
 				|| ((long) (experience.getCreationTime() / (1000 * 60 * 60 * 24))) != ((long) (previousExperience
 						.getCreationTime() / (1000 * 60 * 60 * 24)))) {
 			String headerDateString = formatDateForHeader(
-					experience.getCreationTime()).toUpperCase();
+					experience.getCreationTime());
 			((TextView) holder.separator.findViewById(R.id.separator_text))
 					.setText(headerDateString);
 			holder.separator.setVisibility(View.VISIBLE);
 		} else {
 			holder.separator.setVisibility(View.GONE);
 		}
-
-		holder.title.setText(experience.getTitle());
-		if (experience != null && experience.getDescription().length() > 0) {
-			holder.description.setText(experience.getDescription());
-		} else {
-			holder.description.setVisibility(View.GONE);
-		}
+		String title = experience.getTitle();
+		if(title.length()>MAX_TITLE_LENGTH-1)
+			holder.title.setText(title.substring(0,MAX_TITLE_LENGTH)+"...");
+		else
+			holder.title.setText(title);
+//		if (experience != null && experience.getDescription().length() > 0) {
+//			holder.description.setText(experience.getDescription());
+//		} else {
+//			holder.description.setVisibility(View.GONE);
+//		}
 
 		String collectionsString = "";
 		collectionsString = EBHelper.getUserPreference().collectionNames(
@@ -151,7 +155,6 @@ public class ExperiencesListAdapter extends ArrayAdapter<Experience> {
 	public static class ImgHolder {
 		View separator;
 		TextView title;
-		TextView description;
 		TextView collections;
 		TextView place;
 		TextView date;
