@@ -22,31 +22,84 @@
         android:orientation="vertical"
         android:paddingTop="40dp" >
 
-        <TextView
+        <LinearLayout 
+	        android:layout_width="match_parent"
+	        android:layout_height="wrap_content"
+	        android:orientation="horizontal"
+	        android:background="@drawable/selectable_background_experiencebuster"
+    		android:gravity="center_vertical"
+    		android:padding="5dp" >
+		    <ImageView
+		        android:id="@+id/logo_new_collection"
+		        android:layout_width="wrap_content"
+		        android:layout_height="wrap_content"
+		        android:layout_margin="5dp"
+		        android:gravity="center_vertical"
+		        android:src="@drawable/ic_add_label" >
+		    </ImageView>
+		
+		    <TextView
             android:id="@+id/drawer_add_category"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="8dp"
-            android:background="@drawable/selectable_background_experiencebuster"
-            android:drawableLeft="@drawable/ic_add_label"
-            android:drawablePadding="6dp"
-            android:gravity="center_vertical"
-            android:minHeight="48dp"
-            android:padding="8dp"
-            android:text="@string/dialog_collection_add"
-            android:textColor="@android:color/white" />
+		        android:layout_width="match_parent"
+		        android:layout_height="wrap_content"
+		        android:gravity="center_vertical"
+		        android:paddingLeft="16dp"
+		        android:paddingRight="16dp"
+	            android:text="@string/dialog_collection_add"
+		        android:textColor="@android:color/white" />
+        </LinearLayout>
+        
+<!--         <TextView -->
+<!--             android:id="@+id/drawer_add_category" -->
+<!--             android:layout_width="match_parent" -->
+<!--             android:layout_height="wrap_content" -->
+<!--             android:layout_marginBottom="8dp" -->
+<!--             android:background="@drawable/selectable_background_experiencebuster" -->
+<!--             android:drawableLeft="@drawable/ic_add_label" -->
+<!--             android:drawablePadding="6dp" -->
+<!--             android:gravity="center_vertical" -->
+<!--             android:minHeight="48dp" -->
+<!--             android:padding="8dp" -->
+<!--             android:text="@string/dialog_collection_add" -->
+<!--             android:textColor="@android:color/white" /> -->
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:drawableLeft="@drawable/ic_labels"
-            android:drawablePadding="6dp"
-            android:paddingBottom="3dp"
-            android:paddingLeft="8dp"
-            android:paddingTop="8dp"
-            android:text="@string/mainmenu_collections"
-            android:textColor="@android:color/white"
-            android:textStyle="bold" />
+        <LinearLayout 
+	        android:layout_width="match_parent"
+	        android:layout_height="wrap_content"
+	        android:orientation="horizontal"
+	        android:background="@drawable/selectable_background_experiencebuster"
+    		android:gravity="center_vertical"
+    		android:padding="5dp" >
+		    <ImageView
+		        android:id="@+id/logo_collections"
+		        android:layout_width="wrap_content"
+		        android:layout_height="wrap_content"
+		        android:layout_margin="5dp"
+		        android:gravity="center_vertical"
+		        android:src="@drawable/ic_labels" >
+		    </ImageView>
+		
+		    <TextView
+		        android:layout_width="match_parent"
+		        android:layout_height="wrap_content"
+		        android:gravity="center_vertical"
+		        android:paddingLeft="16dp"
+		        android:paddingRight="16dp"
+	            android:text="@string/mainmenu_collections"
+		        android:textColor="@android:color/white" />
+        </LinearLayout>
+
+<!--         <TextView -->
+<!--             android:layout_width="wrap_content" -->
+<!--             android:layout_height="wrap_content" -->
+<!--             android:drawableLeft="@drawable/ic_labels" -->
+<!--             android:drawablePadding="6dp" -->
+<!--             android:paddingBottom="3dp" -->
+<!--             android:paddingLeft="8dp" -->
+<!--             android:paddingTop="8dp" -->
+<!--             android:text="@string/mainmenu_collections" -->
+<!--             android:textColor="@android:color/white" -->
+<!--             android:textStyle="bold" /> -->
 
         <View
             android:layout_width="match_parent"

@@ -663,6 +663,5 @@ public class EBHelper {
 						0);
 			}
 		}, 10);
-		
 	}
 }

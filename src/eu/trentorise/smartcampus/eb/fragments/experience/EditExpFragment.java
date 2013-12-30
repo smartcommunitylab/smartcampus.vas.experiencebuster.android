@@ -339,15 +339,13 @@ public class EditExpFragment extends SherlockFragment
 		case R.id.expmenu_save:
 			exp.setTitle(mTitleSwitch.getValue());
 
-			if (validate(exp, true)) {
-				try {
-					if (!EBHelper.ensureSyncConfig(getActivity())){
-						new SaveTask().execute();
-					}
-				} catch (DataException e) {
-					Log.e(EditExpFragment.class.getName(),
-							"Error creating filestorage account");
+			try {
+				if (!EBHelper.ensureSyncConfig(getActivity())){
+					new SaveTask().execute();
 				}
+			} catch (DataException e) {
+				Log.e(EditExpFragment.class.getName(),
+						"Error creating filestorage account");
 			}
 			break;
 		case R.id.expmenu_attach_audio:
@@ -421,16 +419,6 @@ public class EditExpFragment extends SherlockFragment
 			return;
 		editMode = true;
 		getSherlockActivity().invalidateOptionsMenu();
-	}
-
-	private boolean validate(Experience e, boolean show) {
-		if (e.getTitle() == null || e.getTitle().trim().length() == 0) {
-			if (show)
-			Toast.makeText(getActivity(), R.string.alert_title_required,
-					Toast.LENGTH_SHORT).show();
-			return false;
-		}
-		return true;
 	}
 
 	@Override
@@ -765,9 +753,7 @@ public class EditExpFragment extends SherlockFragment
 			exp.setTitle(mTitleSwitch.getValue());
 		}
 
-		if (validate(exp, false)) {
-			new SaveTask().execute();
-		}
+		new SaveTask().execute();
 		getFragmentManager().popBackStack();
 
 	}

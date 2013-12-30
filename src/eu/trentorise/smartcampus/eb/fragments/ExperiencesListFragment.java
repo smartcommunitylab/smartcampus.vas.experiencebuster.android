@@ -20,6 +20,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
@@ -32,6 +33,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.TranslateAnimation;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView.AdapterContextMenuInfo;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
@@ -173,7 +175,11 @@ public class ExperiencesListFragment extends SherlockListFragment
 		this.getListView().setDivider(getResources().getDrawable(R.drawable.border));
 		this.getListView().setDividerHeight(1);
 		animateList();
-		
+
+		// hide keyboard if opened
+		InputMethodManager keyboard = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+		keyboard.hideSoftInputFromWindow(getView().getApplicationWindowToken(), 0);
+
 	}
 
 	private void animateList() {
@@ -204,7 +210,7 @@ public class ExperiencesListFragment extends SherlockListFragment
 		if (getArguments() != null && getArguments().containsKey(ARG_FILTER)) {
 			filter = (ExperienceFilter) getArguments().getSerializable(
 					ARG_FILTER);
-			experiencesList = EBHelper.findExperiences(filter, 0, -1);
+			experiencesList.addAll(EBHelper.findExperiences(filter, 0, -1));
 		} else {
 			filter = null;
 			experiencesList.addAll(EBHelper.getExperiences(0, -1));

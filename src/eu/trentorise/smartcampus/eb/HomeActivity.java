@@ -59,6 +59,7 @@ import eu.trentorise.smartcampus.eb.fragments.experience.DialogCallbackContainer
 import eu.trentorise.smartcampus.eb.fragments.experience.EditNoteFragment.NoteHandler;
 import eu.trentorise.smartcampus.eb.fragments.experience.EditPositionFragment.PositionHandler;
 import eu.trentorise.smartcampus.eb.model.ExpCollection;
+import eu.trentorise.smartcampus.eb.model.ExperienceFilter;
 import eu.trentorise.smartcampus.eb.model.UserPreference;
 import eu.trentorise.smartcampus.protocolcarrier.exceptions.SecurityException;
 
@@ -382,6 +383,18 @@ public class HomeActivity extends SherlockFragmentActivity implements
 		if (currentFragment != null
 				&& currentFragment instanceof RefreshCallback) {
 			((RefreshCallback) currentFragment).refresh(id, name, animate);
+		} else {
+			FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+			Fragment frag = new ExperiencesListFragment();
+			if (id != null) {
+				ExperienceFilter ef = new ExperienceFilter();
+				ef.setCollectionIds(new String[] { id });
+				Bundle b = new Bundle();
+				b.putSerializable(ExperiencesListFragment.ARG_FILTER, ef);
+				frag.setArguments(b);
+			}
+			
+			ft.replace(R.id.content_frame, frag).commitAllowingStateLoss();
 		}
 		mDrawerLayout.closeDrawer(findViewById(R.id.drawer_wrapper));
 	}
@@ -395,8 +408,9 @@ public class HomeActivity extends SherlockFragmentActivity implements
 						R.string.t_msg_search),
 				new TutorialItem("categories", null, 0, R.string.t_title_cat,
 						R.string.t_msg_cat),
-				new TutorialItem("settings", null, 0,
-						R.string.t_title_settings, R.string.t_msg_settings), };
+//				new TutorialItem("settings", null, 0,
+//						R.string.t_title_settings, R.string.t_msg_settings), 
+						};
 
 		@Override
 		public int size() {
@@ -415,6 +429,7 @@ public class HomeActivity extends SherlockFragmentActivity implements
 
 		@Override
 		public TutorialItem getItemAt(int pos) {
+			mDrawerLayout.openDrawer(findViewById(R.id.drawer_wrapper));
 			View v = null;
 			switch (pos) {
 			case 0:
@@ -424,12 +439,7 @@ public class HomeActivity extends SherlockFragmentActivity implements
 				v = findViewById(R.id.expmenu_search);
 				break;
 			case 2:
-				mDrawerLayout.openDrawer(findViewById(R.id.drawer_wrapper));
-				v = mDrawerLayout.findViewById(R.id.drawer_add_category);
-				break;
-			case 3:
-				mDrawerLayout.closeDrawer(findViewById(R.id.drawer_wrapper));
-				v = findViewById(R.id.expmenu_settings);
+				v = findViewById(R.id.drawer_wrapper).findViewById(R.id.logo_collections);
 				break;
 			default:
 				break;

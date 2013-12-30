@@ -99,11 +99,11 @@ class PreferenceChecker implements OnPreferenceChangeListener {
 				if (Float.valueOf(value) > 0) {
 					return true;
 				} else {
-					Toast.makeText(ctx, "Value could not be negative",
+					Toast.makeText(ctx, R.string.error_value_negative,
 							Toast.LENGTH_SHORT).show();
 				}
 			} catch (NumberFormatException e) {
-				Toast.makeText(ctx, "Value must be a number",
+				Toast.makeText(ctx, R.string.error_value_nan,
 						Toast.LENGTH_SHORT).show();
 			}
 		} else if (preference.getKey().equals(EBHelper.CONF_SYNCHRO)) {

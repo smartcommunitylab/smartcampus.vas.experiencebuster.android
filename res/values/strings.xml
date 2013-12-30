@@ -17,7 +17,7 @@
 <resources>
 
     <string name="empty" />
-    <string name="content_empty">There\'s nothing here.\n =(</string>
+    <string name="content_empty">No results.</string>
     <string name="app_name">LifeLog</string>
 
     <string name="not_implemented">Coming soon!</string>
@@ -116,4 +116,7 @@
     <string name="tutorial">Tutorial</string>
     
     <string name="error_account">Error saving account information</string>
+    <string name="error_value_negative">Value cannot be negative</string>
+    <string name="error_value_nan">Value must be a number</string>
+    
 </resources>

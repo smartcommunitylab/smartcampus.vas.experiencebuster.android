@@ -27,15 +27,14 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.EditText;
-import android.widget.Toast;
 
 import com.actionbarsherlock.app.SherlockDialogFragment;
 
+import eu.trentorise.smartcampus.android.common.validation.ValidatorHelper;
 import eu.trentorise.smartcampus.eb.HomeActivity;
 import eu.trentorise.smartcampus.eb.R;
 import eu.trentorise.smartcampus.eb.custom.Utils;
 import eu.trentorise.smartcampus.eb.custom.data.EBHelper;
-import eu.trentorise.smartcampus.eb.fragments.experience.DialogCallbackContainer;
 import eu.trentorise.smartcampus.eb.model.ExpCollection;
 import eu.trentorise.smartcampus.eb.model.UserPreference;
 
@@ -98,7 +97,7 @@ public class NewCollectionDialogFragment extends SherlockDialogFragment {
 				ExpCollection updated = null;
 				
 				if (newCollectionEditText.getText() == null || newCollectionEditText.getText().toString().trim().equals("")) {
-					Toast.makeText(getActivity(), R.string.alert_folder_name_required, Toast.LENGTH_SHORT).show();
+					ValidatorHelper.highlight(getActivity(), newCollectionEditText, getString(R.string.alert_folder_name_required));
 					return;
 				}
 				
