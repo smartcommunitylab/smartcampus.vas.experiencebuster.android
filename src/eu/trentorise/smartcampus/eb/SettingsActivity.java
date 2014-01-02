@@ -45,16 +45,23 @@ public class SettingsActivity extends SherlockPreferenceActivity {
 		if (Build.VERSION.SDK_INT < Build.VERSION_CODES.HONEYCOMB) {
 			addPreferencesFromResource(prefs);
 			sizeFilePref = findPreference(EBHelper.CONF_FILE_SIZE);
-			sizeFilePref.setOnPreferenceChangeListener(new PreferenceChecker(
-					this));
+			sizeFilePref.setOnPreferenceChangeListener(new PreferenceChecker(this));
+			getPreferenceManager().findPreference(EBHelper.CONF_SYNCHRO)
+			.setOnPreferenceChangeListener(new PreferenceChecker(this));
 		} else {
-			getFragmentManager().beginTransaction()
-					.replace(android.R.id.content, new PrefFragment()).commit();
-
 		}
 		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 	}
 
+	@Override
+	protected void onResume() {
+		super.onResume();
+		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
+			getFragmentManager().beginTransaction()
+			.replace(android.R.id.content, new PrefFragment()).commit();
+		}
+	}
+	
 	@TargetApi(Build.VERSION_CODES.HONEYCOMB)
 	public static class PrefFragment extends PreferenceFragment {
 		@Override
@@ -64,8 +71,10 @@ public class SettingsActivity extends SherlockPreferenceActivity {
 			getPreferenceManager().findPreference(EBHelper.CONF_FILE_SIZE)
 					.setOnPreferenceChangeListener(
 							new PreferenceChecker(getActivity()));
+			getPreferenceManager().findPreference(EBHelper.CONF_SYNCHRO)
+			.setOnPreferenceChangeListener(
+					new PreferenceChecker(getActivity()));
 		}
-
 	}
 	
 	@Override
@@ -79,6 +88,9 @@ public class SettingsActivity extends SherlockPreferenceActivity {
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 		EBHelper.handleAccountActivityResult(this, requestCode, resultCode, data);
+		if (Build.VERSION.SDK_INT < Build.VERSION_CODES.HONEYCOMB) {
+			addPreferencesFromResource(prefs);
+		}
 		super.onActivityResult(requestCode, resultCode, data);
 	}
 }
@@ -115,6 +127,8 @@ class PreferenceChecker implements OnPreferenceChangeListener {
 				} catch (DataException e) {
 					Toast.makeText(ctx, R.string.error_account, Toast.LENGTH_SHORT).show();
 				}
+			} else {
+				return true;
 			}
 		}
 		return false;

@@ -219,7 +219,7 @@ public class EBHelper {
 	 * @throws DataException
 	 */
 	public static void saveSyncConfig(boolean active, String accountId) throws DataException {
-		saveConfiguration(EBHelper.CONF_SYNCHRO, true, Boolean.class);
+		saveConfiguration(EBHelper.CONF_SYNCHRO, active, Boolean.class);
 		saveConfiguration(EBHelper.CONF_USER_ACCOUNT, accountId, String.class);
 	}
 	
