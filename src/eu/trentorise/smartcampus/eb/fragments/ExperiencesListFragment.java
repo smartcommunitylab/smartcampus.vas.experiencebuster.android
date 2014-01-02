@@ -364,10 +364,10 @@ public class ExperiencesListFragment extends SherlockListFragment
 			ExperienceFilter ef = new ExperienceFilter();
 			ef.setCollectionIds(new String[] { id });
 			filter=ef;
-			experiencesList = EBHelper.findExperiences(ef, 0, -1);
+			experiencesList.addAll(EBHelper.findExperiences(ef, 0, -1));
 			getSherlockActivity().getSupportActionBar().setTitle(name);
 		} else {
-				experiencesList=EBHelper.getExperiences(0, -1);
+			experiencesList.addAll(EBHelper.getExperiences(0, -1));
 				getSherlockActivity().getSupportActionBar().setTitle(getString(R.string.mainmenu_diary));
 			filter=null;
 		}
@@ -382,9 +382,9 @@ public class ExperiencesListFragment extends SherlockListFragment
 	public void onBack() {
 		if (filter!=null) {
 			if(!filter.isEmpty())
-				experiencesList = EBHelper.findExperiences(filter, 0, -1);
+				experiencesList.addAll(EBHelper.findExperiences(filter, 0, -1));
 			else{
-				experiencesList = EBHelper.getExperiences(0, -1);
+				experiencesList.addAll(EBHelper.getExperiences(0, -1));
 				filter=null;
 			}
 			this.setListAdapter(new ExperiencesListAdapter(getSherlockActivity(),
