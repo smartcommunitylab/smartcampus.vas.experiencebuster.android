@@ -155,14 +155,10 @@ public class FileSyncStorage extends SyncStorageWithPaging {
 				throw new ProtocolException(e.getMessage());
 			}
 		}
-		SyncData data = synchronize(authToken, host, service);
-
-		// launch file synchro
-		syncFiles();
-		return data;
+		return synchronize(authToken, host, service);
 	}
 
-	private void syncFiles() {
+	public void syncFiles() {
 		List<SyncFile> syncFiles = fileToSync.getEntryToProcess();
 		boolean forceSynchro = false;
 		for (SyncFile syncFile : syncFiles) {
@@ -274,7 +270,6 @@ public class FileSyncStorage extends SyncStorageWithPaging {
 					Experience.class.getCanonicalName())) {
 				Experience exp = eu.trentorise.smartcampus.android.common.Utils
 						.convertObjectToData(Experience.class, o);
-				// boolean toUpdate = false;
 				for (Content c : exp.getContents()) {
 					if (c.isStorable()) {
 

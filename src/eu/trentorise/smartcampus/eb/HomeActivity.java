@@ -44,6 +44,7 @@ import eu.trentorise.smartcampus.eb.fragments.experience.DeleteExperienceFragmen
 import eu.trentorise.smartcampus.eb.fragments.experience.DialogCallbackContainer;
 import eu.trentorise.smartcampus.eb.fragments.experience.EditNoteFragment.NoteHandler;
 import eu.trentorise.smartcampus.eb.fragments.experience.EditPositionFragment.PositionHandler;
+import eu.trentorise.smartcampus.eb.syncadapter.FileSyncService;
 import eu.trentorise.smartcampus.protocolcarrier.exceptions.SecurityException;
 import eu.trentorise.smartcampus.storage.DataException;
 import eu.trentorise.smartcampus.storage.sync.service.SyncStorageService;
@@ -95,6 +96,7 @@ public class HomeActivity extends SherlockFragmentActivity implements
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		startService(new Intent(this, FileSyncService.class));
 		// supportInvalidateOptionsMenu();
 		getSupportActionBar().setDisplayShowTitleEnabled(false);
 		initDataManagement(savedInstanceState);
