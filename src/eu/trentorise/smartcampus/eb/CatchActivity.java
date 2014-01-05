@@ -17,6 +17,7 @@ package eu.trentorise.smartcampus.eb;
 
 import android.accounts.AccountManager;
 import android.content.Intent;
+import android.content.pm.PackageManager.NameNotFoundException;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
@@ -30,6 +31,7 @@ import eu.trentorise.smartcampus.eb.custom.capture.CaptureHelper;
 import eu.trentorise.smartcampus.eb.custom.capture.CaptureHelper.ResultHandler;
 import eu.trentorise.smartcampus.eb.custom.capture.GrabbedContent;
 import eu.trentorise.smartcampus.eb.custom.data.EBHelper;
+import eu.trentorise.smartcampus.eb.fragments.BackListener;
 import eu.trentorise.smartcampus.eb.fragments.NearMeNowFragment;
 import eu.trentorise.smartcampus.eb.fragments.NewCollectionDialogFragment.CollectionSavedHandler;
 import eu.trentorise.smartcampus.eb.fragments.experience.AssignCollectionFragment.AssignCollectionsCallback;
@@ -71,6 +73,14 @@ public class CatchActivity extends SherlockFragmentActivity implements
 
 	@Override
 	protected void onResume() {
+		if(EBHelper.getLocationHelper()!=null){
+			try {
+				EBHelper.init(this.getApplicationContext());
+			} catch (NameNotFoundException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
 		EBHelper.getLocationHelper().start();
 		super.onResume();
 	}
@@ -167,6 +177,18 @@ public class CatchActivity extends SherlockFragmentActivity implements
 	@Override
 	public void onCancel() {
 		finish();
+	}
+
+	@Override
+	public void onBackPressed() {
+		Fragment currentFragment = getSupportFragmentManager()
+				.findFragmentById(android.R.id.content);
+		// Checking if there is a fragment that it's listening for back button
+		if (currentFragment != null && currentFragment instanceof BackListener) {
+			((BackListener) currentFragment).onBack();
+		}
+		super.onBackPressed();
+		
 	}
 
 	@Override

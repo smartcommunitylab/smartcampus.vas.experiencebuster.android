@@ -85,11 +85,6 @@ public class ViewerActivity extends Activity {
 							.setText(result.getTitle());
 				}
 
-				if (result.getDescription() != null) {
-					((TextView) findViewById(R.id.description_tv_shared))
-							.setText(result.getDescription());
-				}
-
 				if (result.getTags() != null)
 					((TextView) findViewById(R.id.tags_tv_shared))
 							.setText(Concept.toSimpleString(result.getTags()));

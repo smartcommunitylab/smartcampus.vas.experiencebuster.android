@@ -16,20 +16,26 @@
 -->
 <menu xmlns:android="http://schemas.android.com/apk/res/android" >
 
-    <item
+    
+         <item
+        android:id="@+id/expmenu_remove"
+        android:title="@string/expmenu_remove"/>
+     <item
+        android:id="@+id/expmenu_share"
+        android:title="@string/expmenu_share"/> 
+
+<!--     <item 
+    android:id="@+id/expmenu_export" 
+     android:title="@string/expmenu_export"/>  -->
+    
+         <item
         android:id="@+id/expmenu_assign_collection"
-        android:icon="@drawable/select_folder"
-        android:menuCategory="system"
-        android:orderInCategory="1"
-        android:showAsAction="always"
-        android:title="@string/empty">
-    </item>
-    <item
-        android:id="@+id/expmenu_done"
-        android:menuCategory="system"
-        android:orderInCategory="10"
-        android:showAsAction="always"
-        android:title="@string/expmenu_save">
-    </item>
+        android:title="@string/expmenu_assign_collection"/>
+    
+    <!-- <item -->
+    <!-- android:id="@+id/expmenu_map" -->
+    <!-- android:title="@string/expmenu_map"/> -->
+
+
 
 </menu>

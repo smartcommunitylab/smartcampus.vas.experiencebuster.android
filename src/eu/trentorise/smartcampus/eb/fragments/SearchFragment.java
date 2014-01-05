@@ -22,8 +22,8 @@ import android.support.v4.app.FragmentTransaction;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
-import android.view.inputmethod.InputMethodManager;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ListView;
@@ -32,6 +32,7 @@ import android.widget.Toast;
 import com.actionbarsherlock.app.SherlockListFragment;
 
 import eu.trentorise.smartcampus.eb.R;
+import eu.trentorise.smartcampus.eb.custom.data.EBHelper;
 import eu.trentorise.smartcampus.eb.model.ExperienceFilter;
 
 public class SearchFragment extends SherlockListFragment {
@@ -56,6 +57,9 @@ public class SearchFragment extends SherlockListFragment {
 		getSherlockActivity().getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 		getSherlockActivity().getSupportActionBar().setDisplayShowTitleEnabled(true);
 		getSherlockActivity().getSupportActionBar().setTitle(R.string.title_search);
+		
+		EBHelper.applyScaleAnimationOnView(getView().findViewById(R.id.search));
+		EBHelper.openKeyboard(getActivity(), getView().findViewById(R.id.search));
 	}
 
 	@Override
@@ -93,7 +97,7 @@ public class SearchFragment extends SherlockListFragment {
 			}
 			b.putSerializable(ExperiencesListFragment.ARG_FILTER, filter);
 			f.setArguments(b);
-			ft.replace(android.R.id.content, f);
+			ft.replace(R.id.content_frame, f);
 			ft.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE);
 			ft.addToBackStack(null);
 			ft.commit();

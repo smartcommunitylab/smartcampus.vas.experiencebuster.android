@@ -16,6 +16,7 @@
 package eu.trentorise.smartcampus.eb.custom.capture;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -25,7 +26,9 @@ import java.util.Date;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.res.AssetFileDescriptor;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Environment;
 import android.provider.MediaStore;
 import android.util.Log;
@@ -40,26 +43,29 @@ import eu.trentorise.smartcampus.eb.custom.capture.content.VideoContent;
 
 public class CaptureHelper {
 
+	private static final String TMP_IMAGE_NAME = "tmpImg.jpg";
 	public static final int MEDIA_TYPE_IMAGE = 1;
 	public static final int MEDIA_TYPE_VIDEO = 2;
-	
+
 	private static final int RC_SELECT_PICTURE = 2000;
-	private static final int RC_CAPTURE_IMAGE = 2001;	
-	private static final int RC_CAPTURE_VIDEO = 2002;	
-	private static final int RC_CAPTURE_AUDIO = 2003;	
+	private static final int RC_CAPTURE_IMAGE = 2001;
+	private static final int RC_CAPTURE_VIDEO = 2002;
+	private static final int RC_CAPTURE_AUDIO = 2003;
 	private static final int RC_SELECT_VIDEO = 2004;
 	private static final int RC_CAPTURE_QRCODE = 2005;
-	
+
 	private Context mContext = null;
 	private int shift = 0;
 	private ResultHandler resultHandler = null;
 
 	public interface ResultHandler {
 		void startActivityForResult(Intent i, int requestCode);
+
 		void onResult(GrabbedContent value);
+
 		void onCancel();
 	}
-	
+
 	public CaptureHelper(Context context, int shift, ResultHandler handler) {
 		super();
 		this.mContext = context;
@@ -71,49 +77,66 @@ public class CaptureHelper {
 	public void startCapture(CATCH_TYPES type) {
 		if (type != null) {
 			switch (type) {
-			case QRCODE:
-			{
-				Intent intent = new Intent(mContext,QRCodeActivity.class);
-				resultHandler.startActivityForResult(intent, RC_CAPTURE_QRCODE+shift);
+			case QRCODE: {
+				Intent intent = new Intent(mContext, QRCodeActivity.class);
+				resultHandler.startActivityForResult(intent, RC_CAPTURE_QRCODE
+						+ shift);
 				break;
-			}	
-			case IMAGE_GALLERY:
-			{	
+			}
+			case IMAGE_GALLERY: {
 				Intent intent = new Intent();
 				intent.setType("image/*");
 				intent.setAction(Intent.ACTION_GET_CONTENT);
-				resultHandler.startActivityForResult(Intent.createChooser(intent, "Select Image"), RC_SELECT_PICTURE+shift);
+				resultHandler.startActivityForResult(
+						Intent.createChooser(intent, "Select Image"),
+						RC_SELECT_PICTURE + shift);
 				break;
-			}	
-			case VIDEO_GALLERY:
-			{
+			}
+			case VIDEO_GALLERY: {
 				Intent intent = new Intent();
 				intent.setType("video/*");
 				intent.setAction(Intent.ACTION_GET_CONTENT);
-				resultHandler.startActivityForResult(Intent.createChooser(intent, "Select Video"), RC_SELECT_VIDEO+shift);
-				break;
-			}	
-			case AUDIO:
-			{
-				Intent intent = new Intent(MediaStore.Audio.Media.RECORD_SOUND_ACTION);
-//				intent.putExtra(MediaStore.Audio.Media.EXTRA_MAX_BYTES, Constants.FILE_SIZE_LIMIT);
-				resultHandler.startActivityForResult(intent, RC_CAPTURE_AUDIO+shift);
+				resultHandler.startActivityForResult(
+						Intent.createChooser(intent, "Select Video"),
+						RC_SELECT_VIDEO + shift);
 				break;
 			}
-			case IMAGE_CAMERA:	
-			{
+			case AUDIO: {
+				Intent intent = new Intent(
+						MediaStore.Audio.Media.RECORD_SOUND_ACTION);
+				// intent.putExtra(MediaStore.Audio.Media.EXTRA_MAX_BYTES,
+				// Constants.FILE_SIZE_LIMIT);
+				resultHandler.startActivityForResult(intent, RC_CAPTURE_AUDIO
+						+ shift);
+				break;
+			}
+			case IMAGE_CAMERA: {
 				Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-			    resultHandler.startActivityForResult(Intent.createChooser(intent, "Capture Image"), RC_CAPTURE_IMAGE+shift);
+				
+				File mediaStorageDir = new File(
+						Environment
+								.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES),
+						Constants.EB_APP_MEDIA_FOLDER);
+				
+				intent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(new File(mediaStorageDir+File.separator + TMP_IMAGE_NAME)));
+				
+				resultHandler.startActivityForResult(
+						Intent.createChooser(intent, "Capture Image"),
+						RC_CAPTURE_IMAGE + shift);
 				break;
 			}
-			case VIDEO_CAMERA:	
-			{
+			case VIDEO_CAMERA: {
 				Intent intent = new Intent(MediaStore.ACTION_VIDEO_CAPTURE);
 				intent.putExtra(MediaStore.EXTRA_VIDEO_QUALITY, 1);
-//				intent.putExtra(MediaStore.EXTRA_SIZE_LIMIT, Constants.FILE_SIZE_LIMIT);
-//				Uri fileUri = getOutputMediaFileUri(MEDIA_TYPE_VIDEO); 
-//			    intent.putExtra(MediaStore.EXTRA_OUTPUT, fileUri);
-				resultHandler.startActivityForResult(Intent.createChooser(intent, "Capture Video"), RC_CAPTURE_VIDEO+shift);
+				
+				//TODO hotfix for nexus devices.
+				if(Build.MODEL.toLowerCase().contains("nexus"))
+					intent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(getOutputMediaFile("3gp")));
+				
+
+				resultHandler.startActivityForResult(
+						Intent.createChooser(intent, "Capture Video"),
+						RC_CAPTURE_VIDEO + shift);
 				break;
 			}
 			default:
@@ -121,14 +144,16 @@ public class CaptureHelper {
 			}
 		}
 	}
-	
+
 	public void onCaptureResult(int requestCode, int resultCode, Intent data) {
-		if (requestCode == RC_SELECT_PICTURE+shift) {
+		if (requestCode == RC_SELECT_PICTURE + shift) {
 			if (resultCode != 0) {
 				Uri imgUri = data.getData();
 				try {
-//					resultHandler.onResult(new ImageContent(imgUri.toString()));
-					resultHandler.onResult(new ImageContent(writeMediaData(mContext, imgUri, false)));
+					// resultHandler.onResult(new
+					// ImageContent(imgUri.toString()));
+					resultHandler.onResult(new ImageContent(writeMediaData(
+							mContext, imgUri, false)));
 				} catch (Exception e) {
 					e.printStackTrace();
 					Log.e("CaptureHelper", "Error reading image");
@@ -137,13 +162,15 @@ public class CaptureHelper {
 			} else {
 				resultHandler.onCancel();
 			}
-		} 
-		if (requestCode == RC_SELECT_VIDEO+shift) {
+		}
+		if (requestCode == RC_SELECT_VIDEO + shift) {
 			if (resultCode != 0) {
 				Uri imgUri = data.getData();
 				try {
-//					resultHandler.onResult(new VideoContent(imgUri.toString()));
-					resultHandler.onResult(new VideoContent(writeMediaData(mContext, imgUri, false)));
+					// resultHandler.onResult(new
+					// VideoContent(imgUri.toString()));
+					resultHandler.onResult(new VideoContent(writeMediaData(
+							mContext, imgUri, false)));
 				} catch (Exception e) {
 					e.printStackTrace();
 					Log.e("CaptureHelper", "Error reading video");
@@ -152,14 +179,25 @@ public class CaptureHelper {
 			} else {
 				resultHandler.onCancel();
 			}
-		} 
-		if (requestCode == RC_CAPTURE_IMAGE+shift) {
+		}
+		if (requestCode == RC_CAPTURE_IMAGE + shift) {
 			if (resultCode != 0) {
-				Uri imgUri = data.getData();
+				//Uri imgUri = data.getData();
+				File mediaStorageDir = new File(
+						Environment
+								.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES),
+						Constants.EB_APP_MEDIA_FOLDER);
+				
+				File fi = new File(mediaStorageDir+File.separator  + TMP_IMAGE_NAME);
+				
 				try {
-//					imgUri = writeImageData(mContext, imgUri, "jpg");
-//					resultHandler.onResult(new ImageContent(imgUri.toString()));
-					resultHandler.onResult(new ImageContent(writeMediaData(mContext, imgUri, true)));
+					// imgUri = writeImageData(mContext, imgUri, "jpg");
+					// resultHandler.onResult(new
+					// ImageContent(imgUri.toString()));
+					Uri imgUri = Uri.parse(android.provider.MediaStore.Images.Media.insertImage(mContext.getContentResolver(),
+							fi.getAbsolutePath(), null, null));
+					resultHandler.onResult(new ImageContent(writeMediaData(
+							mContext, imgUri, true)));
 				} catch (Exception e) {
 					e.printStackTrace();
 					Log.e("CaptureHelper", "Error reading image");
@@ -168,13 +206,19 @@ public class CaptureHelper {
 			} else {
 				resultHandler.onCancel();
 			}
-		} 
-		if (requestCode == RC_CAPTURE_VIDEO+shift) {
+		}
+		if (requestCode == RC_CAPTURE_VIDEO + shift) {
 			if (resultCode != 0) {
-				Uri imgUri = data.getData();
+				Uri imgUri=data.getData();
+				
 				try {
-//					resultHandler.onResult(new VideoContent(imgUri.toString()));
-					resultHandler.onResult(new VideoContent(writeMediaData(mContext, imgUri, true)));
+					// resultHandler.onResult(new
+					// VideoContent(imgUri.toString()));
+					if(Build.MODEL.toLowerCase().contains("nexus"))
+						resultHandler.onResult(new VideoContent(imgUri.toString().substring(6)));
+					else
+						resultHandler.onResult(new VideoContent(writeMediaData(
+								mContext, imgUri, true)));
 				} catch (Exception e) {
 					e.printStackTrace();
 					Log.e("CaptureHelper", "Error reading video");
@@ -183,13 +227,15 @@ public class CaptureHelper {
 			} else {
 				resultHandler.onCancel();
 			}
-		} 
-		if (requestCode == RC_CAPTURE_AUDIO+shift) {
+		}
+		if (requestCode == RC_CAPTURE_AUDIO + shift) {
 			if (resultCode != 0) {
 				Uri imgUri = data.getData();
 				try {
-					resultHandler.onResult(new AudioContent(writeMediaData(mContext, imgUri, true)));
-//					resultHandler.onResult(new AudioContent(imgUri.toString()));
+					resultHandler.onResult(new AudioContent(writeMediaData(
+							mContext, imgUri, true)));
+					// resultHandler.onResult(new
+					// AudioContent(imgUri.toString()));
 				} catch (Exception e) {
 					e.printStackTrace();
 					Log.e("CaptureHelper", "Error reading audio");
@@ -198,8 +244,8 @@ public class CaptureHelper {
 			} else {
 				resultHandler.onCancel();
 			}
-		} 
-		if (requestCode == RC_CAPTURE_QRCODE+shift) {
+		}
+		if (requestCode == RC_CAPTURE_QRCODE + shift) {
 			if (resultCode != 0) {
 				String s = data.getStringExtra(QRCodeActivity.QR_DATA);
 				try {
@@ -212,76 +258,90 @@ public class CaptureHelper {
 			} else {
 				resultHandler.onCancel();
 			}
-		} 
+		}
 
 	}
 
-	public static String writeMediaData(Context ctx, Uri capturedUri, boolean deleteOriginal) {
-		String capturedFilePath = MediaUtils.getMediaAbsolutePath(ctx, capturedUri);
-	    File capturedFile = new File(capturedFilePath);
-	    String fExt = null;
-	    File newPath = null;
-        try {
-			fExt = capturedFile.getName().substring(capturedFile.getName().lastIndexOf('.')+1);
+	public static String writeMediaData(Context ctx, Uri capturedUri,
+			boolean deleteOriginal) {
+		String capturedFilePath = MediaUtils.getMediaAbsolutePath(ctx,
+				capturedUri);
+		File capturedFile = new File(capturedFilePath);
+		String fExt = null;
+		File newPath = null;
+		try {
+			fExt = capturedFile.getName().substring(
+					capturedFile.getName().lastIndexOf('.') + 1);
 		} catch (Exception e1) {
 			// do nothing
 		}
-	    try {
-	        InputStream fileInputStream = ctx.getContentResolver().openInputStream(capturedUri);
+		try {
+			InputStream fileInputStream = ctx.getContentResolver()
+					.openInputStream(capturedUri);
 			newPath = getOutputMediaFile(fExt);
-	        cloneFile(fileInputStream, newPath);
-	    } catch (FileNotFoundException e) {
-	    	return null;
-	    }
+			cloneFile(fileInputStream, newPath);
+		} catch (FileNotFoundException e) {
+			return null;
+		}
 
-	    if (deleteOriginal) {
-		    // Delete original file from Android's Gallery
-		    capturedFile.delete();
-		    MediaUtils.deleteMedia(ctx, capturedUri);
-	    }
-	    return newPath.getAbsolutePath();//Uri.fromFile(newPath);
+		if (deleteOriginal) {
+			// Delete original file from Android's Gallery
+			capturedFile.delete();
+			MediaUtils.deleteMedia(ctx, capturedUri);
+		}
+		return newPath.getAbsolutePath();// Uri.fromFile(newPath);
 	}
 
-	public static void cloneFile(InputStream currentFileInputStream, File newPath) {
-	    FileOutputStream newFileStream = null;
-	    try {
-	        newFileStream = new FileOutputStream(newPath);
-	        byte[] bytesArray = new byte[1024];
-	        int length;
-	        while ((length = currentFileInputStream.read(bytesArray)) > 0) {
-	            newFileStream.write(bytesArray, 0, length);
-	        }
-	        newFileStream.flush();
+	public static void cloneFile(InputStream currentFileInputStream,
+			File newPath) {
+		FileOutputStream newFileStream = null;
+		try {
+			newFileStream = new FileOutputStream(newPath);
+			byte[] bytesArray = new byte[1024];
+			int length;
+			while ((length = currentFileInputStream.read(bytesArray)) > 0) {
+				newFileStream.write(bytesArray, 0, length);
+			}
+			newFileStream.flush();
 
-	    } catch (Exception e) {
-	        Log.e(CaptureHelper.class.getName(), "Exception while copying file " + currentFileInputStream + " to " + newPath, e);
-	    } finally {
-	        try {
-	            if (currentFileInputStream != null) {
-	                currentFileInputStream.close();
-	            }
+		} catch (Exception e) {
+			Log.e(CaptureHelper.class.getName(),
+					"Exception while copying file " + currentFileInputStream
+							+ " to " + newPath, e);
+		} finally {
+			try {
+				if (currentFileInputStream != null) {
+					currentFileInputStream.close();
+				}
 
-	            if (newFileStream != null) {
-	                newFileStream.close();
-	            }
-	        } catch (IOException e) {
-	            // Suppress file stream close
-	            Log.e(CaptureHelper.class.getName(), "Exception occured while closing filestream ", e);
-	        }
-	    }
-	}	
-	private static File getOutputMediaFile(String ext){
-	    File mediaStorageDir = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES), Constants.EB_APP_MEDIA_FOLDER);
-	    // Create the storage directory if it does not exist
-	    if (! mediaStorageDir.exists()){
-	        if (! mediaStorageDir.mkdirs()){
-	            Log.d("experiencebuster", "failed to create directory");
-	            return null;
-	        }
-	    }
-	    // Create a media file name
-	    String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
-	    File mediaFile = new File(mediaStorageDir.getPath() + File.separator + "M_" + timeStamp + "."+ext);
-	    return mediaFile;
+				if (newFileStream != null) {
+					newFileStream.close();
+				}
+			} catch (IOException e) {
+				// Suppress file stream close
+				Log.e(CaptureHelper.class.getName(),
+						"Exception occured while closing filestream ", e);
+			}
+		}
+	}
+
+	private static File getOutputMediaFile(String ext) {
+		File mediaStorageDir = new File(
+				Environment
+						.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES),
+				Constants.EB_APP_MEDIA_FOLDER);
+		// Create the storage directory if it does not exist
+		if (!mediaStorageDir.exists()) {
+			if (!mediaStorageDir.mkdirs()) {
+				Log.d("experiencebuster", "failed to create directory");
+				return null;
+			}
+		}
+		// Create a media file name
+		String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss")
+				.format(new Date());
+		File mediaFile = new File(mediaStorageDir.getPath() + File.separator
+				+ "M_" + timeStamp + "." + ext);
+		return mediaFile;
 	}
 }

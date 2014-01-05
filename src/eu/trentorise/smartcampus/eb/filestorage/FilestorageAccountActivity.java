@@ -47,8 +47,7 @@ public class FilestorageAccountActivity extends Activity {
 					.setTitle("")
 					.setMessage(
 							eu.trentorise.smartcampus.eb.R.string.msg_synchro_dialog)
-					.setPositiveButton(
-							eu.trentorise.smartcampus.eb.R.string.synchro_dialog_y,
+					.setPositiveButton(android.R.string.yes,
 							new DialogInterface.OnClickListener() {
 								public void onClick(DialogInterface dialog,
 										int which) {
@@ -57,7 +56,7 @@ public class FilestorageAccountActivity extends Activity {
 								}
 							})
 					.setNegativeButton(
-							eu.trentorise.smartcampus.eb.R.string.synchro_dialog_n,
+							android.R.string.no,
 							new DialogInterface.OnClickListener() {
 								public void onClick(DialogInterface dialog,
 										int which) {

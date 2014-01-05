@@ -142,17 +142,15 @@ public class FileSyncStorage extends SyncStorageWithPaging {
 		contentToDelete.add(c.getValue());
 	}
 
-	public synchronized SyncData synchroFile(String authToken,
-			boolean syncFiles, String host, String service)
+	public synchronized SyncData synchroFile(String authToken, String host, String service) 
 			throws StorageConfigurationException, SecurityException,
-			ConnectionException, DataException, ProtocolException {
-		if (syncFiles) {
-			SyncData syncData = helper.getDataToSync(getSyncVersion());
-			try {
-				synchroFile(syncData, authToken);
-			} catch (FilestorageException e) {
-				throw new ProtocolException(e.getMessage());
-			}
+			ConnectionException, DataException, ProtocolException 
+	{
+		SyncData syncData = helper.getDataToSync(getSyncVersion());
+		try {
+			synchroFile(syncData, authToken);
+		} catch (FilestorageException e) {
+			throw new ProtocolException(e.getMessage());
 		}
 		return synchronize(authToken, host, service);
 	}

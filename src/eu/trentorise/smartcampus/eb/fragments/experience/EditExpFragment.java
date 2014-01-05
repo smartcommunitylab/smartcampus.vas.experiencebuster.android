@@ -23,7 +23,6 @@ import java.util.List;
 import java.util.Locale;
 
 import android.annotation.SuppressLint;
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -64,11 +63,10 @@ import eu.trentorise.smartcampus.eb.custom.capture.CaptureHelper.ResultHandler;
 import eu.trentorise.smartcampus.eb.custom.capture.ContentRenderer;
 import eu.trentorise.smartcampus.eb.custom.capture.GrabbedContent;
 import eu.trentorise.smartcampus.eb.custom.data.EBHelper;
-import eu.trentorise.smartcampus.eb.filestorage.FilestorageAccountActivity;
+import eu.trentorise.smartcampus.eb.fragments.BackListener;
 import eu.trentorise.smartcampus.eb.fragments.NewCollectionDialogFragment.CollectionSavedHandler;
 import eu.trentorise.smartcampus.eb.fragments.experience.EditNoteFragment.NoteHandler;
 import eu.trentorise.smartcampus.eb.fragments.experience.EditPositionFragment.PositionHandler;
-import eu.trentorise.smartcampus.eb.model.Concept;
 import eu.trentorise.smartcampus.eb.model.Content;
 import eu.trentorise.smartcampus.eb.model.ContentType;
 import eu.trentorise.smartcampus.eb.model.ExpCollection;
@@ -86,9 +84,10 @@ public class EditExpFragment extends SherlockFragment
 		NoteHandler,
 		eu.trentorise.smartcampus.eb.fragments.experience.DeleteExperienceFragment.RemoveCallback,
 		eu.trentorise.smartcampus.eb.fragments.experience.AssignCollectionFragment.AssignCollectionsCallback,
-		CollectionSavedHandler, PositionHandler {
+		CollectionSavedHandler, PositionHandler, BackListener {
 
-	private TextEditSwitch mTitleSwitch, mDescrSwitch;
+	// private TextEditSwitch mTitleSwitch, mDescrSwitch;
+	private TextEditSwitch mTitleSwitch;
 	private Experience exp = null;
 	private Experience src = null;
 
@@ -103,8 +102,6 @@ public class EditExpFragment extends SherlockFragment
 	private static final String ARG_SRC = "src";
 	public static final String ARG_EXP = "exp";
 	public static final String ARG_VALUE = "value";
-
-	public static final int ACCOUNT_CREATION = 10000;
 
 	public static Bundle prepareArgs(Experience e, GrabbedContent content) {
 		Bundle b = new Bundle();
@@ -182,7 +179,6 @@ public class EditExpFragment extends SherlockFragment
 	public void onPause() {
 		super.onPause();
 		exp.setTitle(mTitleSwitch.getValue());
-		exp.setDescription(mDescrSwitch.getValue());
 	}
 
 	@Override
@@ -195,6 +191,18 @@ public class EditExpFragment extends SherlockFragment
 				true);
 		getSherlockActivity().getSupportActionBar().setTitle(
 				R.string.title_expform);
+
+		if (getArguments() == null || !getArguments().containsKey(ARG_EXP))
+			getView().postDelayed(new Runnable() {
+
+				@Override
+				public void run() {
+					EBHelper.openKeyboard(getActivity(), getView()
+							.findViewById(R.id.title));
+					switchToEdit();
+					mTitleSwitch.editMode();
+	}
+			}, 100);
 	}
 
 	@Override
@@ -215,9 +223,6 @@ public class EditExpFragment extends SherlockFragment
 			mTitleSwitch = new TextEditSwitch(returnView, R.id.title_switcher,
 					R.id.title_tv, R.id.title, this);
 			mTitleSwitch.setValue(exp.getTitle());
-			mDescrSwitch = new TextEditSwitch(returnView, R.id.descr_switcher,
-					R.id.description_tv, R.id.description, this);
-			mDescrSwitch.setValue(exp.getDescription());
 		}
 		adapter = new ExpContentAdapter(getSherlockActivity(),
 				R.layout.exp_contents_row, exp.getContents());
@@ -240,22 +245,22 @@ public class EditExpFragment extends SherlockFragment
 		} else {
 			updateFooterTV(exp.getAddress(), exp.getCreationTime());
 		}
-		if (exp.getTags() != null) {
-			((TextView) returnView.findViewById(R.id.tags_tv)).setText(Concept
-					.toSimpleString(exp.getTags()));
-		}
-
-		((TextView) returnView.findViewById(R.id.tags_tv))
-				.setOnClickListener(new OnClickListener() {
-					@Override
-					public void onClick(View v) {
-						TaggingDialogFragment taggingDialog = new TaggingDialogFragment();
-						taggingDialog.setArguments(TaggingDialogFragment
-								.prepare(Concept.convertToSS(exp.getTags())));
-						taggingDialog.show(getActivity()
-								.getSupportFragmentManager(), "tags");
-					}
-				});
+		// TODO TAGS
+		// if (exp.getTags() != null) {
+		// ((TextView) returnView.findViewById(R.id.tags_tv)).setText(Concept
+		// .toSimpleString(exp.getTags()));
+		// }
+		// ((TextView) returnView.findViewById(R.id.tags_tv))
+		// .setOnClickListener(new OnClickListener() {
+		// @Override
+		// public void onClick(View v) {
+		// TaggingDialogFragment taggingDialog = new TaggingDialogFragment();
+		// taggingDialog.setArguments(TaggingDialogFragment
+		// .prepare(Concept.convertToSS(exp.getTags())));
+		// taggingDialog.show(getActivity()
+		// .getSupportFragmentManager(), "tags");
+		// }
+		// });
 
 		returnView.findViewById(R.id.place_box).setOnClickListener(
 				new OnClickListener() {
@@ -309,11 +314,12 @@ public class EditExpFragment extends SherlockFragment
 
 	@Override
 	public void onTagsSelected(Collection<SemanticSuggestion> suggestions) {
-		List<Concept> list = Concept.convertSS(suggestions);
-		if (list != null)
-			exp.setTags(list);
-		((TextView) returnView.findViewById(R.id.tags_tv)).setText(Concept
-				.toSimpleString(list));
+		// TODO TAGS
+		// List<Concept> list = Concept.convertSS(suggestions);
+		// if (list != null)
+		// exp.setTags(list);
+		// ((TextView) returnView.findViewById(R.id.tags_tv)).setText(Concept
+		// .toSimpleString(list));
 		switchToEdit();
 	}
 
@@ -332,22 +338,14 @@ public class EditExpFragment extends SherlockFragment
 		case R.id.expmenu_done:
 		case R.id.expmenu_save:
 			exp.setTitle(mTitleSwitch.getValue());
-			exp.setDescription(mDescrSwitch.getValue());
-			if (validate(exp)) {
-				// TODO uncomment this to enable synchronization
-				try {
-					if (EBHelper.getConfiguration(EBHelper.CONF_SYNCHRO,
-							Boolean.class)
-							&& EBHelper.getConfiguration(
-									EBHelper.CONF_USER_ACCOUNT, String.class) == null) {
-						EBHelper.askUserAccount(this, ACCOUNT_CREATION, false);
-					} else {
-						new SaveTask().execute();
-					}
-				} catch (DataException e) {
-					Log.e(EditExpFragment.class.getName(),
-							"Error creating filestorage account");
+
+			try {
+				if (!EBHelper.ensureSyncConfig(getActivity())){
+					new SaveTask().execute();
 				}
+			} catch (DataException e) {
+				Log.e(EditExpFragment.class.getName(),
+						"Error creating filestorage account");
 			}
 			break;
 		case R.id.expmenu_attach_audio:
@@ -412,7 +410,7 @@ public class EditExpFragment extends SherlockFragment
 	private void switchToView() {
 		editMode = false;
 		mTitleSwitch.viewMode();
-		mDescrSwitch.viewMode();
+		if (getSherlockActivity() != null)
 		getSherlockActivity().invalidateOptionsMenu();
 	}
 
@@ -421,15 +419,6 @@ public class EditExpFragment extends SherlockFragment
 			return;
 		editMode = true;
 		getSherlockActivity().invalidateOptionsMenu();
-	}
-
-	private boolean validate(Experience e) {
-		if (e.getTitle() == null || e.getTitle().trim().length() == 0) {
-			Toast.makeText(getActivity(), R.string.alert_title_required,
-					Toast.LENGTH_SHORT).show();
-			return false;
-		}
-		return true;
 	}
 
 	@Override
@@ -485,24 +474,8 @@ public class EditExpFragment extends SherlockFragment
 
 	@Override
 	public void onActivityResult(int requestCode, int resultCode, Intent data) {
-		if (requestCode == ACCOUNT_CREATION) {
-			try {
-				if (resultCode == Activity.RESULT_OK) {
-					String accountId = data
-							.getStringExtra(FilestorageAccountActivity.EXTRA_USER_ACCOUNT_ID);
-					EBHelper.saveConfiguration(EBHelper.CONF_SYNCHRO, true,
-							Boolean.class);
-					EBHelper.saveConfiguration(EBHelper.CONF_USER_ACCOUNT,
-							accountId, String.class);
-				} else {
-					EBHelper.saveConfiguration(EBHelper.CONF_SYNCHRO, false,
-							Boolean.class);
-				}
-			} catch (DataException e) {
-				Log.e(EditExpFragment.class.getName(),
-						"Error saving configuration: "
-								+ EBHelper.CONF_USER_ACCOUNT);
-			}
+		if (requestCode == EBHelper.FILESTORAGE_ACCOUNT_REGISTRATION) {
+			EBHelper.handleAccountActivityResult(getActivity(), requestCode, resultCode, data);
 			new SaveTask().execute();
 		}
 
@@ -769,6 +742,20 @@ public class EditExpFragment extends SherlockFragment
 		exp.setCollectionIds(Collections.singletonList(coll.getId()));
 		updateCollectionTV();
 		switchToEdit();
+	}
+
+	@Override
+	public void onBack() {
+
+		if (!adapter.isEmpty() && mTitleSwitch.getValue().isEmpty()) {
+			exp.setTitle(getString(R.string.no_title));
+		} else if (!mTitleSwitch.getValue().isEmpty()) {
+			exp.setTitle(mTitleSwitch.getValue());
+		}
+
+		new SaveTask().execute();
+		getFragmentManager().popBackStack();
+
 	}
 
 }

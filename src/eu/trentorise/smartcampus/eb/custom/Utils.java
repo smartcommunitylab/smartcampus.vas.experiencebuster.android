@@ -32,8 +32,6 @@ import eu.trentorise.smartcampus.eb.custom.data.EBHelper;
 import eu.trentorise.smartcampus.eb.model.Resource;
 
 public class Utils {
-	private static final String TAG = "Utils";
-
 	public static String getShortAddressString(Address a) {
 		String res = a.getLocality();
 		if (res == null || res.length() == 0)

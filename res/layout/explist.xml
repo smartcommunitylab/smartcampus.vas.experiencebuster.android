@@ -14,22 +14,32 @@
   See the License for the specific language governing permissions and
   limitations under the License.
 -->
- <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-         android:orientation="vertical"
-         android:layout_width="match_parent"
-         android:layout_height="match_parent">
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
 
-     <ListView android:id="@id/android:list"
-               android:layout_width="match_parent"
-               android:layout_height="0dp"
-               android:layout_weight="1"
-               android:drawSelectorOnTop="false"
-               android:divider="@android:color/darker_gray"
-               android:dividerHeight="1dp"/>
+    <ListView
+        android:id="@id/android:list"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:divider="@android:color/darker_gray"
+        android:dividerHeight="1dp"
+        android:drawSelectorOnTop="false" />
 
-     <TextView android:id="@id/android:empty"
-               android:layout_width="match_parent"
-               android:layout_height="wrap_content"
-               android:padding="5dp"
-               android:text="@string/content_empty"/>
- </LinearLayout>
+    <TextView
+        android:id="@id/android:empty"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center"
+        android:padding="5dp"
+        android:text="@string/content_empty"
+        android:textColor="@color/sc_gray"
+        android:shadowColor="@android:color/white"
+        android:shadowDx="0"
+        android:shadowDy="0"
+        android:shadowRadius="5"
+        android:textAppearance="?android:attr/textAppearanceLarge" />
+
+</LinearLayout>

@@ -33,6 +33,12 @@ import android.os.Bundle;
 import android.os.RemoteException;
 import android.preference.PreferenceManager;
 import android.util.Log;
+import android.view.View;
+import android.view.animation.AccelerateInterpolator;
+import android.view.animation.AlphaAnimation;
+import android.view.animation.Animation;
+import android.view.animation.ScaleAnimation;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Toast;
 import eu.trentorise.smartcampus.ac.AACException;
 import eu.trentorise.smartcampus.ac.SCAccessProvider;
@@ -41,6 +47,7 @@ import eu.trentorise.smartcampus.android.common.GlobalConfig;
 import eu.trentorise.smartcampus.android.common.LocationHelper;
 import eu.trentorise.smartcampus.android.common.tagging.SemanticSuggestion;
 import eu.trentorise.smartcampus.android.common.tagging.SuggestionHelper;
+import eu.trentorise.smartcampus.eb.HomeActivity;
 import eu.trentorise.smartcampus.eb.R;
 import eu.trentorise.smartcampus.eb.filestorage.FilestorageAccountActivity;
 import eu.trentorise.smartcampus.eb.model.Content;
@@ -70,11 +77,11 @@ import eu.trentorise.smartcampus.territoryservice.model.POIObject;
 
 public class EBHelper {
 
+	public final static int FILESTORAGE_ACCOUNT_REGISTRATION = 20000;
+
 	public static final String CONF_SYNCHRO = "pref_synchro_file";
 	public static final String CONF_FILE_SIZE = "pref_max_file_lenght";
 	public static final String CONF_USER_ACCOUNT = "EB_USER_ACCOUNT";
-
-	private static final boolean testing = true;
 
 	private static final String TERRITORY_URL = "/core.territory";
 
@@ -92,7 +99,6 @@ public class EBHelper {
 	private static LocationHelper mLocationHelper;
 
 	private UserPreference preference = null;
-	private boolean loaded = false;
 
 	private static BasicProfile bp = null;
 
@@ -152,11 +158,81 @@ public class EBHelper {
 		}
 	}
 
+	/**
+	 * Check whether the synchronization is enabled and ask the user if needed.
+	 * 
+	 * @param activity
+	 * @return true if the synchronization is enabled but the user has yet to
+	 *         provide approval / credentials, false otherwise
+	 * @throws DataException
+	 */
+	public static boolean ensureSyncConfig(Activity activity)
+			throws DataException {
+		if (getConfiguration(EBHelper.CONF_SYNCHRO, Boolean.class)
+				&& getConfiguration(EBHelper.CONF_USER_ACCOUNT, String.class) == null) {
+			askUserAccount(activity, FILESTORAGE_ACCOUNT_REGISTRATION, true);
+			return true;
+		}
+		return false;
+	}
+
+	public static void ensureAccount(Activity activity) throws DataException {
+		if (getConfiguration(EBHelper.CONF_USER_ACCOUNT, String.class) == null) {
+			askUserAccount(activity, FILESTORAGE_ACCOUNT_REGISTRATION, false);
+		}
+	}
+
+	/**
+	 * Handle the result of the account creation activity
+	 * 
+	 * @param ctx
+	 * @param requestCode
+	 * @param resultCode
+	 * @param data
+	 */
+	public static void handleAccountActivityResult(Context ctx,
+			int requestCode, int resultCode, Intent data) {
+		if (requestCode == EBHelper.FILESTORAGE_ACCOUNT_REGISTRATION) {
+			if (resultCode == Activity.RESULT_OK) {
+				String accountId = data
+						.getStringExtra(FilestorageAccountActivity.EXTRA_USER_ACCOUNT_ID);
+				try {
+					EBHelper.saveSyncConfig(true, accountId);
+				} catch (DataException e) {
+					Toast.makeText(ctx, R.string.error_account,
+							Toast.LENGTH_SHORT).show();
+					Log.e(HomeActivity.class.getName(),
+							"Error saving filestorage account");
+				}
+			}
+			if (resultCode == Activity.RESULT_CANCELED) {
+				try {
+					EBHelper.saveSyncConfig(false, null);
+				} catch (DataException e) {
+					Log.e(HomeActivity.class.getName(),
+							"Error saving filestorage account");
+				}
+			}
+		}
+
+	}
+
+	/**
+	 * Save sync properties in preferences
+	 * 
+	 * @param active
+	 * @param accountId
+	 * @throws DataException
+	 */
+	public static void saveSyncConfig(boolean active, String accountId)
+			throws DataException {
+		saveConfiguration(EBHelper.CONF_SYNCHRO, active, Boolean.class);
+		saveConfiguration(EBHelper.CONF_USER_ACCOUNT, accountId, String.class);
+	}
+
 	public static boolean isSynchronizationActive() {
-		// return false;
-		// TODO uncomment below to enable synchronization
 		try {
-			return EBHelper.getConfiguration(CONF_SYNCHRO, Boolean.class);
+			return getConfiguration(CONF_SYNCHRO, Boolean.class);
 		} catch (Exception e) {
 			Log.e(EBHelper.class.getName(),
 					"Error getting synchro configuration. Synchronization is not active!");
@@ -228,14 +304,6 @@ public class EBHelper {
 		a.startActivityForResult(i, requestCode);
 	}
 
-	public static void askUserAccount(android.support.v4.app.Fragment f,
-			int requestCode, boolean showDialog) throws DataException {
-		Intent i = new Intent(getInstance().mContext,
-				FilestorageAccountActivity.class);
-		i.putExtra(FilestorageAccountActivity.EXTRA_SHOW_DIALOG, showDialog);
-		f.startActivityForResult(i, requestCode);
-	}
-
 	public static String getAuthToken() throws AACException {
 		return getAccessProvider().readToken(instance.mContext);
 	}
@@ -278,13 +346,14 @@ public class EBHelper {
 			StorageConfigurationException, ConnectionException,
 			ProtocolException, SecurityException, AACException {
 		// UserPreference
-		Collection<UserPreference> userPreferencesCollection = getInstance().storage
-				.getObjects(UserPreference.class);
-		// TODO uncomment below to enable synchronization
-		// if (userPreferencesCollection.isEmpty()) {
-		// userPreferencesCollection = readUserPreference();
-		// }
-		// if not in remotestorage to
+		Collection<UserPreference> userPreferencesCollection = null;
+		if (isSynchronizationActive()) {
+			userPreferencesCollection = readUserPreference();
+		} else {
+			userPreferencesCollection = getInstance().storage
+					.getObjects(UserPreference.class);
+		}
+
 		if (userPreferencesCollection.isEmpty()) {
 			UserPreference userPreference = new UserPreference();
 			userPreference.setSocialUserId(1L);
@@ -311,7 +380,7 @@ public class EBHelper {
 	public static UserPreference getUserPreference() {
 		try {
 			return getInstance().preference;
-		} catch (DataException e) {
+		} catch (Exception e) {
 			Log.e(EBHelper.class.getName(), "" + e.getMessage());
 			return new UserPreference();
 		}
@@ -581,5 +650,44 @@ public class EBHelper {
 			return false;
 		}
 		return profile.getSocialId().equals(e.getSocialUserId());
+	}
+
+	public static void applyScaleAnimationOnView(final View v) {
+		v.postDelayed(new Runnable() {
+
+			@Override
+			public void run() {
+				ScaleAnimation anim = new ScaleAnimation(0, 1, 1, 1);
+				anim.setDuration(320);
+				v.startAnimation(anim);
+				v.requestFocus();
+			}
+		}, 10);
+	}
+
+	public static void applyAlphaAnimationOnView(final View v) {
+		v.post(new Runnable() {
+
+			@Override
+			public void run() {
+				Animation fadeIn = new AlphaAnimation(0, 1);
+				fadeIn.setInterpolator(new AccelerateInterpolator()); // add
+																		// this
+				fadeIn.setDuration(350);
+				v.startAnimation(fadeIn);
+			}
+		});
+	}
+
+	public static void openKeyboard(final Context ctx, final View v) {
+		v.postDelayed(new Runnable() {
+
+			@Override
+			public void run() {
+				InputMethodManager keyboard = (InputMethodManager) ctx
+						.getSystemService(Context.INPUT_METHOD_SERVICE);
+				keyboard.showSoftInput(v, 0);
+			}
+		}, 10);
 	}
 }
