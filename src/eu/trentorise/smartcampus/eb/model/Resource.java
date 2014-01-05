@@ -26,6 +26,7 @@ public class Resource {
 	private byte[] content;
 	private String contentType;
 	private String name;
+	private long size;
 
 	public Resource() {
 	}
@@ -35,6 +36,7 @@ public class Resource {
 		this.resourcefile = resourcefile;
 		this.contentType = contentType;
 		this.name = name;
+		size = resourcefile.length();
 	}
 
 	public Resource(byte[] content, String contentType, String name) {
@@ -42,6 +44,7 @@ public class Resource {
 		this.content = content;
 		this.contentType = contentType;
 		this.name = name;
+		size = content.length;
 	}
 
 	public byte[] getContent() {
@@ -74,6 +77,14 @@ public class Resource {
 
 	public void setResourcefile(File resourcefile) {
 		this.resourcefile = resourcefile;
+	}
+
+	public long getSize() {
+		return size;
+	}
+
+	public void setSize(long size) {
+		this.size = size;
 	}
 
 }

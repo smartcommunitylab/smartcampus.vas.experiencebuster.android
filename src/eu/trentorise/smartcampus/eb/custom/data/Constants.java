@@ -23,8 +23,23 @@ public class Constants {
 	public static final String SYNC_SERVICE = "/smartcampus.vas.experiencebuster.web/sync";
 	public static final String OBJECT_SERVICE = "/smartcampus.vas.discovertrento.web/objects/simple";
 	public static final String FILE_SERVICE = "/core.filestorage";
-	public static final long SYNC_INTERVAL = 5 * 60000;
 	public static final String SYNC_DB_NAME = "experiencebusterdb";
 	public static final int MAX_MESSAGE_NUM = 1000;
 	public static final int DB_VERSION = 1;
+
+	/**
+	 * frequency of file sync execution
+	 */
+	public static final long FILE_SYNC_INTERVAL = 120 * 1000; // 2 min
+
+	/**
+	 * max number of uploading file tentatives; after that upload is removed
+	 * from filesync table
+	 */
+	public static final int FILE_SYNC_MAX_TENTATIVES = 5;
+
+	/**
+	 * total file uploaded size every execution of filesyncservice
+	 */
+	public static final long FILE_SYNC_UPLOAD_SIZE = 100000000; // 100 MB
 }

@@ -59,8 +59,6 @@ public class FileSyncStorage extends SyncStorageWithPaging {
 	private static Map<String, BasicObject> expToDelete = new ConcurrentHashMap<String, BasicObject>();
 	private static List<String> contentToDelete = new ArrayList<String>();
 
-	private static final int MAX_TENTATIVE = 5;
-
 	private Context ctx;
 
 	/**
@@ -161,9 +159,10 @@ public class FileSyncStorage extends SyncStorageWithPaging {
 	public void syncFiles() {
 		List<SyncFile> syncFiles = fileToSync.getEntryToProcess();
 		boolean forceSynchro = false;
+		long totalUploadedSize = Constants.FILE_SYNC_UPLOAD_SIZE;
 		for (SyncFile syncFile : syncFiles) {
 			try {
-				if (syncFile.getTentative() < MAX_TENTATIVE) {
+				if (syncFile.getTentative() < Constants.FILE_SYNC_MAX_TENTATIVES) {
 					Resource res = eu.trentorise.smartcampus.eb.custom.Utils
 							.getResource(mContext, syncFile.getPath());
 					if (res != null) {
@@ -207,6 +206,13 @@ public class FileSyncStorage extends SyncStorageWithPaging {
 								}
 							}
 							forceSynchro = true;
+							// check total uploaded size
+							if ((totalUploadedSize -= res.getSize()) < 0) {
+								Log.i(TAG, "Max uploaded size reached: "
+										+ Constants.FILE_SYNC_UPLOAD_SIZE);
+								break;
+							}
+
 						}
 					} else {
 						Log.i(TAG,
@@ -247,6 +253,7 @@ public class FileSyncStorage extends SyncStorageWithPaging {
 				fileToSync.updateStatus(syncFile,
 						FileSyncDbHelper.ST_FAIL_SERVICE);
 			}
+
 		}
 
 		if (forceSynchro) {

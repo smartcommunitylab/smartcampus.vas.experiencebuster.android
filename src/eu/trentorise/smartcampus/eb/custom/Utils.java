@@ -79,11 +79,9 @@ public class Utils {
 	}
 
 	public static Resource getResource(Context ctx, String uri) {
-		byte[] buffer = new byte[512];
 		String contentType = null;
 		File res = new File(uri);
-		// FileInputStream fis;
-		// ByteArrayOutputStream bout = new ByteArrayOutputStream();
+
 		String ext = MimeTypeMap.getFileExtensionFromUrl(uri);
 		String name = getFilename(uri, true);
 		Resource resource = null;
@@ -91,20 +89,8 @@ public class Utils {
 			contentType = MimeTypeMap.getSingleton().getMimeTypeFromExtension(
 					ext);
 		}
-		// try {
-		// fis = new FileInputStream(res);
-		// int readed = -1;
-		// while ((readed = fis.read(buffer, 0, buffer.length)) != -1) {
-		// bout.write(buffer, 0, readed);
-		// }
-		// resource = new Resource(bout.toByteArray(), contentType, name);
-		// Log.i(TAG, String.format("Loaded resource %s of type %s", name,
-		// contentType));
-		// } catch (IOException e) {
-		// Log.i(TAG, String.format("Problem loading resource %s of type %s",
-		// name, contentType));
-		// }
-		resource = new Resource(res, ext, name);
+
+		resource = new Resource(res, contentType, name);
 		return resource;
 	}
 
