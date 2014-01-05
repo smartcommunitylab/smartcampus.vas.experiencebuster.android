@@ -25,6 +25,7 @@ import android.content.Context;
 import android.util.Log;
 import eu.trentorise.smartcampus.ac.AACException;
 import eu.trentorise.smartcampus.android.common.GlobalConfig;
+import eu.trentorise.smartcampus.eb.custom.Utils;
 import eu.trentorise.smartcampus.eb.custom.data.Constants;
 import eu.trentorise.smartcampus.eb.custom.data.EBHelper;
 import eu.trentorise.smartcampus.eb.model.Content;
@@ -168,11 +169,7 @@ public class FileSyncStorage extends SyncStorageWithPaging {
 					if (res != null) {
 						String userAccountId = EBHelper.getConfiguration(
 								EBHelper.CONF_USER_ACCOUNT, String.class);
-						if (userAccountId != null) /*
-													 * && EBHelper.
-													 * checkFileSizeConstraints
-													 * (res)
-													 */{
+						if (userAccountId != null) {
 							Metadata meta = filestorage.storeOnDropbox(
 									res.getResourcefile(),
 									EBHelper.getAuthToken(), userAccountId,
@@ -281,8 +278,18 @@ public class FileSyncStorage extends SyncStorageWithPaging {
 					if (c.isStorable()) {
 
 						if (!c.isUploaded()) {
-							fileToSync.insertEntry(exp.getId(), c.getId(),
-									c.getLocalValue());
+							if (EBHelper.checkFileSizeConstraints(Utils
+									.getResource(ctx, c.getLocalValue()))) {
+								fileToSync.insertEntry(exp.getId(), c.getId(),
+										c.getLocalValue());
+							} else {
+								Log.i(TAG, String.format(
+										"Content %s size greater than %s MB", c
+												.getLocalValue(),
+										EBHelper.getConfiguration(
+												EBHelper.CONF_FILE_SIZE,
+												String.class)));
+							}
 						}
 					}
 				}

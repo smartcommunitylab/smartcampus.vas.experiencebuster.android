@@ -201,7 +201,7 @@ public class EBHelper {
 					String.class));
 			// transform in bytes
 			maxSize = maxSize * 1048576;
-			return resource.getContent().length <= maxSize;
+			return resource.getSize() <= maxSize;
 		} catch (Exception e) {
 			return true;
 		}

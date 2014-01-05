@@ -28,7 +28,7 @@
             android:key="pref_max_file_lenght"
             android:summary="@string/pref_max_file_lenght"
             android:title="@string/pref_title_max_file_lenght" 
-            android:defaultValue="10"/>
+            android:defaultValue="20"/>
     </PreferenceCategory>
 
 </PreferenceScreen>
