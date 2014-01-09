@@ -201,7 +201,7 @@ public class EditExpFragment extends SherlockFragment
 							.findViewById(R.id.title));
 					switchToEdit();
 					mTitleSwitch.editMode();
-	}
+				}
 			}, 100);
 	}
 
@@ -340,7 +340,7 @@ public class EditExpFragment extends SherlockFragment
 			exp.setTitle(mTitleSwitch.getValue());
 
 			try {
-				if (!EBHelper.ensureSyncConfig(getActivity())){
+				if (!EBHelper.ensureSyncConfig(getActivity())) {
 					new SaveTask().execute();
 				}
 			} catch (DataException e) {
@@ -411,7 +411,7 @@ public class EditExpFragment extends SherlockFragment
 		editMode = false;
 		mTitleSwitch.viewMode();
 		if (getSherlockActivity() != null)
-		getSherlockActivity().invalidateOptionsMenu();
+			getSherlockActivity().invalidateOptionsMenu();
 	}
 
 	private void switchToEdit() {
@@ -475,7 +475,8 @@ public class EditExpFragment extends SherlockFragment
 	@Override
 	public void onActivityResult(int requestCode, int resultCode, Intent data) {
 		if (requestCode == EBHelper.FILESTORAGE_ACCOUNT_REGISTRATION) {
-			EBHelper.handleAccountActivityResult(getActivity(), requestCode, resultCode, data);
+			EBHelper.handleAccountActivityResult(getActivity(), requestCode,
+					resultCode, data);
 			new SaveTask().execute();
 		}
 
@@ -747,9 +748,9 @@ public class EditExpFragment extends SherlockFragment
 	@Override
 	public void onBack() {
 
-		if (!adapter.isEmpty() && mTitleSwitch.getValue().isEmpty()) {
+		if (!adapter.isEmpty() && mTitleSwitch.getValue().length() == 0) {
 			exp.setTitle(getString(R.string.no_title));
-		} else if (!mTitleSwitch.getValue().isEmpty()) {
+		} else if (mTitleSwitch.getValue().length() != 0) {
 			exp.setTitle(mTitleSwitch.getValue());
 		}
 
@@ -757,5 +758,4 @@ public class EditExpFragment extends SherlockFragment
 		getFragmentManager().popBackStack();
 
 	}
-
 }
