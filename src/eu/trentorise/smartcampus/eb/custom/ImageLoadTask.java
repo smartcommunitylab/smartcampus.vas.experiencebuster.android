@@ -25,6 +25,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.media.ThumbnailUtils;
 import android.os.AsyncTask;
+import android.os.Environment;
 import android.provider.MediaStore;
 import android.util.Log;
 import android.widget.ImageView;
@@ -61,7 +62,9 @@ public class ImageLoadTask extends AsyncTask<Content, Void, Bitmap> {
 			e.printStackTrace();
 		}
 	}
-	public ImageLoadTask(ImageView imageView, Integer icMenuReportImage, boolean shared) {
+
+	public ImageLoadTask(ImageView imageView, Integer icMenuReportImage,
+			boolean shared) {
 		this(imageView, icMenuReportImage);
 		this.shared = shared;
 	}
@@ -82,7 +85,11 @@ public class ImageLoadTask extends AsyncTask<Content, Void, Bitmap> {
 			// load from cache if it's present
 			img = ImageCacheManager.get(params[0].getId());
 			if (img == null) {
-				File f = new File(params[0].getLocalValue());
+				String mediaPath = params[0].getLocalValue().substring(
+						params[0].getLocalValue().indexOf("Pictures"));
+
+				File f = new File(Environment.getExternalStorageDirectory(),
+						mediaPath);
 
 				// if resource doesn't exist locally, load from remote and save
 				// if synchro is active
@@ -96,9 +103,9 @@ public class ImageLoadTask extends AsyncTask<Content, Void, Bitmap> {
 								EBHelper.getAuthToken(), params[0].getValue());
 						if (EBHelper.checkFileSizeConstraints(meta.getSize())) {
 							Resource resource = filestorage.getResourceByUser(
-									EBHelper.getAuthToken(), params[0].getValue());
-							FileOutputStream fout = new FileOutputStream(
-									params[0].getLocalValue());
+									EBHelper.getAuthToken(),
+									params[0].getValue());
+							FileOutputStream fout = new FileOutputStream(f);
 							fout.write(resource.getContent());
 							fout.close();
 							Log.i(ImageLoadTask.class.getName(),
@@ -115,8 +122,10 @@ public class ImageLoadTask extends AsyncTask<Content, Void, Bitmap> {
 													String.class)));
 						}
 					} else {
-						Resource resource = filestorage.getSharedResourceByUser(
-								EBHelper.getAuthToken(), params[0].getValue());
+						Resource resource = filestorage
+								.getSharedResourceByUser(
+										EBHelper.getAuthToken(),
+										params[0].getValue());
 						FileOutputStream fout = new FileOutputStream(
 								params[0].getLocalValue());
 						fout.write(resource.getContent());
@@ -125,7 +134,7 @@ public class ImageLoadTask extends AsyncTask<Content, Void, Bitmap> {
 								"Image not present loaded from remote and saved: "
 										+ params[0].getLocalValue());
 					}
-					
+
 				}
 				if (f.exists()) {
 					String absPath = f.getAbsolutePath();
