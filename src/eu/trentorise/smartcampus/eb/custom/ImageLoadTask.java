@@ -96,46 +96,44 @@ public class ImageLoadTask extends AsyncTask<Content, Void, Bitmap> {
 				if (!f.exists()
 						&& !loadingHistory.containsKey(params[0].getId())
 						&& EBHelper.isSynchronizationActive()
-						&& params[0].isUploaded()) {
+						&& params[0].isUploaded() && !shared) {
 					loadingHistory.put(params[0].getId(), true);
-					if (!shared) {
-						Metadata meta = filestorage.getResourceMetadataByUser(
+					Metadata meta = filestorage.getResourceMetadataByUser(
+							EBHelper.getAuthToken(), params[0].getValue());
+					if (EBHelper.checkFileSizeConstraints(meta.getSize())) {
+						Resource resource = filestorage.getResourceByUser(
 								EBHelper.getAuthToken(), params[0].getValue());
-						if (EBHelper.checkFileSizeConstraints(meta.getSize())) {
-							Resource resource = filestorage.getResourceByUser(
-									EBHelper.getAuthToken(),
-									params[0].getValue());
-							FileOutputStream fout = new FileOutputStream(f);
-							fout.write(resource.getContent());
-							fout.close();
-							Log.i(ImageLoadTask.class.getName(),
-									"Image not present loaded from remote and saved: "
-											+ params[0].getLocalValue());
-						} else {
-							Log.i(ImageLoadTask.class.getName(),
-									String.format(
-											"Image %s size is bigger than max file configuration : %s > %s",
-											params[0].getLocalValue(), meta
-													.getSize(),
-											EBHelper.getConfiguration(
-													EBHelper.CONF_FILE_SIZE,
-													String.class)));
-						}
-					} else {
-						Resource resource = filestorage
-								.getSharedResourceByUser(
-										EBHelper.getAuthToken(),
-										params[0].getValue());
-						FileOutputStream fout = new FileOutputStream(
-								params[0].getLocalValue());
+						FileOutputStream fout = new FileOutputStream(f);
 						fout.write(resource.getContent());
 						fout.close();
 						Log.i(ImageLoadTask.class.getName(),
 								"Image not present loaded from remote and saved: "
 										+ params[0].getLocalValue());
+					} else {
+						Log.i(ImageLoadTask.class.getName(),
+								String.format(
+										"Image %s size is bigger than max file configuration : %s > %s",
+										params[0].getLocalValue(), meta
+												.getSize(),
+										EBHelper.getConfiguration(
+												EBHelper.CONF_FILE_SIZE,
+												String.class)));
 					}
-
 				}
+
+				if (!f.exists()
+						&& !loadingHistory.containsKey(params[0].getId())
+						&& params[0].isUploaded() && shared) {
+					Resource resource = filestorage.getSharedResourceByUser(
+							EBHelper.getAuthToken(), params[0].getValue());
+					FileOutputStream fout = new FileOutputStream(f);
+					fout.write(resource.getContent());
+					fout.close();
+					Log.i(ImageLoadTask.class.getName(),
+							"Image not present loaded from remote and saved: "
+									+ params[0].getLocalValue());
+				}
+
 				if (f.exists()) {
 					String absPath = f.getAbsolutePath();
 					if (absPath == null)
