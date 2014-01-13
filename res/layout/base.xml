@@ -22,46 +22,50 @@
         android:orientation="vertical"
         android:paddingTop="40dp" >
 
-        <LinearLayout 
-	        android:layout_width="match_parent"
-	        android:layout_height="wrap_content"
-	        android:orientation="horizontal"
-	        android:background="@drawable/selectable_background_experiencebuster"
-    		android:gravity="center_vertical"
-    		android:padding="5dp" >
-		    <ImageView
-		        android:id="@+id/logo_new_collection"
-		        android:layout_width="wrap_content"
-		        android:layout_height="wrap_content"
-		        android:layout_margin="5dp"
-		        android:gravity="center_vertical"
-		        android:src="@drawable/ic_add_label" >
-		    </ImageView>
+<!--         <LinearLayout  -->
+<!-- 	        android:layout_width="match_parent" -->
+<!-- 	        android:layout_height="wrap_content" -->
+<!-- 	        android:orientation="horizontal" -->
+<!-- 	        android:background="@drawable/selectable_background_experiencebuster" -->
+<!--     		android:gravity="center_vertical" -->
+<!--     		android:clickable="true" -->
+<!--     		android:padding="5dp" > -->
+    		
+<!-- 		    <ImageView -->
+<!-- 		        android:id="@+id/logo_new_collection" -->
+<!-- 		        android:layout_width="wrap_content" -->
+<!-- 		        android:layout_height="wrap_content" -->
+<!-- 		        android:layout_margin="5dp" -->
+<!-- 		        android:gravity="center_vertical" -->
+<!-- 		        android:focusable="false" -->
+<!-- 		        android:src="@drawable/ic_add_label" > -->
+<!-- 		    </ImageView> -->
 		
-		    <TextView
-            android:id="@+id/drawer_add_category"
-		        android:layout_width="match_parent"
-		        android:layout_height="wrap_content"
-		        android:gravity="center_vertical"
-		        android:paddingLeft="16dp"
-		        android:paddingRight="16dp"
-	            android:text="@string/dialog_collection_add"
-		        android:textColor="@android:color/white" />
-        </LinearLayout>
+<!-- 		    <TextView -->
+<!--             	android:id="@+id/drawer_add_category" -->
+<!-- 		        android:layout_width="match_parent" -->
+<!-- 		        android:layout_height="wrap_content" -->
+<!-- 		        android:gravity="center_vertical" -->
+<!-- 		        android:paddingLeft="16dp" -->
+<!-- 		        android:paddingRight="16dp" -->
+<!-- 	            android:text="@string/dialog_collection_add" -->
+<!-- 	            android:focusable="false" -->
+<!-- 		        android:textColor="@android:color/white" /> -->
+<!--         </LinearLayout> -->
         
-<!--         <TextView -->
-<!--             android:id="@+id/drawer_add_category" -->
-<!--             android:layout_width="match_parent" -->
-<!--             android:layout_height="wrap_content" -->
-<!--             android:layout_marginBottom="8dp" -->
-<!--             android:background="@drawable/selectable_background_experiencebuster" -->
-<!--             android:drawableLeft="@drawable/ic_add_label" -->
-<!--             android:drawablePadding="6dp" -->
-<!--             android:gravity="center_vertical" -->
-<!--             android:minHeight="48dp" -->
-<!--             android:padding="8dp" -->
-<!--             android:text="@string/dialog_collection_add" -->
-<!--             android:textColor="@android:color/white" /> -->
+        <TextView
+            android:id="@+id/drawer_add_category"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="8dp"
+            android:background="@drawable/selectable_background_experiencebuster"
+            android:drawableLeft="@drawable/ic_add_label"
+            android:drawablePadding="16dp"
+            android:gravity="center_vertical"
+            android:minHeight="48dp"
+            android:padding="10dp"
+            android:text="@string/dialog_collection_add"
+            android:textColor="@android:color/white" />
 
         <LinearLayout 
 	        android:layout_width="match_parent"
@@ -69,7 +73,9 @@
 	        android:orientation="horizontal"
 	        android:background="@drawable/selectable_background_experiencebuster"
     		android:gravity="center_vertical"
-    		android:clickable="true"
+    		android:focusable="false"
+    		android:focusableInTouchMode="false"
+    		android:clickable="false"
     		android:padding="5dp" >
 		    <ImageView
 		        android:id="@+id/logo_collections"

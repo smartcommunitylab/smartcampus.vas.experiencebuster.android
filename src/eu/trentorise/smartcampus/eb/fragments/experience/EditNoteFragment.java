@@ -15,11 +15,14 @@
  ******************************************************************************/
 package eu.trentorise.smartcampus.eb.fragments.experience;
 
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnClickListener;
 import android.os.Bundle;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.EditText;
@@ -56,7 +59,6 @@ public class EditNoteFragment extends SherlockDialogFragment {
 			et.setText(text);
 		}
 		
-
 		builder.setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
 			@Override
 			public void onClick(DialogInterface dialog, int which) {
@@ -74,8 +76,6 @@ public class EditNoteFragment extends SherlockDialogFragment {
 				dialog.dismiss();
 			}
 		});
-		EBHelper.applyScaleAnimationOnView(et);
-		EBHelper.openKeyboard(getActivity(), et);
 		return builder.create();	
 	}
 
