@@ -58,6 +58,8 @@ import eu.trentorise.smartcampus.eb.model.NearMeObject;
 import eu.trentorise.smartcampus.eb.model.Resource;
 import eu.trentorise.smartcampus.eb.model.UserPreference;
 import eu.trentorise.smartcampus.eb.syncadapter.FileSyncStorage;
+import eu.trentorise.smartcampus.filestorage.client.FilestorageException;
+import eu.trentorise.smartcampus.filestorage.client.model.Token;
 import eu.trentorise.smartcampus.network.RemoteConnector;
 import eu.trentorise.smartcampus.network.RemoteConnector.CLIENT_TYPE;
 import eu.trentorise.smartcampus.profileservice.BasicProfileService;
@@ -66,6 +68,7 @@ import eu.trentorise.smartcampus.protocolcarrier.exceptions.ConnectionException;
 import eu.trentorise.smartcampus.protocolcarrier.exceptions.ProtocolException;
 import eu.trentorise.smartcampus.protocolcarrier.exceptions.SecurityException;
 import eu.trentorise.smartcampus.social.model.Entity;
+import eu.trentorise.smartcampus.storage.AndroidFilestorage;
 import eu.trentorise.smartcampus.storage.DataException;
 import eu.trentorise.smartcampus.storage.StorageConfigurationException;
 import eu.trentorise.smartcampus.storage.db.StorageConfiguration;
@@ -85,6 +88,8 @@ public class EBHelper {
 
 	private static final String TERRITORY_URL = "/core.territory";
 
+	private static final String TAG = "EBHelper";
+
 	private static EBHelper instance = null;
 	private static RemoteStorage remoteStorage;
 
@@ -101,6 +106,8 @@ public class EBHelper {
 	private UserPreference preference = null;
 
 	private static BasicProfile bp = null;
+
+	private static AndroidFilestorage filestorage;
 
 	public static void init(Context mContext) throws NameNotFoundException {
 		if (instance == null) {
@@ -326,6 +333,14 @@ public class EBHelper {
 			RemoteConnector.setClientType(CLIENT_TYPE.CLIENT_WILDCARD);
 		}
 
+		try {
+			filestorage = new AndroidFilestorage(
+					GlobalConfig.getAppUrl(mContext.getApplicationContext())
+							+ Constants.FILE_SERVICE, Constants.APP_NAME);
+		} catch (ProtocolException e) {
+			Log.e(TAG, "ProtocolException istantiating filestorage");
+		}
+
 		this.sc = new EBStorageConfiguration();
 		this.storage = new FileSyncStorage(
 				mContext,
@@ -364,6 +379,20 @@ public class EBHelper {
 					.next();
 		}
 		synchronize(true);
+	}
+
+	public static Token getSharedResourceURL(String resourceId) {
+		if (filestorage != null) {
+			try {
+				return filestorage.getSharedResourceTokenByUser(
+						EBHelper.getAuthToken(), resourceId);
+			} catch (FilestorageException e) {
+				Log.e(TAG, "FilestorageException getting resource token");
+			} catch (AACException e) {
+				Log.e(TAG, "Authentication expcetion getting resource token");
+			}
+		}
+		return null;
 	}
 
 	public static void endAppFailure(Activity activity, int id) {
