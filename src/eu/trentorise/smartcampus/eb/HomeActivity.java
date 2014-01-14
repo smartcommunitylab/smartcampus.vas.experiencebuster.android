@@ -200,7 +200,7 @@ public class HomeActivity extends SherlockFragmentActivity implements
 	private void readCollections() {
 		UserPreference userPreference = EBHelper.getUserPreference();
 		if (collections == null)
-			collections = new ArrayList<ExpCollection>();
+			collections=new ArrayList<ExpCollection>();
 		else
 			collections.clear();
 		if (userPreference.getCollections() != null) {
@@ -451,6 +451,17 @@ public class HomeActivity extends SherlockFragmentActivity implements
 				tutorial[pos].position = new int[2];
 				v.getLocationOnScreen(tutorial[pos].position);
 				tutorial[pos].width = v.getWidth();
+				
+				//In the navigation drawer there is 
+				//some padding that influence the position
+				if(pos==2){
+					tutorial[pos].position[0]-=EBHelper.convertPixelsToDp(20, HomeActivity.this);
+					tutorial[pos].position[1]-=EBHelper.convertPixelsToDp(20, HomeActivity.this);
+					tutorial[pos].width = v.getWidth()+ (int)EBHelper.convertPixelsToDp(40, HomeActivity.this);
+				}
+				else{
+					tutorial[pos].width = v.getWidth();
+				}
 			}
 			return tutorial[pos];
 		}

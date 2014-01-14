@@ -29,9 +29,11 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 import android.content.pm.PackageManager.NameNotFoundException;
+import android.content.res.Resources;
 import android.os.Bundle;
 import android.os.RemoteException;
 import android.preference.PreferenceManager;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.View;
 import android.view.animation.AccelerateInterpolator;
@@ -372,6 +374,7 @@ public class EBHelper {
 		if (userPreferencesCollection.isEmpty()) {
 			UserPreference userPreference = new UserPreference();
 			userPreference.setSocialUserId(1L);
+			userPreference.setCollections(new ArrayList<ExpCollection>());
 			getInstance().preference = getInstance().storage
 					.create(userPreference);
 		} else {
@@ -719,4 +722,36 @@ public class EBHelper {
 			}
 		}, 10);
 	}
+	
+
+
+/**
+ * This method converts dp unit to equivalent pixels, depending on device density. 
+ * 
+ * @param dp A value in dp (density independent pixels) unit. Which we need to convert into pixels
+ * @param context Context to get resources and device specific display metrics
+ * @return A float value to represent px equivalent to dp depending on device density
+ */
+public static float convertDpToPixel(float dp, Context context){
+    Resources resources = context.getResources();
+    DisplayMetrics metrics = resources.getDisplayMetrics();
+    float px = dp * (metrics.densityDpi / 160f);
+    return px;
+}
+
+/**
+ * This method converts device specific pixels to density independent pixels.
+ * 
+ * @param px A value in px (pixels) unit. Which we need to convert into db
+ * @param context Context to get resources and device specific display metrics
+ * @return A float value to represent dp equivalent to px value
+ */
+public static float convertPixelsToDp(float px, Context context){
+    Resources resources = context.getResources();
+    DisplayMetrics metrics = resources.getDisplayMetrics();
+    float dp = px / (metrics.densityDpi / 160f);
+    return dp;
+}
+
+
 }
