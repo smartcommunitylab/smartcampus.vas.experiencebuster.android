@@ -161,7 +161,6 @@ public class EditExpFragment extends SherlockFragment
 
 		exp.resetPreview();
 		src.resetPreview();
-
 		if (adapter != null) {
 			adapter.notifyDataSetChanged();
 		}
@@ -224,6 +223,7 @@ public class EditExpFragment extends SherlockFragment
 					R.id.title_tv, R.id.title, this);
 			mTitleSwitch.setValue(exp.getTitle());
 		}
+
 		adapter = new ExpContentAdapter(getSherlockActivity(),
 				R.layout.exp_contents_row, exp.getContents());
 		list.setAdapter(adapter);

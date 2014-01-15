@@ -76,7 +76,7 @@ public class ContentRenderer {
 			} else {
 				iv.setTag(content.getId());
 				// if device use android 3, use parallel async execution
-				if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.GINGERBREAD) {
+				if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
 					new ImageLoadTask(iv, R.drawable.ic_menu_report_image, shared)
 							.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR,
 									content);
