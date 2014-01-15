@@ -20,6 +20,8 @@ import java.util.Date;
 import java.util.List;
 
 import android.app.Activity;
+import android.os.AsyncTask;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -30,7 +32,9 @@ import eu.trentorise.smartcampus.eb.Constants;
 import eu.trentorise.smartcampus.eb.R;
 import eu.trentorise.smartcampus.eb.custom.capture.ContentRenderer;
 import eu.trentorise.smartcampus.eb.custom.capture.ResourceHandler;
+import eu.trentorise.smartcampus.eb.custom.data.EBHelper;
 import eu.trentorise.smartcampus.eb.model.Content;
+import eu.trentorise.smartcampus.filestorage.client.model.Token;
 
 public class ExpContentAdapter extends ArrayAdapter<Content> {
 
@@ -38,34 +42,41 @@ public class ExpContentAdapter extends ArrayAdapter<Content> {
 	private int layoutResourceId;
 	private List<ResourceHandler> resourceHandlers = new ArrayList<ResourceHandler>();
 	private boolean shared = false;
-	
-	
-	public ExpContentAdapter(Activity context, int layoutResourceId, List<Content> list) {
+
+	private static final String TAG = "ExpContantAdapter";
+
+	public ExpContentAdapter(Activity context, int layoutResourceId,
+			List<Content> list) {
 		super(context, layoutResourceId, list);
 		this.context = context;
 		this.layoutResourceId = layoutResourceId;
 	}
 
-	public ExpContentAdapter(Activity context, int layoutResourceId, List<Content> list, boolean shared) {
+	public ExpContentAdapter(Activity context, int layoutResourceId,
+			List<Content> list, boolean shared) {
 		super(context, layoutResourceId, list);
 		this.context = context;
 		this.layoutResourceId = layoutResourceId;
 		this.shared = shared;
 	}
 
-	
 	@Override
 	public View getView(int position, View convertView, ViewGroup parent) {
 		View row = convertView;
 		Content content = getItem(position);
 
+		// change localValue if content is shared
+		if (shared && content.isStorable()) {
+			new ResourceURLTask(content).execute();
+		}
 		ContentPlaceholder tag = null;
-		
+
 		if (row == null) {
 			LayoutInflater inflater = context.getLayoutInflater();
 			row = inflater.inflate(layoutResourceId, parent, false);
 			tag = new ContentPlaceholder();
-			tag.content_frame = (FrameLayout)row.findViewById(R.id.exp_content);
+			tag.content_frame = (FrameLayout) row
+					.findViewById(R.id.exp_content);
 			tag.content_time = (TextView) row.findViewById(R.id.exp_time);
 			tag.content_note_tv = (TextView) row.findViewById(R.id.exp_notes);
 			row.setTag(tag);
@@ -75,25 +86,32 @@ public class ExpContentAdapter extends ArrayAdapter<Content> {
 
 		if (position % 2 == 1) {
 			row.setBackgroundResource(0);
-			tag.content_note_tv.setTextColor(context.getResources().getColor(android.R.color.black));
-			tag.content_time.setTextColor(context.getResources().getColor(android.R.color.black));
+			tag.content_note_tv.setTextColor(context.getResources().getColor(
+					android.R.color.black));
+			tag.content_time.setTextColor(context.getResources().getColor(
+					android.R.color.black));
 		} else {
 			row.setBackgroundResource(R.drawable.border);
-			tag.content_note_tv.setTextColor(context.getResources().getColor(android.R.color.white));
-			tag.content_time.setTextColor(context.getResources().getColor(android.R.color.white));
+			tag.content_note_tv.setTextColor(context.getResources().getColor(
+					android.R.color.white));
+			tag.content_time.setTextColor(context.getResources().getColor(
+					android.R.color.white));
 		}
-		
+
 		tag.content_frame.removeAllViews();
-		ResourceHandler rh = ContentRenderer.render(content, tag.content_frame, position, shared);
-		if (rh != null) resourceHandlers.add(rh);
-		
+		ResourceHandler rh = ContentRenderer.render(content, tag.content_frame,
+				position, shared);
+		if (rh != null)
+			resourceHandlers.add(rh);
+
 		if (content.getNote() != null) {
 			tag.content_note_tv.setVisibility(View.VISIBLE);
 			tag.content_note_tv.setText(content.getNote());
 		} else {
 			tag.content_note_tv.setVisibility(View.GONE);
 		}
-		tag.content_time.setText(Constants.DATE_FORMATTER.format(new Date(content.getTimestamp())));
+		tag.content_time.setText(Constants.DATE_FORMATTER.format(new Date(
+				content.getTimestamp())));
 		return row;
 	}
 
@@ -102,10 +120,38 @@ public class ExpContentAdapter extends ArrayAdapter<Content> {
 			rh.release();
 		}
 	}
-	
+
 	private static class ContentPlaceholder {
 		TextView content_time;
 		FrameLayout content_frame;
 		TextView content_note_tv;
+	}
+
+	class ResourceURLTask extends AsyncTask<Void, Void, Void> {
+
+		private Content content;
+
+		public ResourceURLTask(Content content) {
+			this.content = content;
+		}
+
+		@Override
+		protected Void doInBackground(Void... params) {
+			if (content.getValue() != null) {
+				Token resourceToken = EBHelper.getSharedResourceURL(content
+						.getValue());
+				if (resourceToken != null) {
+					content.setLocalValue(resourceToken.getUrl());
+				} else {
+					Log.w(TAG, String.format("Token for resource %s is null",
+							content.getValue()));
+				}
+			} else {
+				Log.w(TAG, String.format("Shared content %s has value null",
+						content.getValue()));
+			}
+
+			return null;
+		}
 	}
 }

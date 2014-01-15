@@ -75,14 +75,17 @@ public class ContentRenderer {
 				iv.setImageBitmap(bitmap);
 			} else {
 				iv.setTag(content.getId());
-				// if device use android 3, use parallel async execution
-				if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
-					new ImageLoadTask(iv, R.drawable.ic_menu_report_image, shared)
-							.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR,
-									content);
-				} else {// serial otherwise
-					new ImageLoadTask(iv, R.drawable.ic_menu_report_image, shared)
-							.execute(content);
+				// if shared content not download it
+				if (!shared) {
+					// if device use android 3, use parallel async execution
+					if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
+						new ImageLoadTask(iv, R.drawable.ic_menu_report_image,
+								shared).executeOnExecutor(
+								AsyncTask.THREAD_POOL_EXECUTOR, content);
+					} else {// serial otherwise
+						new ImageLoadTask(iv, R.drawable.ic_menu_report_image,
+								shared).execute(content);
+					}
 				}
 			}
 			view.addView(iv);
