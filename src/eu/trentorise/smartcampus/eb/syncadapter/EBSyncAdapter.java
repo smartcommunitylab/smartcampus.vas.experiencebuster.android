@@ -62,20 +62,20 @@ public class EBSyncAdapter extends AbstractThreadedSyncAdapter {
 		try {
 			Log.i(TAG, "Trying synchronization");
 			FileSyncStorage storage = EBHelper.getSyncStorage();
-//			boolean synchroFile = extras.getBoolean("synchroFile");
-//			Log.i(TAG, "File synchronization: " + synchroFile);
-//			if (synchroFile) {
-				storage.synchroFile(
-						EBHelper.getAuthToken(),
-						GlobalConfig.getAppUrl(mContext),
-						eu.trentorise.smartcampus.eb.custom.data.Constants.SYNC_SERVICE);
-//			} else {
-//				storage.synchronize(
-//						EBHelper.getAuthToken(),
-//						GlobalConfig.getAppUrl(mContext),
-//						eu.trentorise.smartcampus.eb.custom.data.Constants.SYNC_SERVICE);
-//			}
-//			Log.i(TAG, "Synchronization started");
+			// boolean synchroFile = extras.getBoolean("synchroFile");
+			// Log.i(TAG, "File synchronization: " + synchroFile);
+			// if (synchroFile) {
+			storage.synchroFile(
+					EBHelper.getAuthToken(),
+					GlobalConfig.getAppUrl(mContext),
+					eu.trentorise.smartcampus.eb.custom.data.Constants.SYNC_SERVICE);
+			// } else {
+			// storage.synchronize(
+			// EBHelper.getAuthToken(),
+			// GlobalConfig.getAppUrl(mContext),
+			// eu.trentorise.smartcampus.eb.custom.data.Constants.SYNC_SERVICE);
+			// }
+			// Log.i(TAG, "Synchronization started");
 		} catch (SecurityException e) {
 			handleSecurityProblem();
 		} catch (Exception e) {
