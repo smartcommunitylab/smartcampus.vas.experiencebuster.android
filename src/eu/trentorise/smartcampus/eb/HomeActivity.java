@@ -187,7 +187,14 @@ public class HomeActivity extends SherlockFragmentActivity implements
 		// see the class for further infos.
 		mDrawerToggle = new ActionBarDrawerToggle(this, mDrawerLayout,
 				R.drawable.ic_navigation_drawer, R.string.app_name,
-				R.string.app_name);
+				R.string.app_name) {
+
+			/** Called when a drawer has settled in a completely open state. */
+			public void onDrawerOpened(View drawerView) {
+				super.onDrawerOpened(drawerView);
+				refreshMenuList();
+			}
+		};
 
 		mDrawerLayout.setDrawerListener(mDrawerToggle);
 		mListView = (ListView) findViewById(R.id.drawer_list);
@@ -200,7 +207,7 @@ public class HomeActivity extends SherlockFragmentActivity implements
 	private void readCollections() {
 		UserPreference userPreference = EBHelper.getUserPreference();
 		if (collections == null)
-			collections=new ArrayList<ExpCollection>();
+			collections = new ArrayList<ExpCollection>();
 		else
 			collections.clear();
 		if (userPreference.getCollections() != null) {
@@ -360,11 +367,11 @@ public class HomeActivity extends SherlockFragmentActivity implements
 				.setPositiveButton(android.R.string.yes,
 						new DialogInterface.OnClickListener() {
 							public void onClick(DialogInterface dialog, int id) {
-								EBHelper.getUserPreference().getCollections()
-										.remove(coll);
+								UserPreference pref = EBHelper
+										.getUserPreference();
+								pref.getCollections().remove(arg2);
 								if (EBHelper.updateUserPreference(
-										HomeActivity.this,
-										EBHelper.getUserPreference())) {
+										HomeActivity.this, pref)) {
 									collections.remove(arg2);
 									((ArrayAdapter) mListView.getAdapter())
 											.notifyDataSetChanged();
@@ -451,15 +458,18 @@ public class HomeActivity extends SherlockFragmentActivity implements
 				tutorial[pos].position = new int[2];
 				v.getLocationOnScreen(tutorial[pos].position);
 				tutorial[pos].width = v.getWidth();
-				
-				//In the navigation drawer there is 
-				//some padding that influence the position
-				if(pos==2){
-					tutorial[pos].position[0]-=EBHelper.convertPixelsToDp(20, HomeActivity.this);
-					tutorial[pos].position[1]-=EBHelper.convertPixelsToDp(20, HomeActivity.this);
-					tutorial[pos].width = v.getWidth()+ (int)EBHelper.convertPixelsToDp(40, HomeActivity.this);
-				}
-				else{
+
+				// In the navigation drawer there is
+				// some padding that influence the position
+				if (pos == 2) {
+					tutorial[pos].position[0] -= EBHelper.convertPixelsToDp(20,
+							HomeActivity.this);
+					tutorial[pos].position[1] -= EBHelper.convertPixelsToDp(20,
+							HomeActivity.this);
+					tutorial[pos].width = v.getWidth()
+							+ (int) EBHelper.convertPixelsToDp(40,
+									HomeActivity.this);
+				} else {
 					tutorial[pos].width = v.getWidth();
 				}
 			}
