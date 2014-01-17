@@ -154,9 +154,7 @@ public class EmbeddedMediaPlayer implements OnCompletionListener, SeekBar.OnSeek
             e.printStackTrace();
         } catch (IOException e) {
             e.printStackTrace();
-            Uri uri = Uri.parse(fileUri);
-            if (uri != null && (
-            		"http".equalsIgnoreCase(uri.getScheme()) || "https".equalsIgnoreCase(uri.getScheme()))) {
+            if (Utils.isRemote(fileUri)) {
                 mc.getContext().startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(fileUri)));
             }
         }

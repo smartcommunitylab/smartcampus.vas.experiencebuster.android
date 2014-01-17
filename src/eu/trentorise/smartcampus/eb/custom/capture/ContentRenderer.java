@@ -39,6 +39,7 @@ import eu.trentorise.smartcampus.android.common.view.ViewHelper;
 import eu.trentorise.smartcampus.eb.R;
 import eu.trentorise.smartcampus.eb.custom.EmbeddedMediaPlayer;
 import eu.trentorise.smartcampus.eb.custom.ImageLoadTask;
+import eu.trentorise.smartcampus.eb.custom.Utils;
 import eu.trentorise.smartcampus.eb.model.Content;
 
 @SuppressLint("NewApi")
@@ -187,8 +188,12 @@ public class ContentRenderer {
 													// Uri.parse(content.getLocalValue()));
 			if (path == null)
 				return;
-			File file = new File(path);
-			intent.setDataAndType(Uri.fromFile(file), "image/*");
+			if (Utils.isRemote(path)) {
+				intent.setData(Uri.parse(path));
+			} else {
+				File file = new File(path);
+				intent.setDataAndType(Uri.fromFile(file), "image/*");
+			}
 			ctx.startActivity(intent);
 			break;
 		}
@@ -199,8 +204,12 @@ public class ContentRenderer {
 													// Uri.parse(content.getLocalValue()));
 			if (path == null)
 				return;
-			File file = new File(path);
-			intent.setDataAndType(Uri.fromFile(file), "video/*");
+			if (Utils.isRemote(path)) {
+				intent.setData(Uri.parse(path));
+			} else {
+				File file = new File(path);
+				intent.setDataAndType(Uri.fromFile(file), "video/*");
+			}
 			ctx.startActivity(intent);
 			break;
 		}

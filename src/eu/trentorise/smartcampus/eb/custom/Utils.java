@@ -23,6 +23,8 @@ import java.util.UUID;
 
 import android.content.Context;
 import android.location.Address;
+import android.net.Uri;
+import android.util.Log;
 import android.webkit.MimeTypeMap;
 
 import com.google.android.maps.GeoPoint;
@@ -98,4 +100,17 @@ public class Utils {
 		return uri.substring(start, (extension ? uri.length() : end));
 	}
 
+	public static boolean isRemote(String s) {
+        try {
+			Uri uri = Uri.parse(s);
+			if (uri != null && (
+					"http".equalsIgnoreCase(uri.getScheme()) || "https".equalsIgnoreCase(uri.getScheme()))) {
+				return true;
+			}
+		} catch (Exception e) {
+			Log.e("UTILS", ""+e.getMessage());
+		}
+        return false;
+
+	}
 }
