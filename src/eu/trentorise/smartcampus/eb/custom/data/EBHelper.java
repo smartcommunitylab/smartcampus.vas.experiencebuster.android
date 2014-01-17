@@ -105,8 +105,6 @@ public class EBHelper {
 
 	private static LocationHelper mLocationHelper;
 
-	private UserPreference preference = null;
-
 	private static BasicProfile bp = null;
 
 	private static AndroidFilestorage filestorage;
@@ -375,24 +373,21 @@ public class EBHelper {
 			UserPreference userPreference = new UserPreference();
 			userPreference.setSocialUserId(-1L);
 			userPreference.setCollections(new ArrayList<ExpCollection>());
-			getInstance().preference = getInstance().storage
-					.create(userPreference);
+			getInstance().storage.create(userPreference);
 		} else if (userPreferencesCollection.size() > 1) { // fix multiple
 															// UserPreference
 															// istances
 			userPreferencesCollection = getInstance().storage
 					.getObjects(UserPreference.class);
-			getInstance().preference = userPreferencesCollection.iterator()
-					.next();
+			userPreferencesCollection.iterator().next();
 		} else {
-			getInstance().preference = userPreferencesCollection.iterator()
-					.next();
+			userPreferencesCollection.iterator().next();
 		}
 		// fix
-		if (getInstance().preference.getCollections() == null) {
-			getInstance().preference
-					.setCollections(new ArrayList<ExpCollection>());
-		}
+		// if (getInstance().preference.getCollections() == null) {
+		// getInstance().preference
+		// .setCollections(new ArrayList<ExpCollection>());
+		// }
 		synchronize(true);
 	}
 
@@ -424,7 +419,7 @@ public class EBHelper {
 	public static UserPreference getUserPreference() {
 		try {
 			return getInstance().storage.getObjects(UserPreference.class)
-					.iterator().next(); // getInstance().preference;
+					.iterator().next();
 		} catch (Exception e) {
 			Log.e(EBHelper.class.getName(), "" + e.getMessage());
 			return new UserPreference();
@@ -434,8 +429,7 @@ public class EBHelper {
 	public static boolean updateUserPreference(Activity a,
 			UserPreference userPreference) {
 		try {
-			getInstance().preference = userPreference;
-			getInstance().storage.update(getInstance().preference, false);
+			getInstance().storage.update(userPreference, false);
 			synchronize(true);
 			return true;
 		} catch (Exception e) {

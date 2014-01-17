@@ -367,11 +367,11 @@ public class HomeActivity extends SherlockFragmentActivity implements
 				.setPositiveButton(android.R.string.yes,
 						new DialogInterface.OnClickListener() {
 							public void onClick(DialogInterface dialog, int id) {
-								EBHelper.getUserPreference().getCollections()
-										.remove(coll);
+								UserPreference pref = EBHelper
+										.getUserPreference();
+								pref.getCollections().remove(arg2);
 								if (EBHelper.updateUserPreference(
-										HomeActivity.this,
-										EBHelper.getUserPreference())) {
+										HomeActivity.this, pref)) {
 									collections.remove(arg2);
 									((ArrayAdapter) mListView.getAdapter())
 											.notifyDataSetChanged();

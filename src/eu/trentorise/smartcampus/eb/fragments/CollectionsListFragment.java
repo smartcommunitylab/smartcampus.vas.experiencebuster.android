@@ -177,11 +177,11 @@ public class CollectionsListFragment extends SherlockListFragment implements
 								@SuppressWarnings("unchecked")
 								public void onClick(DialogInterface dialog,
 										int id) {
-									EBHelper.getUserPreference()
-											.getCollections().remove(coll);
+									UserPreference pref = EBHelper
+											.getUserPreference();
+									pref.getCollections().remove(coll);
 									if (EBHelper.updateUserPreference(
-											getSherlockActivity(),
-											EBHelper.getUserPreference())) {
+											getSherlockActivity(), pref)) {
 										collections.remove(info.position);
 										((ArrayAdapter<ExpCollection>) getListAdapter())
 												.notifyDataSetChanged();
