@@ -187,7 +187,14 @@ public class HomeActivity extends SherlockFragmentActivity implements
 		// see the class for further infos.
 		mDrawerToggle = new ActionBarDrawerToggle(this, mDrawerLayout,
 				R.drawable.ic_navigation_drawer, R.string.app_name,
-				R.string.app_name);
+				R.string.app_name) {
+
+			/** Called when a drawer has settled in a completely open state. */
+			public void onDrawerOpened(View drawerView) {
+				super.onDrawerOpened(drawerView);
+				refreshMenuList();
+			}
+		};
 
 		mDrawerLayout.setDrawerListener(mDrawerToggle);
 		mListView = (ListView) findViewById(R.id.drawer_list);
