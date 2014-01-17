@@ -8,6 +8,7 @@ import android.app.ProgressDialog;
 import android.content.Intent;
 import android.content.pm.PackageManager.NameNotFoundException;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -19,11 +20,16 @@ import eu.trentorise.smartcampus.eb.custom.ExperiencesListAdapter;
 import eu.trentorise.smartcampus.eb.custom.data.EBHelper;
 import eu.trentorise.smartcampus.eb.fragments.experience.ExperiencePager;
 import eu.trentorise.smartcampus.eb.model.Concept;
+import eu.trentorise.smartcampus.eb.model.Content;
 import eu.trentorise.smartcampus.eb.model.Experience;
+import eu.trentorise.smartcampus.filestorage.client.model.Token;
 import eu.trentorise.smartcampus.protocolcarrier.exceptions.ConnectionException;
 import eu.trentorise.smartcampus.protocolcarrier.exceptions.SecurityException;
 
 public class ViewerActivity extends Activity {
+
+	private static final String TAG = "Viewer";
+
 
 	ExperiencesListAdapter experienceLayout;
 
@@ -61,6 +67,25 @@ public class ViewerActivity extends Activity {
 		public Experience performAction(String... params) throws SecurityException, ConnectionException, Exception {
 			String expId = params[0];
 			Experience e = EBHelper.findExperienceByEntityId(expId);
+			if (e.getContents() != null) {
+				for (Content c : e.getContents()) {
+					if (c.isStorable()) {
+						if (c.getValue() != null) {
+							Token resourceToken = EBHelper.getSharedResourceURL(c.getValue());
+							if (resourceToken != null) {
+								c.setLocalValue(resourceToken.getUrl());
+							} else {
+								Log.w(TAG, String.format("Token for resource %s is null",
+										c.getValue()));
+							}
+						} else {
+							Log.w(TAG, String.format("Shared content %s has value null",
+									c.getValue()));
+						}
+
+					}
+				}
+			}
 			if (e != null) own = EBHelper.isOwnExperience(e);
 			return e;
 		}
