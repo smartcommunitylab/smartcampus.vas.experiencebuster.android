@@ -106,6 +106,15 @@
                 <data android:scheme="eu.trentorise.smartcampus.experience" />
             </intent-filter>
         </activity>
+        
+          <activity
+            android:name=".VideoActivity"
+            android:configChanges="orientation|keyboard" >
+            <intent-filter>
+                <action android:name="eu.trentorise.smartcampus.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
 
         <!-- Sync Service -->
 
