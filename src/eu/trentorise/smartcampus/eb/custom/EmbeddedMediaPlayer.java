@@ -18,8 +18,10 @@ package eu.trentorise.smartcampus.eb.custom;
 import java.io.IOException;
 
 import android.content.Context;
+import android.content.Intent;
 import android.media.MediaPlayer;
 import android.media.MediaPlayer.OnCompletionListener;
+import android.net.Uri;
 import android.os.Handler;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -152,6 +154,11 @@ public class EmbeddedMediaPlayer implements OnCompletionListener, SeekBar.OnSeek
             e.printStackTrace();
         } catch (IOException e) {
             e.printStackTrace();
+            Uri uri = Uri.parse(fileUri);
+            if (uri != null && (
+            		"http".equalsIgnoreCase(uri.getScheme()) || "https".equalsIgnoreCase(uri.getScheme()))) {
+                mc.getContext().startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(fileUri)));
+            }
         }
 	}
 	
