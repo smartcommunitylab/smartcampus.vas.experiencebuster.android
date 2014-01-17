@@ -44,23 +44,26 @@ import eu.trentorise.smartcampus.eb.model.ExpCollection;
 import eu.trentorise.smartcampus.eb.model.ExperienceFilter;
 import eu.trentorise.smartcampus.eb.model.UserPreference;
 
-public class CollectionsListFragment extends SherlockListFragment implements CollectionSavedHandler {
+public class CollectionsListFragment extends SherlockListFragment implements
+		CollectionSavedHandler {
 
 	private List<ExpCollection> collections = null;
 	private static final String STATE_ITEMS = "items";
-	
+
 	@SuppressWarnings("unchecked")
 	@Override
 	public void onCreate(Bundle arg0) {
 		super.onCreate(arg0);
 		setHasOptionsMenu(true);
 		if (arg0 != null && arg0.containsKey(STATE_ITEMS)) {
-			collections = (List<ExpCollection>)arg0.getSerializable(STATE_ITEMS);
+			collections = (List<ExpCollection>) arg0
+					.getSerializable(STATE_ITEMS);
 		} else {
 			collections = new ArrayList<ExpCollection>();
 			readCollections();
 		}
 	}
+
 	private void readCollections() {
 		UserPreference userPreference = EBHelper.getUserPreference();
 		collections.clear();
@@ -68,16 +71,19 @@ public class CollectionsListFragment extends SherlockListFragment implements Col
 			collections.addAll(userPreference.getCollections());
 		}
 	}
+
 	@Override
 	public void onSaveInstanceState(Bundle arg0) {
 		super.onSaveInstanceState(arg0);
-		arg0.putSerializable(STATE_ITEMS, collections == null ? null : new ArrayList<ExpCollection>(collections));
+		arg0.putSerializable(STATE_ITEMS, collections == null ? null
+				: new ArrayList<ExpCollection>(collections));
 	}
 
-
 	@Override
-	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-		this.setListAdapter(new ArrayAdapter<ExpCollection>(getSherlockActivity(), R.layout.collections_row, collections));
+	public View onCreateView(LayoutInflater inflater, ViewGroup container,
+			Bundle savedInstanceState) {
+		this.setListAdapter(new ArrayAdapter<ExpCollection>(
+				getSherlockActivity(), R.layout.collections_row, collections));
 		return super.onCreateView(inflater, container, savedInstanceState);
 	}
 
@@ -86,16 +92,20 @@ public class CollectionsListFragment extends SherlockListFragment implements Col
 		super.onResume();
 		// Showing/hiding back button
 		getSherlockActivity().getSupportActionBar().setHomeButtonEnabled(true);
-		getSherlockActivity().getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-		getSherlockActivity().getSupportActionBar().setDisplayShowTitleEnabled(true);
-		getSherlockActivity().getSupportActionBar().setTitle(R.string.title_collections);
+		getSherlockActivity().getSupportActionBar().setDisplayHomeAsUpEnabled(
+				true);
+		getSherlockActivity().getSupportActionBar().setDisplayShowTitleEnabled(
+				true);
+		getSherlockActivity().getSupportActionBar().setTitle(
+				R.string.title_collections);
 		registerForContextMenu(getListView());
 	}
 
 	@Override
 	public void onPrepareOptionsMenu(Menu menu) {
 		menu.clear();
-		MenuItem item = menu.add(Menu.CATEGORY_SYSTEM, R.id.collection_add, 1, R.string.dialog_collection_add);
+		MenuItem item = menu.add(Menu.CATEGORY_SYSTEM, R.id.collection_add, 1,
+				R.string.dialog_collection_add);
 		item.setIcon(R.drawable.ic_add);
 		item.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
 		super.onPrepareOptionsMenu(menu);
@@ -106,8 +116,10 @@ public class CollectionsListFragment extends SherlockListFragment implements Col
 		switch (item.getItemId()) {
 		case R.id.collection_add:
 			DialogFragment newCollFragment = new NewCollectionDialogFragment();
-			newCollFragment.setArguments(NewCollectionDialogFragment.prepare(null));
-		    newCollFragment.show(getActivity().getSupportFragmentManager(), "exp_coll");
+			newCollFragment.setArguments(NewCollectionDialogFragment
+					.prepare(null));
+			newCollFragment.show(getActivity().getSupportFragmentManager(),
+					"exp_coll");
 			return true;
 		default:
 			return super.onOptionsItemSelected(item);
@@ -118,16 +130,19 @@ public class CollectionsListFragment extends SherlockListFragment implements Col
 	@Override
 	public void onCollectionSaved(ExpCollection coll) {
 		readCollections();
-		((ArrayAdapter<ExpCollection>)getListAdapter()).notifyDataSetChanged();
+		((ArrayAdapter<ExpCollection>) getListAdapter()).notifyDataSetChanged();
 	}
-	
+
 	@Override
-	public void onListItemClick(ListView listView, View containerView, int position, long duration) {
-		FragmentTransaction ft = getSherlockActivity().getSupportFragmentManager().beginTransaction();
+	public void onListItemClick(ListView listView, View containerView,
+			int position, long duration) {
+		FragmentTransaction ft = getSherlockActivity()
+				.getSupportFragmentManager().beginTransaction();
 		Fragment f = new ExperiencesListFragment();
 		Bundle b = new Bundle();
 		ExperienceFilter filter = new ExperienceFilter();
-		filter.setCollectionIds(new String[]{collections.get(position).getId()});
+		filter.setCollectionIds(new String[] { collections.get(position)
+				.getId() });
 		b.putSerializable(ExperiencesListFragment.ARG_FILTER, filter);
 		f.setArguments(b);
 		ft.replace(android.R.id.content, f);
@@ -136,48 +151,59 @@ public class CollectionsListFragment extends SherlockListFragment implements Col
 		ft.commit();
 
 	}
-	
+
 	@Override
-	public void onCreateContextMenu(ContextMenu menu, View view, ContextMenuInfo menuInfo) {
+	public void onCreateContextMenu(ContextMenu menu, View view,
+			ContextMenuInfo menuInfo) {
 		menu.setHeaderTitle(R.string.coll_menu_header);
-		android.view.MenuInflater inflater = getSherlockActivity().getMenuInflater();
-	    inflater.inflate(R.menu.coll_list_menu, menu);
+		android.view.MenuInflater inflater = getSherlockActivity()
+				.getMenuInflater();
+		inflater.inflate(R.menu.coll_list_menu, menu);
 	}
 
 	@Override
 	public boolean onContextItemSelected(android.view.MenuItem item) {
-		final AdapterContextMenuInfo info = (AdapterContextMenuInfo) item.getMenuInfo();
-		final ExpCollection coll = EBHelper.getUserPreference().getCollections().get(info.position);
+		final AdapterContextMenuInfo info = (AdapterContextMenuInfo) item
+				.getMenuInfo();
+		final ExpCollection coll = EBHelper.getUserPreference()
+				.getCollections().get(info.position);
 		switch (item.getItemId()) {
-		case R.id.collmenu_remove:
-		{
+		case R.id.collmenu_remove: {
 			new AlertDialog.Builder(getActivity())
-	        .setMessage(R.string.msg_delete_coll_confirm)
-	        .setCancelable(false)
-	        .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
-	            @SuppressWarnings("unchecked")
-				public void onClick(DialogInterface dialog, int id) {
-	            	EBHelper.getUserPreference().getCollections().remove(coll);
-	            	if (EBHelper.updateUserPreference(getSherlockActivity(), EBHelper.getUserPreference())) {
-		            	collections.remove(info.position);
-		            	((ArrayAdapter<ExpCollection>)getListAdapter()).notifyDataSetChanged();
-	            	} else {
-		            	EBHelper.getUserPreference().getCollections().add(info.position,coll);
-	            	}
-	            }
-	        })
-	        .setNegativeButton(android.R.string.no, null)
-	        .show();
+					.setMessage(R.string.msg_delete_coll_confirm)
+					.setCancelable(false)
+					.setPositiveButton(android.R.string.yes,
+							new DialogInterface.OnClickListener() {
+								@SuppressWarnings("unchecked")
+								public void onClick(DialogInterface dialog,
+										int id) {
+									EBHelper.getUserPreference()
+											.getCollections().remove(coll);
+									if (EBHelper.updateUserPreference(
+											getSherlockActivity(),
+											EBHelper.getUserPreference())) {
+										collections.remove(info.position);
+										((ArrayAdapter<ExpCollection>) getListAdapter())
+												.notifyDataSetChanged();
+									} else {
+										EBHelper.getUserPreference()
+												.getCollections()
+												.add(info.position, coll);
+									}
+								}
+							}).setNegativeButton(android.R.string.no, null)
+					.show();
 			break;
 		}
-		case R.id.collmenu_edit:
-		{
+		case R.id.collmenu_edit: {
 			DialogFragment editCollFragment = new NewCollectionDialogFragment();
-			editCollFragment.setArguments(NewCollectionDialogFragment.prepare(coll));
-		    editCollFragment.show(getActivity().getSupportFragmentManager(), "exp_coll");
+			editCollFragment.setArguments(NewCollectionDialogFragment
+					.prepare(coll));
+			editCollFragment.show(getActivity().getSupportFragmentManager(),
+					"exp_coll");
 			break;
 		}
-		}		
+		}
 		return super.onContextItemSelected(item);
 	}
 }

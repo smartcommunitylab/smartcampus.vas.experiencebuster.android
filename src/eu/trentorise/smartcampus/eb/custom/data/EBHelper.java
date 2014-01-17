@@ -364,22 +364,34 @@ public class EBHelper {
 			ProtocolException, SecurityException, AACException {
 		// UserPreference
 		Collection<UserPreference> userPreferencesCollection = null;
-		if (isSynchronizationActive()) {
-			userPreferencesCollection = readUserPreference();
-		} else {
-			userPreferencesCollection = getInstance().storage
-					.getObjects(UserPreference.class);
-		}
+		// if (isSynchronizationActive()) {
+		// userPreferencesCollection = readUserPreference();
+		// } else {
+		userPreferencesCollection = getInstance().storage
+				.getObjects(UserPreference.class);
+		// }
 
 		if (userPreferencesCollection.isEmpty()) {
 			UserPreference userPreference = new UserPreference();
-			userPreference.setSocialUserId(1L);
+			userPreference.setSocialUserId(-1L);
 			userPreference.setCollections(new ArrayList<ExpCollection>());
 			getInstance().preference = getInstance().storage
 					.create(userPreference);
+		} else if (userPreferencesCollection.size() > 1) { // fix multiple
+															// UserPreference
+															// istances
+			userPreferencesCollection = getInstance().storage
+					.getObjects(UserPreference.class);
+			getInstance().preference = userPreferencesCollection.iterator()
+					.next();
 		} else {
 			getInstance().preference = userPreferencesCollection.iterator()
 					.next();
+		}
+		// fix
+		if (getInstance().preference.getCollections() == null) {
+			getInstance().preference
+					.setCollections(new ArrayList<ExpCollection>());
 		}
 		synchronize(true);
 	}
@@ -411,7 +423,8 @@ public class EBHelper {
 
 	public static UserPreference getUserPreference() {
 		try {
-			return getInstance().preference;
+			return getInstance().storage.getObjects(UserPreference.class)
+					.iterator().next(); // getInstance().preference;
 		} catch (Exception e) {
 			Log.e(EBHelper.class.getName(), "" + e.getMessage());
 			return new UserPreference();
@@ -722,36 +735,41 @@ public class EBHelper {
 			}
 		}, 10);
 	}
-	
 
+	/**
+	 * This method converts dp unit to equivalent pixels, depending on device
+	 * density.
+	 * 
+	 * @param dp
+	 *            A value in dp (density independent pixels) unit. Which we need
+	 *            to convert into pixels
+	 * @param context
+	 *            Context to get resources and device specific display metrics
+	 * @return A float value to represent px equivalent to dp depending on
+	 *         device density
+	 */
+	public static float convertDpToPixel(float dp, Context context) {
+		Resources resources = context.getResources();
+		DisplayMetrics metrics = resources.getDisplayMetrics();
+		float px = dp * (metrics.densityDpi / 160f);
+		return px;
+	}
 
-/**
- * This method converts dp unit to equivalent pixels, depending on device density. 
- * 
- * @param dp A value in dp (density independent pixels) unit. Which we need to convert into pixels
- * @param context Context to get resources and device specific display metrics
- * @return A float value to represent px equivalent to dp depending on device density
- */
-public static float convertDpToPixel(float dp, Context context){
-    Resources resources = context.getResources();
-    DisplayMetrics metrics = resources.getDisplayMetrics();
-    float px = dp * (metrics.densityDpi / 160f);
-    return px;
-}
-
-/**
- * This method converts device specific pixels to density independent pixels.
- * 
- * @param px A value in px (pixels) unit. Which we need to convert into db
- * @param context Context to get resources and device specific display metrics
- * @return A float value to represent dp equivalent to px value
- */
-public static float convertPixelsToDp(float px, Context context){
-    Resources resources = context.getResources();
-    DisplayMetrics metrics = resources.getDisplayMetrics();
-    float dp = px / (metrics.densityDpi / 160f);
-    return dp;
-}
-
+	/**
+	 * This method converts device specific pixels to density independent
+	 * pixels.
+	 * 
+	 * @param px
+	 *            A value in px (pixels) unit. Which we need to convert into db
+	 * @param context
+	 *            Context to get resources and device specific display metrics
+	 * @return A float value to represent dp equivalent to px value
+	 */
+	public static float convertPixelsToDp(float px, Context context) {
+		Resources resources = context.getResources();
+		DisplayMetrics metrics = resources.getDisplayMetrics();
+		float dp = px / (metrics.densityDpi / 160f);
+		return dp;
+	}
 
 }
