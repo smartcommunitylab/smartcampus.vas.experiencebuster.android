@@ -24,7 +24,8 @@
         android:clickable="true"
         android:paddingBottom="10dp"
         android:textAppearance="?android:attr/textAppearanceMedium"
-        android:textStyle="italic" />
+        android:textStyle="italic" 
+        android:visibility="gone"/>
 
     <TextView
         android:id="@+id/collections_tv_shared"
