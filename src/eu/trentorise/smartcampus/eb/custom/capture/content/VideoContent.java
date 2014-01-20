@@ -37,6 +37,7 @@ public class VideoContent implements GrabbedContent {
 	@Override
 	public Content toContent() {
 		Content c = new Content();
+		c.setType(ContentType.VIDEO);
 		c.setLocalValue(uri);
 		// c.setValue(uri);
 		return c;

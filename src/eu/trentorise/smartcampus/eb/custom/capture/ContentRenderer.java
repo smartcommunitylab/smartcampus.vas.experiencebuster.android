@@ -19,6 +19,9 @@ import java.io.File;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.app.Dialog;
+import android.content.ActivityNotFoundException;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.net.Uri;
@@ -26,11 +29,13 @@ import android.os.AsyncTask;
 import android.os.Build;
 import android.text.Html;
 import android.text.util.Linkify;
+import android.util.Log;
 import android.view.Display;
 import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewGroup.LayoutParams;
+import android.webkit.WebView;
 import android.widget.ImageView;
 import android.widget.ImageView.ScaleType;
 import android.widget.LinearLayout;
@@ -202,15 +207,25 @@ public class ContentRenderer {
 			intent.setAction(android.content.Intent.ACTION_VIEW);
 			String path = content.getLocalValue();// MediaUtils.getMediaAbsolutePath(ctx,
 													// Uri.parse(content.getLocalValue()));
+			Uri uri = null;
 			if (path == null)
 				return;
 			if (Utils.isRemote(path)) {
-				intent.setData(Uri.parse(path));
+				uri = Uri.parse(path);
 			} else {
 				File file = new File(path);
-				intent.setDataAndType(Uri.fromFile(file), "video/*");
+				uri=Uri.fromFile(file);
 			}
-			ctx.startActivity(intent);
+			try{
+				intent.setDataAndType(uri,"video/*");
+				ctx.startActivity(intent);
+			}catch (ActivityNotFoundException e) {
+				Log.w(ContentRenderer.class.getName(), e.toString());
+				intent = new Intent(Intent.ACTION_VIEW);
+				intent.setData(uri);
+				ctx.startActivity(intent);
+			}
+			
 			break;
 		}
 		case OBJECT: {

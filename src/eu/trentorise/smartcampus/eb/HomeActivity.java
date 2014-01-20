@@ -19,15 +19,18 @@ import java.util.ArrayList;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.content.ActivityNotFoundException;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.Configuration;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.ActionBarDrawerToggle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.widget.DrawerLayout;
+import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
@@ -48,6 +51,9 @@ import eu.trentorise.smartcampus.ac.SCAccessProvider;
 import eu.trentorise.smartcampus.android.common.SCAsyncTask;
 import eu.trentorise.smartcampus.android.common.tagging.TaggingDialog.OnTagsSelectedListener;
 import eu.trentorise.smartcampus.eb.custom.AbstractAsyncTaskProcessor;
+import eu.trentorise.smartcampus.eb.custom.capture.ContentRenderer;
+import eu.trentorise.smartcampus.eb.custom.capture.GrabbedContent;
+import eu.trentorise.smartcampus.eb.custom.capture.content.VideoContent;
 import eu.trentorise.smartcampus.eb.custom.data.EBHelper;
 import eu.trentorise.smartcampus.eb.fragments.BackListener;
 import eu.trentorise.smartcampus.eb.fragments.ExperiencesListFragment;
@@ -119,7 +125,6 @@ public class HomeActivity extends SherlockFragmentActivity implements
 		setContentView(R.layout.base);
 		getSupportActionBar().setDisplayShowTitleEnabled(false);
 		initDataManagement(savedInstanceState);
-		mTutorialHelper = new ListViewTutorialHelper(this, mTutorialProvider);
 	}
 
 	@Override
