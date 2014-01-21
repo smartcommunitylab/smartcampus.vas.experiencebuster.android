@@ -15,7 +15,10 @@
  ******************************************************************************/
 package eu.trentorise.smartcampus.eb.model;
 
+import java.io.File;
 import java.io.Serializable;
+
+import android.os.Environment;
 
 public class Content implements Serializable {
 	private static final long serialVersionUID = 5647832073206951058L;
@@ -28,6 +31,7 @@ public class Content implements Serializable {
 	private String entityType;
 	private long timestamp;
 	private String localValue;
+	private String thumbnail;
 
 	private transient Object cache;
 
@@ -134,5 +138,40 @@ public class Content implements Serializable {
 
 	public boolean isUploaded() {
 		return localValue != null && value != null && !localValue.equals(value);
+	}
+
+	public boolean permitThumbnail() {
+		return type == ContentType.VIDEO || type == ContentType.PHOTO;
+	}
+
+	public String getRelativePath() {
+		if (isStorable()) {
+			return localValue.substring(localValue.indexOf("Pictures"));
+		}
+		return null;
+	}
+
+	public String getAbsolutePath() {
+		if (isStorable()) {
+			return new File(Environment.getExternalStorageDirectory(),
+					getRelativePath()).getAbsolutePath();
+		}
+		return null;
+	}
+
+	public String getAbsolutePathThumbnail() {
+		if (isStorable()) {
+			if (thumbnail == null) {
+				String path = getAbsolutePath();
+				int extIndex = path.lastIndexOf(".");
+				int pathIndex = path.lastIndexOf("/");
+				String thumbName = path.substring(pathIndex + 1, extIndex - 1);
+				String pathThumb = path.substring(0, pathIndex);
+				String ext = path.substring(extIndex + 1);
+				thumbnail = pathThumb + "/" + thumbName + "_thumb.jpg";
+			}
+			return thumbnail;
+		}
+		return null;
 	}
 }

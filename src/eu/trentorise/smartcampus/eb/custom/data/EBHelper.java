@@ -15,6 +15,7 @@
  ******************************************************************************/
 package eu.trentorise.smartcampus.eb.custom.data;
 
+import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collection;
@@ -403,6 +404,24 @@ public class EBHelper {
 			}
 		}
 		return null;
+	}
+
+	public static void getThumbnail(String resourceId, OutputStream output) {
+		if (filestorage != null) {
+			try {
+				filestorage.getThumbnailByUser(EBHelper.getAuthToken(),
+						resourceId, output);
+			} catch (FilestorageException e) {
+				Log.e(TAG, String.format(
+						"FilestorageException getting thumbnail resource %s",
+						resourceId));
+			} catch (AACException e) {
+				Log.e(TAG, String.format(
+						"SecurityException getting thumbnail resource %s",
+						resourceId));
+			}
+
+		}
 	}
 
 	public static void endAppFailure(Activity activity, int id) {

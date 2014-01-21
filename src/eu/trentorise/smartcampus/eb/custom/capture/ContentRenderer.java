@@ -16,11 +16,10 @@
 package eu.trentorise.smartcampus.eb.custom.capture;
 
 import java.io.File;
+import java.io.IOException;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
-import android.app.AlertDialog;
-import android.app.Dialog;
 import android.content.ActivityNotFoundException;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -35,7 +34,6 @@ import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewGroup.LayoutParams;
-import android.webkit.WebView;
 import android.widget.ImageView;
 import android.widget.ImageView.ScaleType;
 import android.widget.LinearLayout;
@@ -44,6 +42,7 @@ import eu.trentorise.smartcampus.android.common.view.ViewHelper;
 import eu.trentorise.smartcampus.eb.R;
 import eu.trentorise.smartcampus.eb.custom.EmbeddedMediaPlayer;
 import eu.trentorise.smartcampus.eb.custom.ImageLoadTask;
+import eu.trentorise.smartcampus.eb.custom.MediaUtils;
 import eu.trentorise.smartcampus.eb.custom.Utils;
 import eu.trentorise.smartcampus.eb.model.Content;
 
@@ -91,6 +90,15 @@ public class ContentRenderer {
 					} else {// serial otherwise
 						new ImageLoadTask(iv, R.drawable.ic_menu_report_image,
 								shared).execute(content);
+					}
+				} else {
+					try {
+						iv.setImageBitmap(MediaUtils.createBitmap(
+								content.getAbsolutePathThumbnail(), null));
+					} catch (IOException e) {
+						Log.e("ContentRenderer", String.format(
+								"Exception loading thumbnail %s",
+								content.getAbsolutePathThumbnail()));
 					}
 				}
 			}
@@ -162,8 +170,19 @@ public class ContentRenderer {
 				vv.setImageBitmap(thumbnail);
 			} else {
 				vv.setTag(content.getId());
-				new ImageLoadTask(vv, R.drawable.ic_menu_report_image, shared)
-						.execute(content);
+				if (shared) {
+					try {
+						vv.setImageBitmap(MediaUtils.createBitmap(
+								content.getAbsolutePathThumbnail(), null));
+					} catch (IOException e) {
+						Log.e("ContentRenderer", String.format(
+								"Exception loading thumbnail %s",
+								content.getAbsolutePathThumbnail()));
+					}
+				} else {
+					new ImageLoadTask(vv, R.drawable.ic_menu_report_image,
+							shared).execute(content);
+				}
 			}
 
 			view.addView(vv);
@@ -214,18 +233,18 @@ public class ContentRenderer {
 				uri = Uri.parse(path);
 			} else {
 				File file = new File(path);
-				uri=Uri.fromFile(file);
+				uri = Uri.fromFile(file);
 			}
-			try{
-				intent.setDataAndType(uri,"video/*");
+			try {
+				intent.setDataAndType(uri, "video/*");
 				ctx.startActivity(intent);
-			}catch (ActivityNotFoundException e) {
+			} catch (ActivityNotFoundException e) {
 				Log.w(ContentRenderer.class.getName(), e.toString());
 				intent = new Intent(Intent.ACTION_VIEW);
 				intent.setData(uri);
 				ctx.startActivity(intent);
 			}
-			
+
 			break;
 		}
 		case OBJECT: {

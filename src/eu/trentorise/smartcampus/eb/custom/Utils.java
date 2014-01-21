@@ -17,6 +17,8 @@ package eu.trentorise.smartcampus.eb.custom;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.List;
 import java.util.Locale;
 import java.util.UUID;
@@ -101,16 +103,30 @@ public class Utils {
 	}
 
 	public static boolean isRemote(String s) {
-        try {
+		try {
 			Uri uri = Uri.parse(s);
-			if (uri != null && (
-					"http".equalsIgnoreCase(uri.getScheme()) || "https".equalsIgnoreCase(uri.getScheme()))) {
+			if (uri != null
+					&& ("http".equalsIgnoreCase(uri.getScheme()) || "https"
+							.equalsIgnoreCase(uri.getScheme()))) {
 				return true;
 			}
 		} catch (Exception e) {
-			Log.e("UTILS", ""+e.getMessage());
+			Log.e("UTILS", "" + e.getMessage());
 		}
-        return false;
+		return false;
 
+	}
+
+	public static void copyToStream(InputStream in, OutputStream out) {
+		byte[] buf = new byte[1024];
+		int readed = 0;
+		try {
+			while ((readed = in.read(buf)) != -1) {
+				out.write(buf, 0, readed);
+			}
+		} catch (IOException e) {
+			Log.e("UTILS", "IOException " + e.getMessage());
+		}
+		buf = null;
 	}
 }
