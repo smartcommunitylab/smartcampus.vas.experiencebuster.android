@@ -62,10 +62,7 @@
             android:name="eu.trentorise.smartcampus.account.ACCOUNT_BASED_ACCESS"
             android:value="true" />
 
-        <meta-data android:name="dropbox_api_key"
-            android:value="api-key"/>
-        <meta-data android:name="dropbox_api_secret"
-            android:value="api-secret"/>
+
         
          
         <activity android:name=".SettingsActivity" />
@@ -175,6 +172,14 @@
         
         <activity
             android:name="com.github.espiandev.showcaseview.TutorialActivity"
+            android:configChanges="orientation|screenSize|keyboardHidden|keyboard"
+            android:theme="@style/TutorialTheme" >
+            <intent-filter>
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name="com.github.espiandev.showcaseview.TourActivity"
             android:configChanges="orientation|screenSize|keyboardHidden|keyboard"
             android:theme="@style/TutorialTheme" >
             <intent-filter>

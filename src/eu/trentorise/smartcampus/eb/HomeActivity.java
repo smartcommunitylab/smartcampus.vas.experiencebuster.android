@@ -125,6 +125,7 @@ public class HomeActivity extends SherlockFragmentActivity implements
 		setContentView(R.layout.base);
 		getSupportActionBar().setDisplayShowTitleEnabled(false);
 		initDataManagement(savedInstanceState);
+		mTutorialHelper = new TutorialHelper(this, mTutorialProvider);
 	}
 
 	@Override
@@ -467,8 +468,9 @@ public class HomeActivity extends SherlockFragmentActivity implements
 				// In the navigation drawer there is
 				// some padding that influence the position
 				if (pos == 2) {
-					tutorial[pos].position[0] -= EBHelper.convertPixelsToDp(20,
-							HomeActivity.this);
+//					tutorial[pos].position[0] -= EBHelper.convertPixelsToDp(20,
+//							HomeActivity.this);
+					tutorial[pos].position[0] = 0;
 					tutorial[pos].position[1] -= EBHelper.convertPixelsToDp(20,
 							HomeActivity.this);
 					tutorial[pos].width = v.getWidth()
