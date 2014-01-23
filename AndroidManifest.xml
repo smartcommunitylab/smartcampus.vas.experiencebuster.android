@@ -64,19 +64,10 @@
 
         <meta-data
             android:name="dropbox_api_key"
-            android:value="jxevbhte3wzuk1x" />
+            android:value="API_KEY" />
         <meta-data
             android:name="dropbox_api_secret"
-            android:value="c84xgqlh7zuf4lx" />
-
-        <meta-data
-            android:name="eu.trentorise.smartcampus.account.CLIENT_ID"
-            android:value="4fda1c9f-c15d-41df-a80c-8e986e4d3c6f" />
-
-        <!-- vas-dev -->
-        <meta-data
-            android:name="eu.trentorise.smartcampus.account.CLIENT_SECRET"
-            android:value="659b168c-1d59-4814-ad48-b73ebe089ad9" />
+            android:value="API_SECRET" />
 
         <activity android:name=".SettingsActivity" />
         <activity
