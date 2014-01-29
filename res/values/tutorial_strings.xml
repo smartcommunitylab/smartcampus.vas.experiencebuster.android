@@ -16,19 +16,19 @@
 -->
 <resources>
 	
-    <string name="tutorial_startup_msg">Welcome! bla bla.</string>
+    <string name="tutorial_startup_msg">Welcome! This tutorial will guide you through the functionalities of LifeLog.</string>
     <string name="tutorial_start_btn">Start tutorial</string>
     
-    <string name="t_title_grab">Grab experience</string>
-    <string name="t_msg_grab">Grab bla bla</string>
+    <string name="t_title_grab">Grab an experience</string>
+    <string name="t_msg_grab">Capture photos, videos, audio and much more about what is going on around you.</string>
     
     <string name="t_title_search">Search</string>
-    <string name="t_msg_search">Search among your experiences</string>
+    <string name="t_msg_search">Search among your experiences.</string>
     
     <string name="t_title_cat">Categories</string>
-    <string name="t_msg_cat">Categories bla bla</string>
+    <string name="t_msg_cat">Manage the categories in which you classify your experiences.</string>
 
     <string name="t_title_settings">Settings</string>
-    <string name="t_msg_settings">Configure the behaviour of the application</string>
+    <string name="t_msg_settings">Configure the behaviour of the application.</string>
     
 </resources>
