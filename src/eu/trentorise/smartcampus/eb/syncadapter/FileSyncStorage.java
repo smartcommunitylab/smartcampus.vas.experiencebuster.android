@@ -142,10 +142,10 @@ public class FileSyncStorage extends SyncStorageWithPaging {
 		contentToDelete.add(c.getValue());
 	}
 
-	public synchronized SyncData synchroFile(String authToken, String host, String service) 
-			throws StorageConfigurationException, SecurityException,
-			ConnectionException, DataException, ProtocolException 
-	{
+	public synchronized SyncData synchroFile(String authToken, String host,
+			String service) throws StorageConfigurationException,
+			SecurityException, ConnectionException, DataException,
+			ProtocolException {
 		SyncData syncData = helper.getDataToSync(getSyncVersion());
 		try {
 			synchroFile(syncData, authToken);
@@ -157,9 +157,10 @@ public class FileSyncStorage extends SyncStorageWithPaging {
 
 	public void syncFiles() {
 		List<SyncFile> syncFiles = fileToSync.getEntryToProcess();
-		boolean forceSynchro = false;
 		long totalUploadedSize = Constants.FILE_SYNC_UPLOAD_SIZE;
+		boolean forceSynchro = false, resetEntry = false, contentExist = false;
 		for (SyncFile syncFile : syncFiles) {
+			forceSynchro = resetEntry = contentExist = false;
 			try {
 				if (syncFile.getTentative() < Constants.FILE_SYNC_MAX_TENTATIVES) {
 					Resource res = eu.trentorise.smartcampus.eb.custom.Utils
@@ -168,10 +169,6 @@ public class FileSyncStorage extends SyncStorageWithPaging {
 						String userAccountId = EBHelper.getConfiguration(
 								EBHelper.CONF_USER_ACCOUNT, String.class);
 						if (userAccountId != null) {
-							Metadata meta = filestorage.storeOnDropbox(
-									res.getResourcefile(),
-									EBHelper.getAuthToken(), userAccountId,
-									false, ctx);
 							Experience exp = EBHelper
 									.findLocalExperienceById(syncFile
 											.getIdExp());
@@ -180,6 +177,13 @@ public class FileSyncStorage extends SyncStorageWithPaging {
 									if (c.isStorable()
 											&& c.getId().equals(
 													syncFile.getIdContent())) {
+										contentExist = true;
+										Metadata meta = filestorage
+												.storeOnDropbox(
+														res.getResourcefile(),
+														EBHelper.getAuthToken(),
+														userAccountId, false,
+														ctx);
 										c.setValue(meta.getResourceId());
 										Log.i(TAG,
 												String.format(
@@ -193,14 +197,21 @@ public class FileSyncStorage extends SyncStorageWithPaging {
 															syncFile,
 															FileSyncDbHelper.ST_FAIL_DB);
 										} else {
+											forceSynchro = true;
 											fileToSync.removeEntry(syncFile
 													.getIdEntry());
 										}
 
 									}
 								}
+								resetEntry = !contentExist;
+							} else {
+								resetEntry = true;
 							}
-							forceSynchro = true;
+							if (resetEntry) {
+								fileToSync.removeEntry(syncFile.getIdEntry());
+							}
+
 							// check total uploaded size
 							if ((totalUploadedSize -= res.getSize()) < 0) {
 								Log.i(TAG, "Max uploaded size reached: "
