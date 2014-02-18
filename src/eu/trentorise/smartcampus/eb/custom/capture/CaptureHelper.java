@@ -16,7 +16,6 @@
 package eu.trentorise.smartcampus.eb.custom.capture;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -26,7 +25,6 @@ import java.util.Date;
 
 import android.content.Context;
 import android.content.Intent;
-import android.content.res.AssetFileDescriptor;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Environment;
@@ -112,14 +110,17 @@ public class CaptureHelper {
 			}
 			case IMAGE_CAMERA: {
 				Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-				
+
 				File mediaStorageDir = new File(
 						Environment
 								.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES),
 						Constants.EB_APP_MEDIA_FOLDER);
-				
-				intent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(new File(mediaStorageDir+File.separator + TMP_IMAGE_NAME)));
-				
+
+				intent.putExtra(
+						MediaStore.EXTRA_OUTPUT,
+						Uri.fromFile(new File(mediaStorageDir + File.separator
+								+ TMP_IMAGE_NAME)));
+
 				resultHandler.startActivityForResult(
 						Intent.createChooser(intent, "Capture Image"),
 						RC_CAPTURE_IMAGE + shift);
@@ -128,11 +129,11 @@ public class CaptureHelper {
 			case VIDEO_CAMERA: {
 				Intent intent = new Intent(MediaStore.ACTION_VIDEO_CAPTURE);
 				intent.putExtra(MediaStore.EXTRA_VIDEO_QUALITY, 1);
-				
-				//TODO hotfix for nexus devices.
-				if(Build.MODEL.toLowerCase().contains("nexus"))
-					intent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(getOutputMediaFile("3gp")));
-				
+
+				// TODO hotfix for nexus devices.
+				if (Build.MODEL.toLowerCase().contains("nexus"))
+					intent.putExtra(MediaStore.EXTRA_OUTPUT,
+							Uri.fromFile(getOutputMediaFile("3gp")));
 
 				resultHandler.startActivityForResult(
 						Intent.createChooser(intent, "Capture Video"),
@@ -182,20 +183,23 @@ public class CaptureHelper {
 		}
 		if (requestCode == RC_CAPTURE_IMAGE + shift) {
 			if (resultCode != 0) {
-				//Uri imgUri = data.getData();
+				// Uri imgUri = data.getData();
 				File mediaStorageDir = new File(
 						Environment
 								.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES),
 						Constants.EB_APP_MEDIA_FOLDER);
-				
-				File fi = new File(mediaStorageDir+File.separator  + TMP_IMAGE_NAME);
-				
+
+				File fi = new File(mediaStorageDir + File.separator
+						+ TMP_IMAGE_NAME);
+
 				try {
 					// imgUri = writeImageData(mContext, imgUri, "jpg");
 					// resultHandler.onResult(new
 					// ImageContent(imgUri.toString()));
-					Uri imgUri = Uri.parse(android.provider.MediaStore.Images.Media.insertImage(mContext.getContentResolver(),
-							fi.getAbsolutePath(), null, null));
+					Uri imgUri = Uri
+							.parse(android.provider.MediaStore.Images.Media
+									.insertImage(mContext.getContentResolver(),
+											fi.getAbsolutePath(), null, null));
 					resultHandler.onResult(new ImageContent(writeMediaData(
 							mContext, imgUri, true)));
 				} catch (Exception e) {
@@ -209,13 +213,14 @@ public class CaptureHelper {
 		}
 		if (requestCode == RC_CAPTURE_VIDEO + shift) {
 			if (resultCode != 0) {
-				Uri imgUri=data.getData();
-				
+				Uri imgUri = data.getData();
+
 				try {
 					// resultHandler.onResult(new
 					// VideoContent(imgUri.toString()));
-					if(Build.MODEL.toLowerCase().contains("nexus"))
-						resultHandler.onResult(new VideoContent(imgUri.toString().substring(6)));
+					if (Build.MODEL.toLowerCase().contains("nexus"))
+						resultHandler.onResult(new VideoContent(imgUri
+								.toString().substring(6)));
 					else
 						resultHandler.onResult(new VideoContent(writeMediaData(
 								mContext, imgUri, true)));
@@ -266,6 +271,9 @@ public class CaptureHelper {
 			boolean deleteOriginal) {
 		String capturedFilePath = MediaUtils.getMediaAbsolutePath(ctx,
 				capturedUri);
+		if (capturedFilePath == null) {
+			capturedFilePath = capturedUri.getPath();
+		}
 		File capturedFile = new File(capturedFilePath);
 		String fExt = null;
 		File newPath = null;
