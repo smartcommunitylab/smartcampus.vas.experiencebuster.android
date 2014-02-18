@@ -20,6 +20,9 @@
         android:layout_marginTop="-38dp"
         android:background="@color/sc_dark_gray"
         android:orientation="vertical"
+        android:focusable="true"
+        android:focusableInTouchMode="true"
+        android:clickable="true"
         android:paddingTop="40dp" >
 
 <!--         <LinearLayout  -->
@@ -71,11 +74,7 @@
 	        android:layout_width="match_parent"
 	        android:layout_height="wrap_content"
 	        android:orientation="horizontal"
-	        android:background="@drawable/selectable_background_experiencebuster"
     		android:gravity="center_vertical"
-    		android:focusable="false"
-    		android:focusableInTouchMode="false"
-    		android:clickable="false"
     		android:padding="5dp" >
 		    <ImageView
 		        android:id="@+id/logo_collections"

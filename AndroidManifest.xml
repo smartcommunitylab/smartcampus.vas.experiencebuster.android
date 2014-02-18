@@ -18,8 +18,8 @@
     package="eu.trentorise.smartcampus.eb"
     android:sharedUserId="eu.trentorise.smartcampus.shared"
     android:sharedUserLabel="@string/app_uid_label"
-    android:versionCode="16"
-    android:versionName="0.11.0" >
+    android:versionCode="18"
+    android:versionName="0.12.1" >
 
     <uses-sdk
         android:minSdkVersion="8"
@@ -61,15 +61,13 @@
         <meta-data
             android:name="eu.trentorise.smartcampus.account.ACCOUNT_BASED_ACCESS"
             android:value="true" />
-        
-        <!-- Keys used to direct upload media content to dropbox directly from application
-        INSERT DROPBOX APPLICATION KEYS -->
+
         <meta-data
             android:name="dropbox_api_key"
-            android:value="API_KEY" />
+            android:value="" />
         <meta-data
             android:name="dropbox_api_secret"
-            android:value="API_SECRET" />
+            android:value="" />
 
         <activity android:name=".SettingsActivity" />
         <activity
@@ -86,6 +84,7 @@
 
 <!--                 <category android:name="android.intent.category.LAUNCHER" /> -->
 <!--             </intent-filter> -->
+
             <intent-filter>
                 <action android:name="eu.trentorise.smartcampus.START" />
 
