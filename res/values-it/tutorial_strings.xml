@@ -15,15 +15,15 @@
   limitations under the License.
 -->
 <resources>
-	
+
     <string name="tutorial_startup_msg">Benvenuto! Questo tutorial ti guiderà alla scoperta delle funzionalità di LifeLog.</string>
     <string name="tutorial_start_btn">Inizia tutorial</string>
     
     <string name="t_title_grab">Cattura un\'esperienza</string>
-    <string name="t_msg_grab">Cattura foto, video e altri contenuti multimediali per ricordare le tue esperienze quotidiane.</string>
+    <string name="t_msg_grab">Immortala ci\ò che \è attorno a te con foto, video e molto altro</string>
     
     <string name="t_title_search">Cerca</string>
-    <string name="t_msg_search">Cerca tra le esperienze salvate.</string>
+    <string name="t_msg_search">Effettua ricerche nel tuo diario</string>
     
     <string name="t_title_cat">Categorie</string>
     <string name="t_msg_cat">Gestisci le categorie in cui puoi organizzare le tue esperienze.</string>

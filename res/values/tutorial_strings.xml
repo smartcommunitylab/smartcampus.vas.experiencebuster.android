@@ -15,15 +15,15 @@
   limitations under the License.
 -->
 <resources>
-	
+
     <string name="tutorial_startup_msg">Welcome! This tutorial will guide you through the functionalities of LifeLog.</string>
     <string name="tutorial_start_btn">Start tutorial</string>
     
     <string name="t_title_grab">Grab an experience</string>
-    <string name="t_msg_grab">Capture photos, videos, audio and much more about what is going on around you.</string>
+    <string name="t_msg_grab">Capture what is going on around you through photos, videos and much more</string>
     
     <string name="t_title_search">Search</string>
-    <string name="t_msg_search">Search among your experiences.</string>
+    <string name="t_msg_search">Search through your diary entries</string>
     
     <string name="t_title_cat">Categories</string>
     <string name="t_msg_cat">Manage the categories in which you classify your experiences.</string>
