@@ -19,89 +19,69 @@
     <string name="empty" />
     <string name="content_empty">Nessun risultato.</string>
     <string name="app_name">LifeLog</string>
-
     <string name="not_implemented">Coming soon!</string>
-    
     <string name="mainmenu_grab">Cattura esperienza</string>
     <string name="mainmenu_diary">Diario</string>
     <string name="mainmenu_collections">Categorie</string>
     <string name="mainmenu_search">Cerca</string>
-    
     <string name="dialog_create">Crea</string>
     <string name="dialog_save">Salva</string>
     <string name="dialog_grab">Cattura l\'esperienza con:</string>
     <string name="dialog_collection_add">Crea nuova categoria</string>
     <string name="dialog_collection_edit">Modifica categoria</string>
-    
     <string name="app_failure_security">Errore nell\'autenticazione</string>
     <string name="app_failure_setup">Errore nell\'inizializzazione dell\'app</string>
     <string name="app_failure_operation">OOPS! Si è verificato un errore. Verifica la tua connessione o riprova più tardi.</string>
     <string name="app_uid_label">SmartCampus</string>
-
     <string name="title_grab_qrcode">Cattura QR-code</string>
     <string name="title_expform">Esperienza</string>
     <string name="title_collections">Categorie</string>
     <string name="title_diary">Diario</string>
     <string name="title_nearme">Intorno a me</string>
     <string name="title_search">Cerca</string>
-     <string name="title_activity_file"></string>
-    
+    <string name="title_activity_file"></string>
     <string name="ext_form_title_hint">Titolo…</string>
-
     <string name="exp_form_tags_hint">Tags…</string>
     <string name="exp_form_descr_hint">Testo…</string>
-
     <string name="expmenu_save">Salva</string>
     <!-- <string name="expmenu_done">Done</string> -->
-    <string name="expmenu_assign_collection">Assegna category</string>
+    <string name="expmenu_assign_collection">Assegna categoria</string>
     <string name="expmenu_share">Condividi</string>
     <string name="expmenu_export">Esporta</string>
     <string name="expmenu_map">Visualizza sulla mappa</string>
     <string name="expmenu_remove">Elimina</string>
-    
-    <string name="expmenu_attach_gallery_photo">Foto da galleria</string>
-    <string name="expmenu_attach_camera_photo">Foto</string>
-    <string name="expmenu_attach_gallery_video">Video da galleria</string>
-    <string name="expmenu_attach_camera_video">Video</string>
-    <string name="expmenu_attach_qrcode">QR</string>
-    <string name="expmenu_attach_audio">Audio</string>
-    <string name="expmenu_attach_text">Testo</string>
-    
+    <string name="expmenu_attach_gallery_photo">Foto scattate</string>
+    <string name="expmenu_attach_camera_photo">Fotocamera</string>
+    <string name="expmenu_attach_gallery_video">Video registrati</string>
+    <string name="expmenu_attach_camera_video">Videocamera</string>
+    <string name="expmenu_attach_qrcode">QR code</string>
+    <string name="expmenu_attach_audio">Registrazione audio</string>
+    <string name="expmenu_attach_text">Digitazione testo</string>
     <string name="msg_delete_confirm">Sei sicuro di voler eliminare questo elemento?</string>
     <string name="msg_location_undefined">Errore nel rilevamento della posizione corrente.</string>
-    
     <string name="alert_title_required">E\' necessario specificare un titolo</string>
     <string name="alert_folder_name_required">E\' necessario specificare il nome della categoria</string>
-    
     <string name="error_collection_store">Errore nel salvataggio della categoria</string>
     <string name="error_exp_store">Errore nel salvataggio dell\'esperienza</string>
     <string name="error_exp_delete">Errore nella cancellazione dell\'esperienza</string>
-    
     <string name="filters_now">Filtra per giorno</string>
     <string name="filters_near">Filtra per posizione</string>
-    
     <string name="exp_menu_header">Opzioni esperienza</string>
-    
     <string name="coll_menu_header">Opzioni categoria</string>
     <string name="collmenu_edit">Modifica categoria</string>
     <string name="collmenu_remove">Elimina categoria</string>
     <string name="msg_delete_coll_confirm">Sei sicuro di voler eliminare questa categoria?</string>
-    
     <string name="expcontentmenu_comment">Testo</string>
     <string name="expcontentmenu_remove">Elimina</string>
-
     <string name="exp_notes_hint">Testo…</string>
     <string name="exp_notes_title">Aggiungi testo</string>
-
     <string name="exp_position_hint">Indirizzo…</string>
     <string name="exp_position_title">Inserisci indirizzo</string>
-    
     <string name="msg_synchro_dialog">Per mantenere sincronizzati le tue foto e i tuoi video, inserisci il tuo account Dropbox. Vorresti sincronizzare i tuoi contenuti?</string>
     <string name="synchro_dialog_y">Sì</string>
     <string name="synchro_dialog_n">No</string>
     <string name="msg_synchro_no_appaccount">Account application mancante. La sincronizzazione non può essere attivata.</string>
     <string name="exp_shared_error">Oggetto non trovato!</string>
-    
     <string name="pref_synchro_file">Attiva sincronizzazione file</string>
     <string name="pref_title_synchro_file">Sincronizzazione</string>
     <string name="pref_max_file_lenght">Dimensione massima file da sincronizzare</string>
@@ -109,14 +89,21 @@
     <string name="mainmenu_settings">Impostazioni</string>
     <string name="token_required">Eseguire il login prima di procedure con l\'applicazione.</string>
     <string name="token_expired">Sessione scaduta.</string>
-    
     <string name="no_title">Nessun titolo</string>
-    
     <string name="uncantorized">Tutte</string>
     <string name="tutorial">Tutorial</string>
-    
     <string name="error_account">Errore nel salvataggio delle informazioni dell\'account</string>
     <string name="error_value_negative">Il valore non può essere negativo.</string>
     <string name="error_value_nan">Il valore deve essere un numero.</string>
-    
+
+    <!-- Grab dialog -->
+    <string name="grab_dialog_photo">Fotocamera</string>
+    <string name="grab_dialog_video">Videocanera</string>
+    <string name="grab_dialog_photo_gallery">Foto scattate</string>
+    <string name="grab_dialog_video_gallery">Video registrati</string>
+    <string name="grab_dialog_text">Digitazione testo</string>
+    <string name="grab_dialog_photo_audio">Registrazione audio</string>
+    <string name="grab_dialog_qr_code">QR code</string>
+    <string name="grab_dialog_near_me_now">Intorno a me</string>
+
 </resources>

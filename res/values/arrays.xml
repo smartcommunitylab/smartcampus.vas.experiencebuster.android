@@ -17,14 +17,14 @@
 <resources>
 
     <array name="grabDialogArray">
-        <item>Photo</item>
-        <item>Video</item>
-        <item>Photo from gallery</item>
-        <item>Video from gallery</item>
-        <item>Text</item>
-        <item>Audio</item>
-        <item>QR code</item>
-        <item>Near me now</item>
+        <item>@string/grab_dialog_photo</item>
+        <item>@string/grab_dialog_video</item>
+        <item>@string/grab_dialog_photo_gallery</item>
+        <item>@string/grab_dialog_video_gallery</item>
+        <item>@string/grab_dialog_text</item>
+        <item>@string/grab_dialog_photo_audio</item>
+        <item>@string/grab_dialog_qr_code</item>
+        <item>@string/grab_dialog_near_me_now</item>
     </array>
     <array name="grabDialogTypesArray">
         <item>IMAGE_CAMERA</item>

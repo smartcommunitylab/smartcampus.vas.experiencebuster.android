@@ -29,9 +29,9 @@ public class Constants {
 	public static final String ENTITY_TYPE_EXPERIENCE = "experience";
 
 	public static final SimpleDateFormat DATE_FORMATTER = new SimpleDateFormat(
-			"dd/MM/yyyy HH:mm", Locale.US);
+			"dd/MM/yyyy HH:mm", Locale.getDefault());
 	public static final SimpleDateFormat DATE_FORMATTER_HEADER = new SimpleDateFormat(
-			"MMMM dd", Locale.US);
+			"MMMM dd", Locale.getDefault());
 
 	public static final String EB_APP_MEDIA_FOLDER = "experiencebuster";
 
