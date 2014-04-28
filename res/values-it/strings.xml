@@ -98,7 +98,7 @@
 
     <!-- Grab dialog -->
     <string name="grab_dialog_photo">Fotocamera</string>
-    <string name="grab_dialog_video">Videocanera</string>
+    <string name="grab_dialog_video">Videocamera</string>
     <string name="grab_dialog_photo_gallery">Foto scattate</string>
     <string name="grab_dialog_video_gallery">Video registrati</string>
     <string name="grab_dialog_text">Digitazione testo</string>
