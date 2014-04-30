@@ -133,7 +133,7 @@
 
         <!-- Filestorage activities -->
         <activity
-            android:name=".filestorage.FilestorageAccountActivity"
+            android:name="eu.trentorise.smartcampus.eb.filestorage.FilestorageAccountActivity"
             android:configChanges="orientation|keyboard"
             android:label="@string/title_activity_file" >
         </activity>

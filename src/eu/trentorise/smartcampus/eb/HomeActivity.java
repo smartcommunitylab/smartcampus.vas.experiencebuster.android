@@ -23,6 +23,7 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager.NameNotFoundException;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.support.v4.app.ActionBarDrawerToggle;
@@ -45,6 +46,7 @@ import com.github.espiandev.showcaseview.TutorialHelper;
 import com.github.espiandev.showcaseview.TutorialHelper.TutorialProvider;
 import com.github.espiandev.showcaseview.TutorialItem;
 
+import eu.trentorise.smartcampus.ac.AACException;
 import eu.trentorise.smartcampus.ac.SCAccessProvider;
 import eu.trentorise.smartcampus.android.common.LauncherHelper;
 import eu.trentorise.smartcampus.android.common.SCAsyncTask;
@@ -100,8 +102,7 @@ public class HomeActivity extends SherlockFragmentActivity implements
 									new DialogInterface.OnCancelListener() {
 
 										@Override
-										public void onCancel(
-												DialogInterface arg0) {
+										public void onCancel(DialogInterface arg0) {
 											arg0.dismiss();
 											initData();
 										}
@@ -110,8 +111,7 @@ public class HomeActivity extends SherlockFragmentActivity implements
 									new DialogInterface.OnClickListener() {
 
 										@Override
-										public void onClick(
-												DialogInterface dialog,
+										public void onClick(DialogInterface dialog,
 												int which) {
 											dialog.dismiss();
 											initData();
@@ -123,9 +123,13 @@ public class HomeActivity extends SherlockFragmentActivity implements
 					initData();
 				}
 			}
-		} catch (Exception e) {
+			
+		} catch (NameNotFoundException e) {
+			EBHelper.endAppFailure(this, R.string.app_failure_setup);
+		} catch (AACException e) {
 			EBHelper.endAppFailure(this, R.string.app_failure_setup);
 		}
+		
 	}
 
 	private boolean initData() {
