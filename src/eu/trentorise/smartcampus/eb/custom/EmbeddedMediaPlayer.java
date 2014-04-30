@@ -28,7 +28,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.SeekBar;
-import eu.trentorise.smartcampus.eb.R;
+import it.smartcampuslab.eb.R;
 import eu.trentorise.smartcampus.eb.custom.capture.ResourceHandler;
 
 public class EmbeddedMediaPlayer implements OnCompletionListener, SeekBar.OnSeekBarChangeListener, ResourceHandler {

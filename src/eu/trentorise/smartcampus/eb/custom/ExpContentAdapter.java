@@ -27,7 +27,7 @@ import android.widget.ArrayAdapter;
 import android.widget.FrameLayout;
 import android.widget.TextView;
 import eu.trentorise.smartcampus.eb.Constants;
-import eu.trentorise.smartcampus.eb.R;
+import it.smartcampuslab.eb.R;
 import eu.trentorise.smartcampus.eb.custom.capture.ContentRenderer;
 import eu.trentorise.smartcampus.eb.custom.capture.ResourceHandler;
 import eu.trentorise.smartcampus.eb.model.Content;

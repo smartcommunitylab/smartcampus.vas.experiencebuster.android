@@ -29,7 +29,7 @@ import android.support.v4.app.DialogFragment;
 
 import com.actionbarsherlock.app.SherlockDialogFragment;
 
-import eu.trentorise.smartcampus.eb.R;
+import it.smartcampuslab.eb.R;
 import eu.trentorise.smartcampus.eb.custom.data.EBHelper;
 import eu.trentorise.smartcampus.eb.fragments.NewCollectionDialogFragment;
 import eu.trentorise.smartcampus.eb.model.ExpCollection;

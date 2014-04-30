@@ -39,7 +39,7 @@ import android.widget.ImageView.ScaleType;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import eu.trentorise.smartcampus.android.common.view.ViewHelper;
-import eu.trentorise.smartcampus.eb.R;
+import it.smartcampuslab.eb.R;
 import eu.trentorise.smartcampus.eb.custom.EmbeddedMediaPlayer;
 import eu.trentorise.smartcampus.eb.custom.ImageLoadTask;
 import eu.trentorise.smartcampus.eb.custom.MediaUtils;

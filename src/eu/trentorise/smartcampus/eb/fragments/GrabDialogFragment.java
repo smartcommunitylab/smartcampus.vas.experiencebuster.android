@@ -33,7 +33,7 @@ import com.actionbarsherlock.app.SherlockDialogFragment;
 
 import eu.trentorise.smartcampus.eb.CatchActivity;
 import eu.trentorise.smartcampus.eb.Constants.CATCH_TYPES;
-import eu.trentorise.smartcampus.eb.R;
+import it.smartcampuslab.eb.R;
 
 public class GrabDialogFragment extends SherlockDialogFragment {
 

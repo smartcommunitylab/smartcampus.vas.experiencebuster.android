@@ -20,7 +20,7 @@ import android.util.Log;
 import eu.trentorise.smartcampus.android.common.HandleExceptionHelper;
 import eu.trentorise.smartcampus.android.common.SCAsyncTask.SCAsyncTaskProcessor;
 import eu.trentorise.smartcampus.eb.HomeActivity;
-import eu.trentorise.smartcampus.eb.R;
+import it.smartcampuslab.eb.R;
 import eu.trentorise.smartcampus.eb.custom.data.EBHelper;
 
 public abstract class AbstractAsyncTaskProcessor<Params, Result> implements

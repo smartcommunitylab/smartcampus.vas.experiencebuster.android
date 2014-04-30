@@ -1,5 +1,7 @@
 package eu.trentorise.smartcampus.eb;
 
+import it.smartcampuslab.eb.R;
+
 import java.io.File;
 import java.io.FileOutputStream;
 import java.util.ArrayList;

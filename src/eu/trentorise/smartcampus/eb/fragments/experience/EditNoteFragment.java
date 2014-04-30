@@ -26,7 +26,7 @@ import android.widget.EditText;
 
 import com.actionbarsherlock.app.SherlockDialogFragment;
 
-import eu.trentorise.smartcampus.eb.R;
+import it.smartcampuslab.eb.R;
 
 public class EditNoteFragment extends SherlockDialogFragment {
 

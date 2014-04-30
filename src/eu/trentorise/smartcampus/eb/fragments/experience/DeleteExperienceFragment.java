@@ -22,7 +22,7 @@ import android.os.Bundle;
 
 import com.actionbarsherlock.app.SherlockDialogFragment;
 
-import eu.trentorise.smartcampus.eb.R;
+import it.smartcampuslab.eb.R;
 import eu.trentorise.smartcampus.eb.custom.data.EBHelper;
 
 public class DeleteExperienceFragment extends SherlockDialogFragment {

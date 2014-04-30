@@ -15,6 +15,7 @@
  ******************************************************************************/
 package eu.trentorise.smartcampus.eb;
 
+import it.smartcampuslab.eb.R;
 import net.sourceforge.zbar.SymbolSet;
 import android.content.Intent;
 import android.os.Bundle;

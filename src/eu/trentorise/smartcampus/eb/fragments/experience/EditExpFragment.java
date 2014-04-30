@@ -54,7 +54,7 @@ import eu.trentorise.smartcampus.android.common.tagging.TaggingDialog.OnTagsSele
 import eu.trentorise.smartcampus.eb.CatchActivity;
 import eu.trentorise.smartcampus.eb.Constants;
 import eu.trentorise.smartcampus.eb.Constants.CATCH_TYPES;
-import eu.trentorise.smartcampus.eb.R;
+import it.smartcampuslab.eb.R;
 import eu.trentorise.smartcampus.eb.custom.AbstractAsyncTaskProcessor;
 import eu.trentorise.smartcampus.eb.custom.ExpContentAdapter;
 import eu.trentorise.smartcampus.eb.custom.Utils;

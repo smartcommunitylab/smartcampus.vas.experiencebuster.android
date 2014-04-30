@@ -15,6 +15,8 @@
  ******************************************************************************/
 package eu.trentorise.smartcampus.eb;
 
+import it.smartcampuslab.eb.R;
+
 import java.util.List;
 
 import android.content.Context;

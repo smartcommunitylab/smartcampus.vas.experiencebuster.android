@@ -15,6 +15,7 @@
  ******************************************************************************/
 package eu.trentorise.smartcampus.eb;
 
+import it.smartcampuslab.eb.R;
 import android.accounts.AccountManager;
 import android.content.Intent;
 import android.content.pm.PackageManager.NameNotFoundException;
