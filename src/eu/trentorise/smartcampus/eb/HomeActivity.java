@@ -102,6 +102,7 @@ public class HomeActivity extends SherlockFragmentActivity implements
 										@Override
 										public void onCancel(
 												DialogInterface arg0) {
+											arg0.dismiss();
 											initData();
 										}
 									})
@@ -112,6 +113,7 @@ public class HomeActivity extends SherlockFragmentActivity implements
 										public void onClick(
 												DialogInterface dialog,
 												int which) {
+											dialog.dismiss();
 											initData();
 										}
 									});
