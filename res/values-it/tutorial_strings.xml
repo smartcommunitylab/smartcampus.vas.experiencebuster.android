@@ -16,19 +16,17 @@
 -->
 <resources>
 
+    <string name="welcome_title">Benvenuto in Lifelog! </string>
+    <string name="welcome_msg">Quest’app ti permetterà di tenere un diario che catturerà le tue esperienze attraverso foto, video e altri contenuti multimediali. Condividi la tua esperienza con i tuoi amici Smart Campus.</string>
     <string name="tutorial_startup_msg">Benvenuto! Questo tutorial ti guiderà alla scoperta delle funzionalità di LifeLog.</string>
     <string name="tutorial_start_btn">Inizia tutorial</string>
-    
     <string name="t_title_grab">Cattura un\'esperienza</string>
     <string name="t_msg_grab">Immortala ci\ò che \è attorno a te con foto, video e molto altro</string>
-    
     <string name="t_title_search">Cerca</string>
     <string name="t_msg_search">Effettua ricerche nel tuo diario</string>
-    
     <string name="t_title_cat">Categorie</string>
     <string name="t_msg_cat">Gestisci le categorie in cui puoi organizzare le tue esperienze.</string>
-
     <string name="t_title_settings">Impostazioni</string>
     <string name="t_msg_settings">Configura il comportamento dell\'applicazione.</string>
-    
+
 </resources>

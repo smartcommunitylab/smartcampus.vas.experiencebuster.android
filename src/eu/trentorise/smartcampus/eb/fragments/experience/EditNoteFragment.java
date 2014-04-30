@@ -15,14 +15,11 @@
  ******************************************************************************/
 package eu.trentorise.smartcampus.eb.fragments.experience;
 
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnClickListener;
 import android.os.Bundle;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentTransaction;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.EditText;
@@ -30,7 +27,6 @@ import android.widget.EditText;
 import com.actionbarsherlock.app.SherlockDialogFragment;
 
 import eu.trentorise.smartcampus.eb.R;
-import eu.trentorise.smartcampus.eb.custom.data.EBHelper;
 
 public class EditNoteFragment extends SherlockDialogFragment {
 

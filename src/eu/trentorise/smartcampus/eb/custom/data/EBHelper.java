@@ -110,6 +110,8 @@ public class EBHelper {
 
 	private static AndroidFilestorage filestorage;
 
+	private static String FIRST_LAUNCH = "ebfirstlaunch";
+
 	public static void init(Context mContext) throws NameNotFoundException {
 		if (instance == null) {
 			instance = new EBHelper(mContext);
@@ -783,6 +785,17 @@ public class EBHelper {
 		DisplayMetrics metrics = resources.getDisplayMetrics();
 		float dp = px / (metrics.densityDpi / 160f);
 		return dp;
+	}
+
+	public static boolean isFirstLaunch(Context ctx) {
+		SharedPreferences sp = PreferenceManager
+				.getDefaultSharedPreferences(ctx);
+		return sp.getBoolean(FIRST_LAUNCH, true);
+	}
+
+	public static void disableFirstLaunch(Context ctx) {
+		PreferenceManager.getDefaultSharedPreferences(ctx).edit()
+				.putBoolean(FIRST_LAUNCH, false).commit();
 	}
 
 }

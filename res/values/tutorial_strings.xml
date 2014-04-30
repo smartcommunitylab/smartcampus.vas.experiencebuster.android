@@ -15,7 +15,10 @@
   limitations under the License.
 -->
 <resources>
-
+    
+    <string name="welcome_title">Welcome to LifeLog!</string>
+    <string name="welcome_msg">This app lets you keep a daily diary by capturing your experiences through photos, videos and other multimedia. Share your experiences with your Smart Campus friends.</string>
+    
     <string name="tutorial_startup_msg">Welcome! This tutorial will guide you through the functionalities of LifeLog.</string>
     <string name="tutorial_start_btn">Start tutorial</string>
     

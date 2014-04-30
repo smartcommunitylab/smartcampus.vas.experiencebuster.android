@@ -17,14 +17,13 @@ package eu.trentorise.smartcampus.eb;
 
 import java.util.List;
 
-import eu.trentorise.smartcampus.eb.model.ExpCollection;
-
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.TextView;
+import eu.trentorise.smartcampus.eb.model.ExpCollection;
 
 public class NavDrawerAdapter extends ArrayAdapter<ExpCollection> {
 

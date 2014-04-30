@@ -22,7 +22,6 @@ import android.view.ViewGroup;
 
 import com.actionbarsherlock.app.SherlockFragmentActivity;
 
-import eu.trentorise.smartcampus.eb.R;
 import eu.trentorise.smartcampus.eb.custom.capture.QRCodeReaderHelper;
 import eu.trentorise.smartcampus.eb.custom.capture.QRCodeResultHandler;
 

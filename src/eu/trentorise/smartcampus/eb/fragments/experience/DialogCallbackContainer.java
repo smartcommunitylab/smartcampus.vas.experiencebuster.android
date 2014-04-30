@@ -19,8 +19,8 @@ import eu.trentorise.smartcampus.android.common.tagging.TaggingDialog.OnTagsSele
 import eu.trentorise.smartcampus.eb.fragments.NewCollectionDialogFragment.CollectionSavedHandler;
 import eu.trentorise.smartcampus.eb.fragments.experience.AssignCollectionFragment.AssignCollectionsCallback;
 import eu.trentorise.smartcampus.eb.fragments.experience.DeleteExperienceFragment.RemoveCallback;
-import eu.trentorise.smartcampus.eb.fragments.experience.EditPositionFragment.PositionHandler;
 import eu.trentorise.smartcampus.eb.fragments.experience.EditNoteFragment.NoteHandler;
+import eu.trentorise.smartcampus.eb.fragments.experience.EditPositionFragment.PositionHandler;
 
 public interface DialogCallbackContainer {
 

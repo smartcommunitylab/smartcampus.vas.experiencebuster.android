@@ -19,18 +19,15 @@ import java.util.ArrayList;
 
 import android.app.Activity;
 import android.app.AlertDialog;
-import android.content.ActivityNotFoundException;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.Configuration;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.ActionBarDrawerToggle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.widget.DrawerLayout;
-import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
@@ -42,7 +39,6 @@ import android.widget.TextView;
 import com.actionbarsherlock.app.SherlockFragmentActivity;
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuItem;
-import com.github.espiandev.showcaseview.ListViewTutorialHelper;
 import com.github.espiandev.showcaseview.TutorialHelper;
 import com.github.espiandev.showcaseview.TutorialHelper.TutorialProvider;
 import com.github.espiandev.showcaseview.TutorialItem;
@@ -51,9 +47,6 @@ import eu.trentorise.smartcampus.ac.SCAccessProvider;
 import eu.trentorise.smartcampus.android.common.SCAsyncTask;
 import eu.trentorise.smartcampus.android.common.tagging.TaggingDialog.OnTagsSelectedListener;
 import eu.trentorise.smartcampus.eb.custom.AbstractAsyncTaskProcessor;
-import eu.trentorise.smartcampus.eb.custom.capture.ContentRenderer;
-import eu.trentorise.smartcampus.eb.custom.capture.GrabbedContent;
-import eu.trentorise.smartcampus.eb.custom.capture.content.VideoContent;
 import eu.trentorise.smartcampus.eb.custom.data.EBHelper;
 import eu.trentorise.smartcampus.eb.fragments.BackListener;
 import eu.trentorise.smartcampus.eb.fragments.ExperiencesListFragment;
@@ -96,7 +89,33 @@ public class HomeActivity extends SherlockFragmentActivity implements
 		try {
 			EBHelper.init(getApplicationContext());
 			if (!EBHelper.getAccessProvider().login(this, null)) {
-				initData();
+				if(EBHelper.isFirstLaunch(this)){
+					AlertDialog.Builder builder = new AlertDialog.Builder(this);
+					builder.setTitle(R.string.welcome_title)
+							.setMessage(R.string.welcome_msg)
+							.setOnCancelListener(
+									new DialogInterface.OnCancelListener() {
+
+										@Override
+										public void onCancel(DialogInterface arg0) {
+											initData();
+										}
+									})
+							.setPositiveButton(getString(R.string.ok),
+									new DialogInterface.OnClickListener() {
+
+										@Override
+										public void onClick(DialogInterface dialog,
+												int which) {
+											initData();
+										}
+									});
+					builder.create().show();
+					EBHelper.disableFirstLaunch(this);
+				}
+				else{
+					initData();
+				}
 			}
 		} catch (Exception e) {
 			EBHelper.endAppFailure(this, R.string.app_failure_setup);
@@ -104,8 +123,10 @@ public class HomeActivity extends SherlockFragmentActivity implements
 	}
 
 	private boolean initData() {
+
 		try {
-			// // check filestorage account
+
+			// check filestorage account
 			if (!EBHelper.ensureSyncConfig(this)) {
 				new SCAsyncTask<Void, Void, Void>(this,
 						new StartProcessor(this)).execute();
@@ -468,8 +489,9 @@ public class HomeActivity extends SherlockFragmentActivity implements
 				// In the navigation drawer there is
 				// some padding that influence the position
 				if (pos == 2) {
-//					tutorial[pos].position[0] -= EBHelper.convertPixelsToDp(20,
-//							HomeActivity.this);
+					// tutorial[pos].position[0] -=
+					// EBHelper.convertPixelsToDp(20,
+					// HomeActivity.this);
 					tutorial[pos].position[0] = 0;
 					tutorial[pos].position[1] -= EBHelper.convertPixelsToDp(20,
 							HomeActivity.this);
