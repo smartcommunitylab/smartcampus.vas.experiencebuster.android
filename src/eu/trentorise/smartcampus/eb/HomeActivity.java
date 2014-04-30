@@ -44,6 +44,7 @@ import com.github.espiandev.showcaseview.TutorialHelper.TutorialProvider;
 import com.github.espiandev.showcaseview.TutorialItem;
 
 import eu.trentorise.smartcampus.ac.SCAccessProvider;
+import eu.trentorise.smartcampus.android.common.LauncherHelper;
 import eu.trentorise.smartcampus.android.common.SCAsyncTask;
 import eu.trentorise.smartcampus.android.common.tagging.TaggingDialog.OnTagsSelectedListener;
 import eu.trentorise.smartcampus.eb.custom.AbstractAsyncTaskProcessor;
@@ -89,7 +90,7 @@ public class HomeActivity extends SherlockFragmentActivity implements
 		try {
 			EBHelper.init(getApplicationContext());
 			if (!EBHelper.getAccessProvider().login(this, null)) {
-				if(EBHelper.isFirstLaunch(this)){
+				if (EBHelper.isFirstLaunch(this)) {
 					AlertDialog.Builder builder = new AlertDialog.Builder(this);
 					builder.setTitle(R.string.welcome_title)
 							.setMessage(R.string.welcome_msg)
@@ -97,7 +98,8 @@ public class HomeActivity extends SherlockFragmentActivity implements
 									new DialogInterface.OnCancelListener() {
 
 										@Override
-										public void onCancel(DialogInterface arg0) {
+										public void onCancel(
+												DialogInterface arg0) {
 											initData();
 										}
 									})
@@ -105,15 +107,15 @@ public class HomeActivity extends SherlockFragmentActivity implements
 									new DialogInterface.OnClickListener() {
 
 										@Override
-										public void onClick(DialogInterface dialog,
+										public void onClick(
+												DialogInterface dialog,
 												int which) {
 											initData();
 										}
 									});
 					builder.create().show();
 					EBHelper.disableFirstLaunch(this);
-				}
-				else{
+				} else {
 					initData();
 				}
 			}
@@ -141,12 +143,14 @@ public class HomeActivity extends SherlockFragmentActivity implements
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		startService(new Intent(this, FileSyncService.class));
-		// supportInvalidateOptionsMenu();
-		setContentView(R.layout.base);
-		getSupportActionBar().setDisplayShowTitleEnabled(false);
-		initDataManagement(savedInstanceState);
-		mTutorialHelper = new TutorialHelper(this, mTutorialProvider);
+		if (LauncherHelper.isLauncherInstalled(this, true)) {
+			startService(new Intent(this, FileSyncService.class));
+			// supportInvalidateOptionsMenu();
+			setContentView(R.layout.base);
+			getSupportActionBar().setDisplayShowTitleEnabled(false);
+			mTutorialHelper = new TutorialHelper(this, mTutorialProvider);
+			initDataManagement(savedInstanceState);
+		}
 	}
 
 	@Override
