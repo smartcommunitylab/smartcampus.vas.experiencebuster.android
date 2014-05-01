@@ -16,8 +16,6 @@
 -->
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="it.smartcampuslab.eb"
-    android:sharedUserId="eu.trentorise.smartcampus.shared"
-    android:sharedUserLabel="@string/app_uid_label"
     android:versionCode="18"
     android:versionName="0.12.1" >
 
@@ -38,7 +36,9 @@
     <uses-permission android:name="android.permission.READ_SYNC_STATS" />
     <uses-permission android:name="android.permission.READ_SYNC_SETTINGS" />
     <uses-permission android:name="android.permission.WRITE_SYNC_SETTINGS" />
-
+    <uses-permission android:name="android.permission.AUTHENTICATE_ACCOUNTS" />
+    <uses-permission android:name="android.permission.GET_ACCOUNTS" />
+    
     <application
         android:allowBackup="false"
         android:icon="@drawable/ic_launcer"
@@ -69,6 +69,10 @@
             android:name="dropbox_api_secret"
             android:value="" />
 
+        <meta-data
+            android:name="SHARED_PACKAGE"
+            android:value="it.smartcampuslab.eb" />
+        
         <activity android:name="eu.trentorise.smartcampus.eb.SettingsActivity" />
         <activity
             android:name="eu.trentorise.smartcampus.eb.CatchActivity"
