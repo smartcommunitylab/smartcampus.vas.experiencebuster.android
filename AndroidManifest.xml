@@ -61,7 +61,6 @@
         <meta-data
             android:name="eu.trentorise.smartcampus.account.ACCOUNT_BASED_ACCESS"
             android:value="true" />
-
         <meta-data
             android:name="dropbox_api_key"
             android:value="" />
@@ -84,7 +83,6 @@
 
 <!--                 <category android:name="android.intent.category.LAUNCHER" /> -->
 <!--             </intent-filter> -->
-
             <intent-filter>
                 <action android:name="eu.trentorise.smartcampus.START" />
 
@@ -146,28 +144,14 @@
             android:configChanges="orientation|keyboard"
             android:label="@string/title_activity_file" >
         </activity>
+
+        <!-- Authentication storage activity -->
         <activity
             android:name="eu.trentorise.smartcampus.storage.AuthActivity"
             android:configChanges="orientation|keyboard" >
         </activity>
-        <activity
-            android:name="eu.trentorise.smartcampus.storage.dropbox.DropboxAuth"
-            android:configChanges="orientation|keyboard" >
-        </activity>
-        <activity
-            android:name="com.dropbox.client2.android.AuthActivity"
-            android:configChanges="orientation|keyboard|screenSize"
-            android:launchMode="singleTask"
-            android:screenOrientation="portrait" >
-            <intent-filter>
-                <data android:scheme="db-jxevbhte3wzuk1x" />
 
-                <action android:name="android.intent.action.VIEW" />
-
-                <category android:name="android.intent.category.BROWSABLE" />
-                <category android:name="android.intent.category.DEFAULT" />
-            </intent-filter>
-        </activity>
+        <!-- Tutorial activity -->
         <activity
             android:name="com.github.espiandev.showcaseview.TutorialActivity"
             android:configChanges="orientation|screenSize|keyboardHidden|keyboard"
