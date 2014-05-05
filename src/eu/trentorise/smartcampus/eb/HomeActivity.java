@@ -85,6 +85,7 @@ public class HomeActivity extends SherlockFragmentActivity implements
 
 	private TutorialHelper mTutorialHelper = null;
 
+
 	@Override
 	protected void onSaveInstanceState(Bundle outState) {
 		super.onSaveInstanceState(outState);
@@ -94,34 +95,7 @@ public class HomeActivity extends SherlockFragmentActivity implements
 		try {
 			EBHelper.init(getApplicationContext());
 			if (!EBHelper.getAccessProvider().login(this, null)) {
-				if (EBHelper.isFirstLaunch(this)) {
-					AlertDialog.Builder builder = new AlertDialog.Builder(this);
-					builder.setTitle(R.string.welcome_title)
-							.setMessage(R.string.welcome_msg)
-							.setOnCancelListener(
-									new DialogInterface.OnCancelListener() {
-
-										@Override
-										public void onCancel(DialogInterface arg0) {
-											arg0.dismiss();
-											initData();
-										}
-									})
-							.setPositiveButton(getString(R.string.ok),
-									new DialogInterface.OnClickListener() {
-
-										@Override
-										public void onClick(DialogInterface dialog,
-												int which) {
-											dialog.dismiss();
-											initData();
-										}
-									});
-					builder.create().show();
-					EBHelper.disableFirstLaunch(this);
-				} else {
-					initData();
-				}
+				initData();
 			}
 			
 		} catch (NameNotFoundException e) {
@@ -199,6 +173,31 @@ public class HomeActivity extends SherlockFragmentActivity implements
 				});
 
 		prepareButtons();
+		if (EBHelper.isFirstLaunch(this)) {
+			AlertDialog.Builder builder = new AlertDialog.Builder(this);
+			builder.setTitle(R.string.welcome_title)
+					.setMessage(R.string.welcome_msg)
+					.setPositiveButton(getString(R.string.begin_tut),
+							new DialogInterface.OnClickListener() {
+
+								@Override
+								public void onClick(DialogInterface dialog,
+										int which) {
+									dialog.dismiss();
+									showTutorial();
+								}
+							})
+					.setNeutralButton(getString(android.R.string.cancel),
+							new DialogInterface.OnClickListener() {
+
+								@Override
+								public void onClick(DialogInterface dialog, int which) {
+									dialog.dismiss();
+								}
+							});
+			builder.create().show();
+			EBHelper.disableFirstLaunch(this);
+		}	
 	}
 
 	private void prepareButtons() {
@@ -472,7 +471,7 @@ public class HomeActivity extends SherlockFragmentActivity implements
 
 		@Override
 		public void onTutorialCancelled() {
-			mDrawerLayout.closeDrawer(findViewById(R.id.drawer_wrapper));
+			onTutorialFinished();
 		}
 
 		@Override
