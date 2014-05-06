@@ -15,6 +15,8 @@
  ******************************************************************************/
 package eu.trentorise.smartcampus.eb.custom.data;
 
+import it.smartcampuslab.eb.R;
+
 import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -24,8 +26,10 @@ import java.util.List;
 
 import android.accounts.Account;
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.ContentResolver;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
@@ -36,12 +40,14 @@ import android.os.RemoteException;
 import android.preference.PreferenceManager;
 import android.util.DisplayMetrics;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.View;
 import android.view.animation.AccelerateInterpolator;
 import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
 import android.view.animation.ScaleAnimation;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.TextView;
 import android.widget.Toast;
 import eu.trentorise.smartcampus.ac.AACException;
 import eu.trentorise.smartcampus.ac.SCAccessProvider;
@@ -51,7 +57,6 @@ import eu.trentorise.smartcampus.android.common.LocationHelper;
 import eu.trentorise.smartcampus.android.common.tagging.SemanticSuggestion;
 import eu.trentorise.smartcampus.android.common.tagging.SuggestionHelper;
 import eu.trentorise.smartcampus.eb.HomeActivity;
-import it.smartcampuslab.eb.R;
 import eu.trentorise.smartcampus.eb.filestorage.FilestorageAccountActivity;
 import eu.trentorise.smartcampus.eb.model.Content;
 import eu.trentorise.smartcampus.eb.model.ExpCollection;
@@ -111,6 +116,8 @@ public class EBHelper {
 	private static AndroidFilestorage filestorage;
 
 	private static String FIRST_LAUNCH = "ebfirstlaunch";
+
+	private static String FIRST_SHARE= "eb_first_share";
 
 	public static void init(Context mContext) throws NameNotFoundException {
 		if (instance == null) {
@@ -683,7 +690,43 @@ public class EBHelper {
 		return null;
 	}
 
-	public static void share(Experience exp, Activity ctx) {
+	public static void share(final Experience exp,final Activity ctx) {
+		if(PreferenceManager.getDefaultSharedPreferences(ctx).getBoolean(FIRST_SHARE , true)){
+			showShareDisclaimer(exp, ctx);
+			PreferenceManager.getDefaultSharedPreferences(ctx).edit().putBoolean(FIRST_SHARE, false).commit();
+		}
+		else
+			callshare(exp, ctx);
+	}
+	
+	private static void showShareDisclaimer(final Experience exp,final Activity ctx){
+		TextView msg = new TextView(ctx);
+		msg.setText(R.string.disclaimer_share);
+		msg.setPadding(6, 6, 6, 6);
+		msg.setGravity(Gravity.CENTER);
+		msg.setTextSize(18);
+		AlertDialog.Builder builder = new AlertDialog.Builder(ctx);
+		builder.setTitle(android.R.string.dialog_alert_title)
+			   .setView(msg)
+			   .setOnCancelListener(new DialogInterface.OnCancelListener() {
+				
+				@Override
+				public void onCancel(DialogInterface dialog) {
+					callshare(exp, ctx);
+				}
+			   })
+			   .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
+					
+					@Override
+					public void onClick(DialogInterface dialog, int which) {
+						callshare(exp, ctx);
+					}
+			   });
+		builder.create().show();
+	}
+	
+
+	public static void callshare(Experience exp, Activity ctx) {
 		Entity obj = new Entity();
 		obj.setEntityId(exp.getEntityId());
 		obj.setTitle(exp.getTitle());

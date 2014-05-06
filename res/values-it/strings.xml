@@ -105,5 +105,7 @@
     <string name="grab_dialog_photo_audio">Registrazione audio</string>
     <string name="grab_dialog_qr_code">QR code</string>
     <string name="grab_dialog_near_me_now">Intorno a me</string>
+    
+    <string name="disclaimer_share">Gli elementi condivisi sono visibili all’interno dell’app MyPeople.\nFai attenzione quando condividi un elemento: ad esempio se fai spunta su “Pubblico”, l’elemento sarà disponibile a chiunque nella community Smart Campus.</string>
 
 </resources>

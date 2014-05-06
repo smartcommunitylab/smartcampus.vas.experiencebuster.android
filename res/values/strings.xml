@@ -95,7 +95,7 @@
     <string name="error_account">Error saving account information</string>
     <string name="error_value_negative">Value cannot be negative</string>
     <string name="error_value_nan">Value must be a number</string>
-    
+
     <!-- Grab dialog -->
     <string name="grab_dialog_photo">Photo</string>
     <string name="grab_dialog_video">Video</string>
@@ -105,5 +105,9 @@
     <string name="grab_dialog_photo_audio">Audio</string>
     <string name="grab_dialog_qr_code">QR code</string>
     <string name="grab_dialog_near_me_now">Near me now</string>
+    
+    <string name="disclaimer_share">Shared items are viewable within the MyPeople app.\nPlease use caution when sharing an item: for example, if you check “Public”, it will be available to everyone in the Smart Campus community.
+        
+    </string>
 
 </resources>
