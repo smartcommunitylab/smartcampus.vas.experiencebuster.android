@@ -108,4 +108,7 @@
     
     <string name="disclaimer_share">Gli elementi condivisi sono visibili all’interno dell’app MyPeople.\nFai attenzione quando condividi un elemento: ad esempio se fai spunta su “Pubblico”, l’elemento sarà disponibile a chiunque nella community Smart Campus.</string>
 
+    
+    <string name="no_conn_title">CONNESSIONE ASSENTE</string>
+    <string name="no_conn_msg">Non sei collegato a Internet. Verifica la tua connessione e riprova a sincronizzare i tuoi dati aprendo il menù in alto a destra e selezionando "Impostazioni".</string>
 </resources>

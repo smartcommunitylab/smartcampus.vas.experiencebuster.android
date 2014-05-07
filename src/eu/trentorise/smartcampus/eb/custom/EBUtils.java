@@ -17,6 +17,9 @@ package eu.trentorise.smartcampus.eb.custom;
 
 import java.util.Calendar;
 
+import android.content.Context;
+import android.net.ConnectivityManager;
+
 public class EBUtils {
 
 	public static Calendar millis2cal(long milliseconds, boolean clearTime) {
@@ -29,6 +32,11 @@ public class EBUtils {
 			cal.clear(Calendar.MILLISECOND);
 		}
 		return cal;
+	}
+	
+	public static boolean isConnected(Context ctx){
+		ConnectivityManager conMgr =  (ConnectivityManager)ctx.getSystemService(Context.CONNECTIVITY_SERVICE);
+		return (conMgr.getActiveNetworkInfo()!=null && conMgr.getActiveNetworkInfo().isConnectedOrConnecting());
 	}
 
 }

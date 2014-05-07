@@ -23,6 +23,7 @@ import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import eu.trentorise.smartcampus.android.common.GlobalConfig;
+import eu.trentorise.smartcampus.eb.custom.EBUtils;
 import eu.trentorise.smartcampus.eb.custom.data.Constants;
 import eu.trentorise.smartcampus.eb.custom.data.EBHelper;
 import eu.trentorise.smartcampus.filestorage.client.model.StorageType;
@@ -52,8 +53,31 @@ public class FilestorageAccountActivity extends Activity {
 							new DialogInterface.OnClickListener() {
 								public void onClick(DialogInterface dialog,
 										int which) {
-									new AccountTask().execute();
-									// createAccount();
+									
+									if(EBUtils.isConnected(FilestorageAccountActivity.this))
+										new AccountTask().execute();
+									else{
+										dialog.dismiss();
+										new AlertDialog.Builder(FilestorageAccountActivity.this)
+										.setTitle(R.string.no_conn_title)
+										.setMessage(
+												R.string.no_conn_msg)
+										.setPositiveButton(android.R.string.ok,
+												new DialogInterface.OnClickListener() {
+													public void onClick(DialogInterface dialog,
+															int which) {
+														dialog.dismiss();
+														FilestorageAccountActivity.this.finish();
+													}
+												})
+										.setOnCancelListener(new DialogInterface.OnCancelListener() {
+											
+											@Override
+											public void onCancel(DialogInterface dialog) {
+												FilestorageAccountActivity.this.finish();
+											}
+										}).create().show();
+									}
 								}
 							})
 					.setNegativeButton(
