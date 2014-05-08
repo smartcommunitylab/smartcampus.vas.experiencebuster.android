@@ -704,7 +704,7 @@ public class EBHelper {
 		WebView wv = new WebView(ctx);
 		wv.loadData(ctx.getString(R.string.disclaimer_share), "text/html; charset=UTF-8", "utf-8");
 		AlertDialog.Builder builder = new AlertDialog.Builder(ctx);
-		builder.setTitle("")
+		builder.setTitle(android.R.string.dialog_alert_title)
 			   .setView(wv)
 			   .setOnCancelListener(new DialogInterface.OnCancelListener() {
 				
