@@ -106,7 +106,7 @@
     <string name="grab_dialog_qr_code">QR code</string>
     <string name="grab_dialog_near_me_now">Intorno a me</string>
     
-    <string name="disclaimer_share">Gli elementi condivisi sono visibili all’interno dell’app MyPeople.\nFai attenzione quando condividi un elemento: ad esempio se fai spunta su “Pubblico”, l’elemento sarà disponibile a chiunque nella community Smart Campus.</string>
+    <string name="disclaimer_share"><![CDATA[<div style="text-align:justify;font-family:Arial;font-size:20px;padding:8px">Gli elementi condivisi sono visibili all’interno dell\'app MyPeople.<br>Fai attenzione quando condividi un elemento: ad esempio se fai spunta su "Pubblico", l\'elemento sarà disponibile a chiunque nella community Smart Campus.</div>]]></string>
 
     
     <string name="no_conn_title">CONNESSIONE ASSENTE</string>

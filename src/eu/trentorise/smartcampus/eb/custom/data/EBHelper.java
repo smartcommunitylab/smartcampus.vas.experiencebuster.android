@@ -47,6 +47,7 @@ import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
 import android.view.animation.ScaleAnimation;
 import android.view.inputmethod.InputMethodManager;
+import android.webkit.WebView;
 import android.widget.TextView;
 import android.widget.Toast;
 import eu.trentorise.smartcampus.ac.AACException;
@@ -700,13 +701,11 @@ public class EBHelper {
 	}
 	
 	private static void showShareDisclaimer(final Experience exp,final Activity ctx){
-		TextView msg = new TextView(ctx);
-		msg.setText(R.string.disclaimer_share);
-		msg.setPadding(16, 16, 16, 16);
-		msg.setTextSize(18);
+		WebView wv = new WebView(ctx);
+		wv.loadData(ctx.getString(R.string.disclaimer_share), "text/html", "utf-8");
 		AlertDialog.Builder builder = new AlertDialog.Builder(ctx);
 		builder.setTitle("")
-			   .setView(msg)
+			   .setView(wv)
 			   .setOnCancelListener(new DialogInterface.OnCancelListener() {
 				
 				@Override

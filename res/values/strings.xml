@@ -105,13 +105,8 @@
     <string name="grab_dialog_photo_audio">Audio</string>
     <string name="grab_dialog_qr_code">QR code</string>
     <string name="grab_dialog_near_me_now">Near me now</string>
-    
-    <string name="disclaimer_share">Shared items are viewable within the MyPeople app.\nPlease use caution when sharing an item: for example, if you check “Public”, it will be available to everyone in the Smart Campus community.
-        
-    </string>
-    
+    <string name="disclaimer_share"><![CDATA[<div style="text-align:justify;font-family:Arial;font-size:20px;padding:8px">Shared items are viewable within the MyPeople app.<br/>Please use caution when sharing an item: for example, if you check "Public", it will be available to everyone in the Smart Campus community.</div>]]></string>
     <string name="no_conn_title">NO CONNECTION</string>
     <string name="no_conn_msg">You are not connected to the Internet. Please check your connection and try to synchronize your data again by tapping on the top-right menu and then on Setting</string>
-        
 
 </resources>
