@@ -702,7 +702,7 @@ public class EBHelper {
 	
 	private static void showShareDisclaimer(final Experience exp,final Activity ctx){
 		WebView wv = new WebView(ctx);
-		wv.loadData(ctx.getString(R.string.disclaimer_share), "text/html", "utf-8");
+		wv.loadData(ctx.getString(R.string.disclaimer_share), "text/html; charset=UTF-8", "utf-8");
 		AlertDialog.Builder builder = new AlertDialog.Builder(ctx);
 		builder.setTitle("")
 			   .setView(wv)
