@@ -15,6 +15,8 @@
  ******************************************************************************/
 package eu.trentorise.smartcampus.eb.custom;
 
+import it.smartcampuslab.eb.R;
+
 import java.util.List;
 
 import android.app.Activity;
@@ -24,7 +26,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.TextView;
-import eu.trentorise.smartcampus.eb.R;
 import eu.trentorise.smartcampus.eb.model.Fake;
 
 public class FakeListAdapter extends ArrayAdapter<Fake> {
@@ -33,7 +34,8 @@ public class FakeListAdapter extends ArrayAdapter<Fake> {
 	private int layoutResourceId;
 	private List<Fake> contentsList;
 
-	public FakeListAdapter(Context context, int layoutResourceId, List<Fake> contentsList) {
+	public FakeListAdapter(Context context, int layoutResourceId,
+			List<Fake> contentsList) {
 		super(context, layoutResourceId, contentsList);
 		this.context = context;
 		this.layoutResourceId = layoutResourceId;
@@ -69,7 +71,6 @@ public class FakeListAdapter extends ArrayAdapter<Fake> {
 		} else {
 			holder.separator.setVisibility(View.GONE);
 		}
-
 
 		return row;
 	}

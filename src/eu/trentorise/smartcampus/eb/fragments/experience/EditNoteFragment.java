@@ -15,22 +15,17 @@
  ******************************************************************************/
 package eu.trentorise.smartcampus.eb.fragments.experience;
 
-import android.app.Activity;
+import it.smartcampuslab.eb.R;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnClickListener;
 import android.os.Bundle;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentTransaction;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.EditText;
 
 import com.actionbarsherlock.app.SherlockDialogFragment;
-
-import eu.trentorise.smartcampus.eb.R;
-import eu.trentorise.smartcampus.eb.custom.data.EBHelper;
 
 public class EditNoteFragment extends SherlockDialogFragment {
 
@@ -51,32 +46,39 @@ public class EditNoteFragment extends SherlockDialogFragment {
 		}
 		AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
 		builder.setTitle(R.string.exp_notes_title);
-		final View v = LayoutInflater.from(getActivity()).inflate(R.layout.edit_exp_note, null);
+		final View v = LayoutInflater.from(getActivity()).inflate(
+				R.layout.edit_exp_note, null);
 		builder.setView(v);
-		final EditText et = (EditText)v.findViewById(R.id.exp_note_dialog_note);
+		final EditText et = (EditText) v
+				.findViewById(R.id.exp_note_dialog_note);
 		if (text != null) {
 
 			et.setText(text);
 		}
-		
-		builder.setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
-			@Override
-			public void onClick(DialogInterface dialog, int which) {
-				dialog.dismiss();
-			}
-		});
-		
+
+		builder.setNegativeButton(android.R.string.cancel,
+				new DialogInterface.OnClickListener() {
+					@Override
+					public void onClick(DialogInterface dialog, int which) {
+						dialog.dismiss();
+					}
+				});
+
 		builder.setPositiveButton(android.R.string.ok, new OnClickListener() {
 			@Override
 			public void onClick(DialogInterface dialog, int which) {
-				NoteHandler c = ((DialogCallbackContainer)getActivity()).getNoteHandler();
-				c.onNote(et.getText() != null ? et.getText().toString() : null, getArguments().getInt(ARG_IDX));
-//
-//				((NoteHandler)getFragmentManager().findFragmentById(getArguments().getInt(ARG_CONTAINER_ID))).onNote(et.getText() != null ? et.getText().toString() : null, getArguments().getInt(ARG_IDX));
+				NoteHandler c = ((DialogCallbackContainer) getActivity())
+						.getNoteHandler();
+				c.onNote(et.getText() != null ? et.getText().toString() : null,
+						getArguments().getInt(ARG_IDX));
+				//
+				// ((NoteHandler)getFragmentManager().findFragmentById(getArguments().getInt(ARG_CONTAINER_ID))).onNote(et.getText()
+				// != null ? et.getText().toString() : null,
+				// getArguments().getInt(ARG_IDX));
 				dialog.dismiss();
 			}
 		});
-		return builder.create();	
+		return builder.create();
 	}
 
 	public static Bundle prepare(String note, int i) {

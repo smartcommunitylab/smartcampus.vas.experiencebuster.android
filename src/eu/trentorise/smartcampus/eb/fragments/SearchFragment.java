@@ -15,6 +15,7 @@
  ******************************************************************************/
 package eu.trentorise.smartcampus.eb.fragments;
 
+import it.smartcampuslab.eb.R;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -31,62 +32,74 @@ import android.widget.Toast;
 
 import com.actionbarsherlock.app.SherlockListFragment;
 
-import eu.trentorise.smartcampus.eb.R;
 import eu.trentorise.smartcampus.eb.custom.data.EBHelper;
 import eu.trentorise.smartcampus.eb.model.ExperienceFilter;
 
 public class SearchFragment extends SherlockListFragment {
 
 	@Override
-	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-		this.setListAdapter(new ArrayAdapter<String>(getSherlockActivity(),R.layout.search_row, getResources().getStringArray(R.array.searchArray)));
+	public View onCreateView(LayoutInflater inflater, ViewGroup container,
+			Bundle savedInstanceState) {
+		this.setListAdapter(new ArrayAdapter<String>(getSherlockActivity(),
+				R.layout.search_row, getResources().getStringArray(
+						R.array.searchArray)));
 		return inflater.inflate(R.layout.search, null);
 	}
 
 	@Override
 	public void onStart() {
 		super.onStart();
-		getView().findViewById(R.id.search_img).setOnClickListener(buttonClickListener);
+		getView().findViewById(R.id.search_img).setOnClickListener(
+				buttonClickListener);
 	}
-	
+
 	@Override
 	public void onResume() {
 		super.onResume();
 		// Showing/hiding back button
 		getSherlockActivity().getSupportActionBar().setHomeButtonEnabled(true);
-		getSherlockActivity().getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-		getSherlockActivity().getSupportActionBar().setDisplayShowTitleEnabled(true);
-		getSherlockActivity().getSupportActionBar().setTitle(R.string.title_search);
-		
+		getSherlockActivity().getSupportActionBar().setDisplayHomeAsUpEnabled(
+				true);
+		getSherlockActivity().getSupportActionBar().setDisplayShowTitleEnabled(
+				true);
+		getSherlockActivity().getSupportActionBar().setTitle(
+				R.string.title_search);
+
 		EBHelper.applyScaleAnimationOnView(getView().findViewById(R.id.search));
-		EBHelper.openKeyboard(getActivity(), getView().findViewById(R.id.search));
+		EBHelper.openKeyboard(getActivity(), getView()
+				.findViewById(R.id.search));
 	}
 
 	@Override
-	public void onListItemClick(ListView listView, View containerView, int position, long duration) {
-//		// TODO for other search types
-//		FragmentTransaction ft = getSherlockActivity().getSupportFragmentManager().beginTransaction();
-//		Fragment f = new ExperiencesListFragment();
-//		Bundle b = new Bundle();
-//		ExperienceFilter filter = new ExperienceFilter();
-//		b.putSerializable(ExperiencesListFragment.ARG_FILTER, filter);
-//		f.setArguments(b);
-//		ft.replace(android.R.id.content, f);
-//		ft.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE);
-//		ft.addToBackStack(null);
-//		ft.commit();
-		Toast.makeText(getSherlockActivity(), "Coming soon!", Toast.LENGTH_SHORT).show();
+	public void onListItemClick(ListView listView, View containerView,
+			int position, long duration) {
+		// // TODO for other search types
+		// FragmentTransaction ft =
+		// getSherlockActivity().getSupportFragmentManager().beginTransaction();
+		// Fragment f = new ExperiencesListFragment();
+		// Bundle b = new Bundle();
+		// ExperienceFilter filter = new ExperienceFilter();
+		// b.putSerializable(ExperiencesListFragment.ARG_FILTER, filter);
+		// f.setArguments(b);
+		// ft.replace(android.R.id.content, f);
+		// ft.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE);
+		// ft.addToBackStack(null);
+		// ft.commit();
+		Toast.makeText(getSherlockActivity(), "Coming soon!",
+				Toast.LENGTH_SHORT).show();
 	}
-	
+
 	OnClickListener buttonClickListener = new OnClickListener() {
-		
+
 		@Override
 		public void onClick(View v) {
-			EditText txt = (EditText)getView().findViewById(R.id.search);
-			InputMethodManager imm = (InputMethodManager) getSherlockActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
-		    imm.hideSoftInputFromWindow(txt.getWindowToken(), 0);
+			EditText txt = (EditText) getView().findViewById(R.id.search);
+			InputMethodManager imm = (InputMethodManager) getSherlockActivity()
+					.getSystemService(Context.INPUT_METHOD_SERVICE);
+			imm.hideSoftInputFromWindow(txt.getWindowToken(), 0);
 
-			FragmentTransaction ft = getSherlockActivity().getSupportFragmentManager().beginTransaction();
+			FragmentTransaction ft = getSherlockActivity()
+					.getSupportFragmentManager().beginTransaction();
 			Fragment f = new ExperiencesListFragment();
 			Bundle b = new Bundle();
 			ExperienceFilter filter = new ExperienceFilter();

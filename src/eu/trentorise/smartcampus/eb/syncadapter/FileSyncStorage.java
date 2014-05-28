@@ -15,6 +15,7 @@
  ******************************************************************************/
 package eu.trentorise.smartcampus.eb.syncadapter;
 
+import java.io.FileInputStream;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -33,6 +34,7 @@ import eu.trentorise.smartcampus.eb.model.Experience;
 import eu.trentorise.smartcampus.eb.model.Resource;
 import eu.trentorise.smartcampus.filestorage.client.FilestorageException;
 import eu.trentorise.smartcampus.filestorage.client.model.Metadata;
+import eu.trentorise.smartcampus.filestorage.client.model.StorageType;
 import eu.trentorise.smartcampus.protocolcarrier.exceptions.ConnectionException;
 import eu.trentorise.smartcampus.protocolcarrier.exceptions.ProtocolException;
 import eu.trentorise.smartcampus.protocolcarrier.exceptions.SecurityException;
@@ -169,6 +171,8 @@ public class FileSyncStorage extends SyncStorageWithPaging {
 						String userAccountId = EBHelper.getConfiguration(
 								EBHelper.CONF_USER_ACCOUNT, String.class);
 						if (userAccountId != null) {
+							eu.trentorise.smartcampus.filestorage.client.model.Account account = filestorage
+									.getAccountByUser(EBHelper.getAuthToken());
 							Experience exp = EBHelper
 									.findLocalExperienceById(syncFile
 											.getIdExp());
@@ -178,12 +182,25 @@ public class FileSyncStorage extends SyncStorageWithPaging {
 											&& c.getId().equals(
 													syncFile.getIdContent())) {
 										contentExist = true;
-										Metadata meta = filestorage
-												.storeOnDropbox(
-														res.getResourcefile(),
-														EBHelper.getAuthToken(),
-														userAccountId, false,
-														ctx);
+
+										Metadata meta = null;
+										if (account.getStorageType() == StorageType.DROPBOX) {
+											meta = filestorage.storeOnDropbox(
+													res.getResourcefile(),
+													EBHelper.getAuthToken(),
+													userAccountId, false, ctx);
+											Log.i(TAG, "Stored on dropbox");
+										} else {
+											meta = filestorage
+													.storeResourceByUser(
+															res.getResourcefile(),
+															new FileInputStream(
+																	res.getResourcefile()),
+															EBHelper.getAuthToken(),
+															userAccountId, true);
+											Log.i(TAG,
+													"Stored through fs service");
+										}
 										c.setValue(meta.getResourceId());
 										Log.i(TAG,
 												String.format(

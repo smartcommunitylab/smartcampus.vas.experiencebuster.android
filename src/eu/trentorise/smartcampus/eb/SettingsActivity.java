@@ -15,6 +15,7 @@
  ******************************************************************************/
 package eu.trentorise.smartcampus.eb;
 
+import it.smartcampuslab.eb.R;
 import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
 import android.app.Activity;
@@ -45,9 +46,10 @@ public class SettingsActivity extends SherlockPreferenceActivity {
 		if (Build.VERSION.SDK_INT < Build.VERSION_CODES.HONEYCOMB) {
 			addPreferencesFromResource(prefs);
 			sizeFilePref = findPreference(EBHelper.CONF_FILE_SIZE);
-			sizeFilePref.setOnPreferenceChangeListener(new PreferenceChecker(this));
+			sizeFilePref.setOnPreferenceChangeListener(new PreferenceChecker(
+					this));
 			getPreferenceManager().findPreference(EBHelper.CONF_SYNCHRO)
-			.setOnPreferenceChangeListener(new PreferenceChecker(this));
+					.setOnPreferenceChangeListener(new PreferenceChecker(this));
 		} else {
 		}
 		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
@@ -58,10 +60,10 @@ public class SettingsActivity extends SherlockPreferenceActivity {
 		super.onResume();
 		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
 			getFragmentManager().beginTransaction()
-			.replace(android.R.id.content, new PrefFragment()).commit();
+					.replace(android.R.id.content, new PrefFragment()).commit();
 		}
 	}
-	
+
 	@TargetApi(Build.VERSION_CODES.HONEYCOMB)
 	public static class PrefFragment extends PreferenceFragment {
 		@Override
@@ -72,22 +74,23 @@ public class SettingsActivity extends SherlockPreferenceActivity {
 					.setOnPreferenceChangeListener(
 							new PreferenceChecker(getActivity()));
 			getPreferenceManager().findPreference(EBHelper.CONF_SYNCHRO)
-			.setOnPreferenceChangeListener(
-					new PreferenceChecker(getActivity()));
+					.setOnPreferenceChangeListener(
+							new PreferenceChecker(getActivity()));
 		}
 	}
-	
+
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
-		if(item.getItemId()==android.R.id.home){
+		if (item.getItemId() == android.R.id.home) {
 			this.finish();
 		}
 		return super.onOptionsItemSelected(item);
 	}
-	
+
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-		EBHelper.handleAccountActivityResult(this, requestCode, resultCode, data);
+		EBHelper.handleAccountActivityResult(this, requestCode, resultCode,
+				data);
 		if (Build.VERSION.SDK_INT < Build.VERSION_CODES.HONEYCOMB) {
 			addPreferencesFromResource(prefs);
 		}
@@ -125,7 +128,8 @@ class PreferenceChecker implements OnPreferenceChangeListener {
 					EBHelper.ensureAccount(ctx);
 					return true;
 				} catch (DataException e) {
-					Toast.makeText(ctx, R.string.error_account, Toast.LENGTH_SHORT).show();
+					Toast.makeText(ctx, R.string.error_account,
+							Toast.LENGTH_SHORT).show();
 				}
 			} else {
 				return true;

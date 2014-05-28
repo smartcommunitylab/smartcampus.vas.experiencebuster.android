@@ -16,6 +16,7 @@
 
 package eu.trentorise.smartcampus.eb.syncadapter;
 
+import it.smartcampuslab.eb.R;
 import android.accounts.Account;
 import android.app.Notification;
 import android.app.NotificationManager;
@@ -49,7 +50,7 @@ public class EBSyncAdapter extends AbstractThreadedSyncAdapter {
 		mContext = context;
 		EBHelper.init(mContext);
 		ContentResolver.setSyncAutomatically(EBHelper.SCAccount,
-				"eu.trentorise.smartcampus.eb", true);
+				"it.smartcampuslab.eb", true);
 		// ContentResolver.addPeriodicSync(EBHelper.SCAccount,
 		// "eu.trentorise.smartcampus.eb", new Bundle(),
 		// Constants.SYNC_INTERVAL * 60);
@@ -91,12 +92,10 @@ public class EBSyncAdapter extends AbstractThreadedSyncAdapter {
 		NotificationManager mNotificationManager = (NotificationManager) mContext
 				.getSystemService(Context.NOTIFICATION_SERVICE);
 
-		int icon = eu.trentorise.smartcampus.eb.R.drawable.stat_notify_error;
-		CharSequence tickerText = mContext
-				.getString(eu.trentorise.smartcampus.eb.R.string.token_expired);
+		int icon = R.drawable.stat_notify_error;
+		CharSequence tickerText = mContext.getString(R.string.token_expired);
 		long when = System.currentTimeMillis();
-		CharSequence contentText = mContext
-				.getString(eu.trentorise.smartcampus.eb.R.string.token_required);
+		CharSequence contentText = mContext.getString(R.string.token_required);
 		PendingIntent contentIntent = PendingIntent.getActivity(mContext, 0, i,
 				0);
 
