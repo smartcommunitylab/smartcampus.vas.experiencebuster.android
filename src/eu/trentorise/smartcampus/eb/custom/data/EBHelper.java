@@ -71,7 +71,7 @@ import eu.trentorise.smartcampus.profileservice.model.BasicProfile;
 import eu.trentorise.smartcampus.protocolcarrier.exceptions.ConnectionException;
 import eu.trentorise.smartcampus.protocolcarrier.exceptions.ProtocolException;
 import eu.trentorise.smartcampus.protocolcarrier.exceptions.SecurityException;
-import eu.trentorise.smartcampus.social.model.Entity;
+import eu.trentorise.smartcampus.socialservice.beans.Entity;
 import eu.trentorise.smartcampus.storage.AndroidFilestorage;
 import eu.trentorise.smartcampus.storage.DataException;
 import eu.trentorise.smartcampus.storage.StorageConfigurationException;
@@ -684,9 +684,12 @@ public class EBHelper {
 
 	public static void share(Experience exp, Activity ctx) {
 		Entity obj = new Entity();
-		obj.setEntityId(exp.getEntityId());
-		obj.setTitle(exp.getTitle());
-		obj.setEntityType(eu.trentorise.smartcampus.eb.Constants.ENTITY_TYPE_EXPERIENCE);
+		obj.setUri(exp.getEntityId());
+		obj.setName(exp.getTitle());
+		obj.setType(eu.trentorise.smartcampus.eb.Constants.ENTITY_TYPE_EXPERIENCE);
+		// obj.setEntityId(exp.getEntityId());
+		// obj.setTitle(exp.getTitle());
+		// obj.setEntityType(eu.trentorise.smartcampus.eb.Constants.ENTITY_TYPE_EXPERIENCE);
 		Intent intent = new Intent();
 		intent.setAction(ctx
 				.getString(eu.trentorise.smartcampus.android.common.R.string.share_intent_action));
