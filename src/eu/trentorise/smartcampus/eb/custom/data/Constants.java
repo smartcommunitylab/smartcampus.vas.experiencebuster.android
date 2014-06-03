@@ -18,7 +18,7 @@ package eu.trentorise.smartcampus.eb.custom.data;
 public class Constants {
 
 	public static final String APP_TOKEN = "experiencebuster";
-	public static final String APP_NAME = "expbuster-dev";
+	public static final String APP_NAME = "social";
 	public static final String SERVICE = "/smartcampus.vas.experiencebuster.web-dev";
 	public static final String SYNC_SERVICE = "/smartcampus.vas.experiencebuster.web-dev/sync";
 	public static final String OBJECT_SERVICE = "/smartcampus.vas.discovertrento.web/objects/simple";
