@@ -687,15 +687,24 @@ public class EBHelper {
 		obj.setUri(exp.getEntityId());
 		obj.setName(exp.getTitle());
 		obj.setType(eu.trentorise.smartcampus.eb.Constants.ENTITY_TYPE_EXPERIENCE);
-		// obj.setEntityId(exp.getEntityId());
-		// obj.setTitle(exp.getTitle());
-		// obj.setEntityType(eu.trentorise.smartcampus.eb.Constants.ENTITY_TYPE_EXPERIENCE);
 		Intent intent = new Intent();
 		intent.setAction(ctx
 				.getString(eu.trentorise.smartcampus.android.common.R.string.share_intent_action));
 		intent.putExtra(
 				ctx.getString(eu.trentorise.smartcampus.android.common.R.string.share_entity_arg_entity),
 				obj);
+
+		intent.putExtra(
+				ctx.getString(eu.trentorise.smartcampus.android.common.R.string.share_entity_arg_appid),
+				Constants.APP_NAME);
+
+		try {
+			intent.putExtra(
+					ctx.getString(eu.trentorise.smartcampus.android.common.R.string.share_entity_arg_token),
+					getAuthToken());
+		} catch (AACException e) {
+			Log.e(TAG, "Exception getting token doing share operation");
+		}
 		AppHelper.startActivityForApp(intent, ctx);
 	}
 
