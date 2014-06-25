@@ -15,6 +15,8 @@
  ******************************************************************************/
 package eu.trentorise.smartcampus.eb.custom;
 
+import it.smartcampuslab.eb.R;
+
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -27,7 +29,6 @@ import android.widget.ArrayAdapter;
 import android.widget.FrameLayout;
 import android.widget.TextView;
 import eu.trentorise.smartcampus.eb.Constants;
-import eu.trentorise.smartcampus.eb.R;
 import eu.trentorise.smartcampus.eb.custom.capture.ContentRenderer;
 import eu.trentorise.smartcampus.eb.custom.capture.ResourceHandler;
 import eu.trentorise.smartcampus.eb.model.Content;
@@ -60,9 +61,9 @@ public class ExpContentAdapter extends ArrayAdapter<Content> {
 		Content content = getItem(position);
 
 		// change localValue if content is shared
-//		if (shared && content.isStorable()) {
-//			new ResourceURLTask(content).execute();
-//		}
+		// if (shared && content.isStorable()) {
+		// new ResourceURLTask(content).execute();
+		// }
 		ContentPlaceholder tag = null;
 
 		if (row == null) {
@@ -121,31 +122,31 @@ public class ExpContentAdapter extends ArrayAdapter<Content> {
 		TextView content_note_tv;
 	}
 
-//	class ResourceURLTask extends AsyncTask<Void, Void, Void> {
-//
-//		private Content content;
-//
-//		public ResourceURLTask(Content content) {
-//			this.content = content;
-//		}
-//
-//		@Override
-//		protected Void doInBackground(Void... params) {
-//			if (content.getValue() != null) {
-//				Token resourceToken = EBHelper.getSharedResourceURL(content
-//						.getValue());
-//				if (resourceToken != null) {
-//					content.setLocalValue(resourceToken.getUrl());
-//				} else {
-//					Log.w(TAG, String.format("Token for resource %s is null",
-//							content.getValue()));
-//				}
-//			} else {
-//				Log.w(TAG, String.format("Shared content %s has value null",
-//						content.getValue()));
-//			}
-//
-//			return null;
-//		}
-//	}
+	// class ResourceURLTask extends AsyncTask<Void, Void, Void> {
+	//
+	// private Content content;
+	//
+	// public ResourceURLTask(Content content) {
+	// this.content = content;
+	// }
+	//
+	// @Override
+	// protected Void doInBackground(Void... params) {
+	// if (content.getValue() != null) {
+	// Token resourceToken = EBHelper.getSharedResourceURL(content
+	// .getValue());
+	// if (resourceToken != null) {
+	// content.setLocalValue(resourceToken.getUrl());
+	// } else {
+	// Log.w(TAG, String.format("Token for resource %s is null",
+	// content.getValue()));
+	// }
+	// } else {
+	// Log.w(TAG, String.format("Shared content %s has value null",
+	// content.getValue()));
+	// }
+	//
+	// return null;
+	// }
+	// }
 }

@@ -15,6 +15,7 @@
  ******************************************************************************/
 package eu.trentorise.smartcampus.eb.fragments;
 
+import it.smartcampuslab.eb.R;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Context;
@@ -33,7 +34,6 @@ import com.actionbarsherlock.app.SherlockDialogFragment;
 
 import eu.trentorise.smartcampus.eb.CatchActivity;
 import eu.trentorise.smartcampus.eb.Constants.CATCH_TYPES;
-import eu.trentorise.smartcampus.eb.R;
 
 public class GrabDialogFragment extends SherlockDialogFragment {
 
@@ -49,34 +49,41 @@ public class GrabDialogFragment extends SherlockDialogFragment {
 	public Dialog onCreateDialog(Bundle savedInstanceState) {
 		AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
 		builder.setTitle(R.string.dialog_grab);
-		builder.setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
-			@Override
-			public void onClick(DialogInterface dialog, int which) {
-				dialog.dismiss();
-			}
-		});
-		
-		LayoutInflater inflater = (LayoutInflater) getActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+		builder.setNegativeButton(android.R.string.cancel,
+				new DialogInterface.OnClickListener() {
+					@Override
+					public void onClick(DialogInterface dialog, int which) {
+						dialog.dismiss();
+					}
+				});
+
+		LayoutInflater inflater = (LayoutInflater) getActivity()
+				.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 		View v = inflater.inflate(R.layout.grabdialog, null);
 		ListView list = (ListView) v.findViewById(R.id.grabList);
-		final String[] items = getResources().getStringArray(R.array.grabDialogArray);
-		final String[] types = getResources().getStringArray(R.array.grabDialogTypesArray);
-		final String[] labels = getResources().getStringArray(R.array.grabDialogLabelsArray);
-		
-		ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(this.getActivity(),
-				android.R.layout.simple_list_item_1, items);
+		final String[] items = getResources().getStringArray(
+				R.array.grabDialogArray);
+		final String[] types = getResources().getStringArray(
+				R.array.grabDialogTypesArray);
+		final String[] labels = getResources().getStringArray(
+				R.array.grabDialogLabelsArray);
+
+		ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(
+				this.getActivity(), android.R.layout.simple_list_item_1, items);
 		list.setAdapter(arrayAdapter);
 		list.setOnItemClickListener(new OnItemClickListener() {
 			@Override
-			public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+			public void onItemClick(AdapterView<?> parent, View view,
+					int position, long id) {
 				String typeString = types[position];
 				final String[] elems = typeString.split("\\|");
 				final String[] labelElems = labels[position].split("\\|");
 				assert labelElems.length == elems.length;
-				final Intent i = new Intent(getActivity(),CatchActivity.class);
+				final Intent i = new Intent(getActivity(), CatchActivity.class);
 				if (elems.length > 1) {
 					getDialog().hide();
-					AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+					AlertDialog.Builder builder = new AlertDialog.Builder(
+							getActivity());
 					builder.setItems(labelElems, new OnClickListener() {
 						@Override
 						public void onClick(DialogInterface dialog, int which) {

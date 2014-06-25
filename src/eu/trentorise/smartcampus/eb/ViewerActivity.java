@@ -31,6 +31,7 @@ import eu.trentorise.smartcampus.filestorage.client.model.Token;
 import eu.trentorise.smartcampus.protocolcarrier.exceptions.ConnectionException;
 import eu.trentorise.smartcampus.protocolcarrier.exceptions.SecurityException;
 
+import it.smartcampuslab.eb.R;
 public class ViewerActivity extends Activity {
 
 	private static final String TAG = "Viewer";

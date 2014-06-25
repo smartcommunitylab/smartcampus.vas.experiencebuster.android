@@ -20,20 +20,11 @@ import java.io.Serializable;
 public class ExperienceFilter implements Serializable {
 	private static final long serialVersionUID = -1960068211542404044L;
 
-	private Concept[] concepts;
 	private String[] collectionIds;
 	private String place;
 	private String text;
 
 	private String[] entityIds;
-	
-	public Concept[] getConcepts() {
-		return concepts;
-	}
-
-	public void setConcepts(Concept[] concepts) {
-		this.concepts = concepts;
-	}
 
 	public String[] getCollectionIds() {
 		return collectionIds;
@@ -66,8 +57,9 @@ public class ExperienceFilter implements Serializable {
 	public void setEntityIds(String[] entityIds) {
 		this.entityIds = entityIds;
 	}
-	
-	public boolean isEmpty(){
-		return collectionIds==null||entityIds==null||place==null||text==null;
+
+	public boolean isEmpty() {
+		return collectionIds == null || entityIds == null || place == null
+				|| text == null;
 	}
 }

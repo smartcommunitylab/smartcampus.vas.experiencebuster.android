@@ -15,6 +15,8 @@
  ******************************************************************************/
 package eu.trentorise.smartcampus.eb.fragments;
 
+import it.smartcampuslab.eb.R;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -33,7 +35,6 @@ import com.actionbarsherlock.view.MenuItem;
 import com.google.android.maps.GeoPoint;
 
 import eu.trentorise.smartcampus.android.common.SCAsyncTask;
-import eu.trentorise.smartcampus.eb.R;
 import eu.trentorise.smartcampus.eb.custom.AbstractAsyncTaskProcessor;
 import eu.trentorise.smartcampus.eb.custom.NearMeAdapter;
 import eu.trentorise.smartcampus.eb.custom.Utils;
@@ -49,14 +50,15 @@ public class NearMeNowFragment extends SherlockListFragment {
 	private static final String P_FILTER_EVENTS = "filterEvents";
 	private static final String P_FILTER_LOCATIONS = "filterLocations";
 	private static final String P_LIST = "list";
-	
+
 	private NearMeAdapter mAdapter = null;
 	private List<NearMeObject> list = null;
-	
+
 	boolean filterEvents = true;
 	boolean filterLocations = true;
-	
-	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+
+	public View onCreateView(LayoutInflater inflater, ViewGroup container,
+			Bundle savedInstanceState) {
 		return inflater.inflate(R.layout.nearme, container, false);
 	}
 
@@ -79,7 +81,8 @@ public class NearMeNowFragment extends SherlockListFragment {
 	@Override
 	public void onSaveInstanceState(Bundle arg0) {
 		super.onSaveInstanceState(arg0);
-		if (list != null) arg0.putSerializable(P_LIST, new ArrayList<NearMeObject>(list));
+		if (list != null)
+			arg0.putSerializable(P_LIST, new ArrayList<NearMeObject>(list));
 		arg0.putBoolean(P_FILTER_EVENTS, filterEvents);
 		arg0.putBoolean(P_FILTER_LOCATIONS, filterLocations);
 	}
@@ -92,7 +95,7 @@ public class NearMeNowFragment extends SherlockListFragment {
 			break;
 		default:
 			break;
-		}	
+		}
 		return super.onOptionsItemSelected(item);
 	}
 
@@ -101,8 +104,10 @@ public class NearMeNowFragment extends SherlockListFragment {
 		super.onResume();
 		// Showing/hiding back button
 		getSherlockActivity().getSupportActionBar().setHomeButtonEnabled(false);
-		getSherlockActivity().getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-		getSherlockActivity().getSupportActionBar().setDisplayShowTitleEnabled(true);
+		getSherlockActivity().getSupportActionBar().setDisplayHomeAsUpEnabled(
+				true);
+		getSherlockActivity().getSupportActionBar().setDisplayShowTitleEnabled(
+				true);
 		getSherlockActivity().setTitle(R.string.title_nearme);
 	}
 
@@ -110,7 +115,8 @@ public class NearMeNowFragment extends SherlockListFragment {
 	public void onStart() {
 		super.onStart();
 		if (list != null) {
-			mAdapter = new NearMeAdapter(getActivity(), R.layout.nearme_row, list);
+			mAdapter = new NearMeAdapter(getActivity(), R.layout.nearme_row,
+					list);
 			setListAdapter(mAdapter);
 			checkListEmpty(list);
 		} else {
@@ -118,30 +124,41 @@ public class NearMeNowFragment extends SherlockListFragment {
 			setListAdapter(mAdapter);
 			new LoadSuggestionsTask().execute();
 		}
-		
-		getListView().setOnItemClickListener(new AdapterView.OnItemClickListener() {
 
-			@Override
-			public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-				assert getActivity() instanceof ResultHandler;
-				NearMeObject o = list.get(position);
-				((ResultHandler)getActivity()).onResult(new ObjectContent(o));
-			}
-		});
-		
-		final ImageButton loc = (ImageButton)getView().findViewById(R.id.filters_near);
-		if (filterLocations) loc.setImageResource(R.drawable.ic_position_s);
-		else loc.setImageResource(R.drawable.ic_position);
-		final ImageButton evt = (ImageButton)getView().findViewById(R.id.filters_now);
-		if (filterEvents) evt.setImageResource(R.drawable.ic_date_s);
-		else evt.setImageResource(R.drawable.ic_date);
+		getListView().setOnItemClickListener(
+				new AdapterView.OnItemClickListener() {
+
+					@Override
+					public void onItemClick(AdapterView<?> parent, View view,
+							int position, long id) {
+						assert getActivity() instanceof ResultHandler;
+						NearMeObject o = list.get(position);
+						((ResultHandler) getActivity())
+								.onResult(new ObjectContent(o));
+					}
+				});
+
+		final ImageButton loc = (ImageButton) getView().findViewById(
+				R.id.filters_near);
+		if (filterLocations)
+			loc.setImageResource(R.drawable.ic_position_s);
+		else
+			loc.setImageResource(R.drawable.ic_position);
+		final ImageButton evt = (ImageButton) getView().findViewById(
+				R.id.filters_now);
+		if (filterEvents)
+			evt.setImageResource(R.drawable.ic_date_s);
+		else
+			evt.setImageResource(R.drawable.ic_date);
 
 		loc.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
 				filterLocations = !filterLocations;
-				if (filterLocations) loc.setImageResource(R.drawable.ic_position_s);
-				else loc.setImageResource(R.drawable.ic_position);
+				if (filterLocations)
+					loc.setImageResource(R.drawable.ic_position_s);
+				else
+					loc.setImageResource(R.drawable.ic_position);
 				new LoadSuggestionsTask().execute();
 			}
 		});
@@ -149,44 +166,56 @@ public class NearMeNowFragment extends SherlockListFragment {
 			@Override
 			public void onClick(View v) {
 				filterEvents = !filterEvents;
-				if (filterEvents) evt.setImageResource(R.drawable.ic_date_s);
-				else evt.setImageResource(R.drawable.ic_date);
+				if (filterEvents)
+					evt.setImageResource(R.drawable.ic_date_s);
+				else
+					evt.setImageResource(R.drawable.ic_date);
 				new LoadSuggestionsTask().execute();
 			}
 		});
-		
+
 	}
 
-
 	private void checkListEmpty(List<NearMeObject> result) {
-		((ViewGroup)getListView().getParent()).removeView(getView().findViewById(R.id.content_empty));
+		((ViewGroup) getListView().getParent()).removeView(getView()
+				.findViewById(R.id.content_empty));
 		if (result == null || result.isEmpty()) {
 			TextView view = new TextView(getActivity());
 			view.setId(R.id.content_empty);
 			view.setText(R.string.content_empty);
 			view.setPadding(5, 5, 5, 5);
-			((ViewGroup)getListView().getParent()).addView(view);
+			((ViewGroup) getListView().getParent()).addView(view);
 		}
 	}
 
-
-	private class LoadSuggestionsTask extends SCAsyncTask<Void, Void, List<NearMeObject>> {
+	private class LoadSuggestionsTask extends
+			SCAsyncTask<Void, Void, List<NearMeObject>> {
 
 		public LoadSuggestionsTask() {
-			super(getSherlockActivity(), 
-					new AbstractAsyncTaskProcessor<Void, List<NearMeObject>>(getSherlockActivity()) {
+			super(getSherlockActivity(),
+					new AbstractAsyncTaskProcessor<Void, List<NearMeObject>>(
+							getSherlockActivity()) {
 
 						@Override
-						public List<NearMeObject> performAction(Void... params) throws SecurityException, ConnectionException, Exception {
-							GeoPoint location = Utils.requestMyLocation(getActivity());
-							if (location == null) return Collections.emptyList();
-							
-							return EBHelper.getNearMeNowSuggestions(new double[]{location.getLatitudeE6() / 1E6, location.getLongitudeE6() / 1E6}, filterEvents, filterLocations);
+						public List<NearMeObject> performAction(Void... params)
+								throws SecurityException, ConnectionException,
+								Exception {
+							GeoPoint location = Utils
+									.requestMyLocation(getActivity());
+							if (location == null)
+								return Collections.emptyList();
+
+							return EBHelper.getNearMeNowSuggestions(
+									new double[] {
+											location.getLatitudeE6() / 1E6,
+											location.getLongitudeE6() / 1E6 },
+									filterEvents, filterLocations);
 						}
 
 						@Override
 						public void handleResult(List<NearMeObject> result) {
-							list = result == null ? new ArrayList<NearMeObject>() : result;
+							list = result == null ? new ArrayList<NearMeObject>()
+									: result;
 							mAdapter.clear();
 							for (NearMeObject nmo : result) {
 								mAdapter.add(nmo);
@@ -195,10 +224,10 @@ public class NearMeNowFragment extends SherlockListFragment {
 							checkListEmpty(result);
 
 						}
-				
-			});
+
+					});
 		}
-		
+
 	}
-	
+
 }

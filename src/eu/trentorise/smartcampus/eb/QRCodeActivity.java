@@ -15,6 +15,7 @@
  ******************************************************************************/
 package eu.trentorise.smartcampus.eb;
 
+import it.smartcampuslab.eb.R;
 import net.sourceforge.zbar.SymbolSet;
 import android.content.Intent;
 import android.os.Bundle;
@@ -22,7 +23,6 @@ import android.view.ViewGroup;
 
 import com.actionbarsherlock.app.SherlockFragmentActivity;
 
-import eu.trentorise.smartcampus.eb.R;
 import eu.trentorise.smartcampus.eb.custom.capture.QRCodeReaderHelper;
 import eu.trentorise.smartcampus.eb.custom.capture.QRCodeResultHandler;
 
@@ -39,21 +39,23 @@ public class QRCodeActivity extends SherlockFragmentActivity {
 
 	private void startCapture() {
 		setTitle(R.string.title_grab_qrcode);
-        setContentView(R.layout.catch_qrcode);
-        ViewGroup parent = (ViewGroup)findViewById(R.id.cameraPreview);
+		setContentView(R.layout.catch_qrcode);
+		ViewGroup parent = (ViewGroup) findViewById(R.id.cameraPreview);
 		mHelper = new QRCodeReaderHelper(this, parent, handler);
 	}
 
-    public void onPause() {
-        super.onPause();
-		if (mHelper != null) mHelper.release();
-    }
+	public void onPause() {
+		super.onPause();
+		if (mHelper != null)
+			mHelper.release();
+	}
 
 	private QRCodeResultHandler handler = new QRCodeResultHandler() {
 		@Override
 		public void onQRCodeResults(SymbolSet result) {
 			Intent data = new Intent();
-			if (!result.isEmpty()) data.putExtra(QR_DATA, result.iterator().next().getData());
+			if (!result.isEmpty())
+				data.putExtra(QR_DATA, result.iterator().next().getData());
 			setResult(RESULT_OK, data);
 			finish();
 		}

@@ -15,6 +15,7 @@
  ******************************************************************************/
 package eu.trentorise.smartcampus.eb.fragments.experience;
 
+import it.smartcampuslab.eb.R;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.DialogInterface;
@@ -25,8 +26,6 @@ import android.view.View;
 import android.widget.EditText;
 
 import com.actionbarsherlock.app.SherlockDialogFragment;
-
-import eu.trentorise.smartcampus.eb.R;
 
 public class EditPositionFragment extends SherlockDialogFragment {
 
@@ -46,33 +45,38 @@ public class EditPositionFragment extends SherlockDialogFragment {
 		}
 		AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
 		builder.setTitle(R.string.exp_position_title);
-		final View v = LayoutInflater.from(getActivity()).inflate(R.layout.edit_exp_position, null);
+		final View v = LayoutInflater.from(getActivity()).inflate(
+				R.layout.edit_exp_position, null);
 		builder.setView(v);
 
 		if (text != null) {
-			EditText et = (EditText)v.findViewById(R.id.exp_position_dialog_position);
+			EditText et = (EditText) v
+					.findViewById(R.id.exp_position_dialog_position);
 			et.setText(text);
 		}
-		
 
-		builder.setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
-			@Override
-			public void onClick(DialogInterface dialog, int which) {
-				dialog.dismiss();
-			}
-		});
-		
+		builder.setNegativeButton(android.R.string.cancel,
+				new DialogInterface.OnClickListener() {
+					@Override
+					public void onClick(DialogInterface dialog, int which) {
+						dialog.dismiss();
+					}
+				});
+
 		builder.setPositiveButton(android.R.string.ok, new OnClickListener() {
 			@Override
 			public void onClick(DialogInterface dialog, int which) {
-				EditText et = (EditText)v.findViewById(R.id.exp_position_dialog_position);
-				PositionHandler ph = ((DialogCallbackContainer)getActivity()).getPositionHandler();
-				ph.onPosition(et.getText() != null ? et.getText().toString() : null);
+				EditText et = (EditText) v
+						.findViewById(R.id.exp_position_dialog_position);
+				PositionHandler ph = ((DialogCallbackContainer) getActivity())
+						.getPositionHandler();
+				ph.onPosition(et.getText() != null ? et.getText().toString()
+						: null);
 				dialog.dismiss();
 			}
 		});
 
-		return builder.create();	
+		return builder.create();
 	}
 
 	public static Bundle prepare(String text) {

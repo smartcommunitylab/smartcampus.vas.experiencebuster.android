@@ -15,6 +15,8 @@
  ******************************************************************************/
 package eu.trentorise.smartcampus.eb.custom.data;
 
+import it.smartcampuslab.eb.R;
+
 import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -51,7 +53,6 @@ import eu.trentorise.smartcampus.android.common.LocationHelper;
 import eu.trentorise.smartcampus.android.common.tagging.SemanticSuggestion;
 import eu.trentorise.smartcampus.android.common.tagging.SuggestionHelper;
 import eu.trentorise.smartcampus.eb.HomeActivity;
-import eu.trentorise.smartcampus.eb.R;
 import eu.trentorise.smartcampus.eb.filestorage.FilestorageAccountActivity;
 import eu.trentorise.smartcampus.eb.model.Content;
 import eu.trentorise.smartcampus.eb.model.ExpCollection;
@@ -161,8 +162,8 @@ public class EBHelper {
 		if (isSynchronizationActive()) {
 			Bundle bundle = new Bundle();
 			bundle.putBoolean("synchroFile", synchronizeFile);
-			ContentResolver.requestSync(SCAccount,
-					"eu.trentorise.smartcampus.eb", bundle);
+			ContentResolver.requestSync(SCAccount, "it.smartcampuslab.eb",
+					bundle);
 		}
 	}
 
@@ -692,6 +693,18 @@ public class EBHelper {
 		intent.putExtra(
 				ctx.getString(eu.trentorise.smartcampus.android.common.R.string.share_entity_arg_entity),
 				obj);
+
+		intent.putExtra(
+				ctx.getString(eu.trentorise.smartcampus.android.common.R.string.share_entity_arg_appid),
+				Constants.APP_NAME);
+
+		try {
+			intent.putExtra(
+					ctx.getString(eu.trentorise.smartcampus.android.common.R.string.share_entity_arg_token),
+					getAuthToken());
+		} catch (AACException e) {
+			Log.e(TAG, "Exception getting token doing share operation");
+		}
 		AppHelper.startActivityForApp(intent, ctx);
 	}
 

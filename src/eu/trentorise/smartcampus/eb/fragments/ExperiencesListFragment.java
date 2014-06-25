@@ -15,6 +15,8 @@
  ******************************************************************************/
 package eu.trentorise.smartcampus.eb.fragments;
 
+import it.smartcampuslab.eb.R;
+
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -46,7 +48,6 @@ import com.actionbarsherlock.view.MenuItem;
 
 import eu.trentorise.smartcampus.eb.HomeActivity;
 import eu.trentorise.smartcampus.eb.HomeActivity.RefreshCallback;
-import eu.trentorise.smartcampus.eb.R;
 import eu.trentorise.smartcampus.eb.SettingsActivity;
 import eu.trentorise.smartcampus.eb.custom.ExperiencesListAdapter;
 import eu.trentorise.smartcampus.eb.custom.data.EBHelper;
@@ -65,8 +66,6 @@ public class ExperiencesListFragment extends SherlockListFragment
 		RemoveCallback,
 		eu.trentorise.smartcampus.eb.fragments.experience.AssignCollectionFragment.AssignCollectionsCallback,
 		RefreshCallback, BackListener {
-	
-	
 
 	public static final String ARG_FILTER = "filter";
 
@@ -98,7 +97,7 @@ public class ExperiencesListFragment extends SherlockListFragment
 		// }
 		setHasOptionsMenu(true);
 
-		}
+	}
 
 	@Override
 	public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
@@ -128,18 +127,17 @@ public class ExperiencesListFragment extends SherlockListFragment
 			ft.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE);
 			ft.addToBackStack(null);
 			ft.commit();
-			
-			//this is just to manage the back button
-			//because the search can show a subset of items
-			filter= new ExperienceFilter();
+
+			// this is just to manage the back button
+			// because the search can show a subset of items
+			filter = new ExperienceFilter();
 			break;
 		case R.id.expmenu_settings:
-			startActivity(new Intent(getActivity(),
-					SettingsActivity.class));
+			startActivity(new Intent(getActivity(), SettingsActivity.class));
 			break;
 		case R.id.expmenu_tutorial:
-			if(getActivity() instanceof HomeActivity)
-				((HomeActivity)getActivity()).showTutorial();
+			if (getActivity() instanceof HomeActivity)
+				((HomeActivity) getActivity()).showTutorial();
 			break;
 		default:
 			break;
@@ -172,13 +170,16 @@ public class ExperiencesListFragment extends SherlockListFragment
 	@Override
 	public void onStart() {
 		super.onStart();
-		this.getListView().setDivider(getResources().getDrawable(R.drawable.border));
+		this.getListView().setDivider(
+				getResources().getDrawable(R.drawable.border));
 		this.getListView().setDividerHeight(1);
 		animateList();
 
 		// hide keyboard if opened
-		InputMethodManager keyboard = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
-		keyboard.hideSoftInputFromWindow(getView().getApplicationWindowToken(), 0);
+		InputMethodManager keyboard = (InputMethodManager) getActivity()
+				.getSystemService(Context.INPUT_METHOD_SERVICE);
+		keyboard.hideSoftInputFromWindow(getView().getApplicationWindowToken(),
+				0);
 
 	}
 
@@ -306,16 +307,16 @@ public class ExperiencesListFragment extends SherlockListFragment
 
 	@Override
 	public void onCollectionsAssigned(String id, List<String> colls) {
-		//TODO uncomment this to enable synchronization
-//		try {
-//			if (EBHelper.getConfiguration(EBHelper.CONF_USER_ACCOUNT,
-//					String.class) == null) {
-//				EBHelper.askUserAccount(getActivity(), ACCOUNT_CREATION, true);
-//			}
-//		} catch (DataException e1) {
-//			Log.e(ExperiencesListFragment.class.getName(),
-//					"Error creating filestorage user account");
-//		}
+		// TODO uncomment this to enable synchronization
+		// try {
+		// if (EBHelper.getConfiguration(EBHelper.CONF_USER_ACCOUNT,
+		// String.class) == null) {
+		// EBHelper.askUserAccount(getActivity(), ACCOUNT_CREATION, true);
+		// }
+		// } catch (DataException e1) {
+		// Log.e(ExperiencesListFragment.class.getName(),
+		// "Error creating filestorage user account");
+		// }
 		for (Experience e : experiencesList) {
 			if (e.getId().equals(id)) {
 				e.setCollectionIds(colls);
@@ -358,39 +359,42 @@ public class ExperiencesListFragment extends SherlockListFragment
 	}
 
 	@Override
-	public void refresh(String id,String name,boolean animate) {
+	public void refresh(String id, String name, boolean animate) {
 		experiencesList.clear();
 		if (id != null) {
 			ExperienceFilter ef = new ExperienceFilter();
 			ef.setCollectionIds(new String[] { id });
-			filter=ef;
+			filter = ef;
 			experiencesList.addAll(EBHelper.findExperiences(ef, 0, -1));
 			getSherlockActivity().getSupportActionBar().setTitle(name);
 		} else {
 			experiencesList.addAll(EBHelper.getExperiences(0, -1));
-				getSherlockActivity().getSupportActionBar().setTitle(getString(R.string.mainmenu_diary));
-			filter=null;
+			getSherlockActivity().getSupportActionBar().setTitle(
+					getString(R.string.mainmenu_diary));
+			filter = null;
 		}
 		this.setListAdapter(new ExperiencesListAdapter(getSherlockActivity(),
 				R.layout.experience_row, experiencesList));
 		((ArrayAdapter) getListView().getAdapter()).notifyDataSetChanged();
-		if(animate)
+		if (animate)
 			animateList();
 	}
 
 	@Override
 	public void onBack() {
-		if (filter!=null) {
-			if(!filter.isEmpty())
+		if (filter != null) {
+			if (!filter.isEmpty())
 				experiencesList.addAll(EBHelper.findExperiences(filter, 0, -1));
-			else{
+			else {
 				experiencesList.addAll(EBHelper.getExperiences(0, -1));
-				filter=null;
+				filter = null;
 			}
-			this.setListAdapter(new ExperiencesListAdapter(getSherlockActivity(),
-					R.layout.experience_row, experiencesList));
+			this.setListAdapter(new ExperiencesListAdapter(
+					getSherlockActivity(), R.layout.experience_row,
+					experiencesList));
 			((ArrayAdapter) getListView().getAdapter()).notifyDataSetChanged();
-			getSherlockActivity().getSupportActionBar().setTitle(getString(R.string.mainmenu_diary));
+			getSherlockActivity().getSupportActionBar().setTitle(
+					getString(R.string.mainmenu_diary));
 			animateList();
 		} else {
 			getActivity().finish();

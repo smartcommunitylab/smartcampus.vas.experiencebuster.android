@@ -18,12 +18,12 @@ package eu.trentorise.smartcampus.eb.custom.data;
 public class Constants {
 
 	public static final String APP_TOKEN = "experiencebuster";
-	public static final String APP_NAME = "expbuster";
-	public static final String SERVICE = "/smartcampus.vas.experiencebuster.web";
-	public static final String SYNC_SERVICE = "/smartcampus.vas.experiencebuster.web/sync";
+	public static final String APP_NAME = "social";
+	public static final String SERVICE = "/smartcampus.vas.experiencebuster.web-dev";
+	public static final String SYNC_SERVICE = "/smartcampus.vas.experiencebuster.web-dev/sync";
 	public static final String OBJECT_SERVICE = "/smartcampus.vas.discovertrento.web/objects/simple";
-	public static final String FILE_SERVICE = "/core.filestorage";
-	public static final String SYNC_DB_NAME = "experiencebusterdb";
+	public static final String FILE_SERVICE = "/core.filestorage-dev";
+	public static final String SYNC_DB_NAME = "experiencebusterdb-dev";
 	public static final int MAX_MESSAGE_NUM = 1000;
 	public static final int DB_VERSION = 1;
 

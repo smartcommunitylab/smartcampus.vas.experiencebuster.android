@@ -15,6 +15,7 @@
  ******************************************************************************/
 package eu.trentorise.smartcampus.eb.filestorage;
 
+import it.smartcampuslab.eb.R;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
@@ -45,8 +46,7 @@ public class FilestorageAccountActivity extends Activity {
 		if (i.getBooleanExtra(EXTRA_SHOW_DIALOG, true)) {
 			new AlertDialog.Builder(this)
 					.setTitle("")
-					.setMessage(
-							eu.trentorise.smartcampus.eb.R.string.msg_synchro_dialog)
+					.setMessage(R.string.msg_synchro_dialog)
 					.setPositiveButton(android.R.string.yes,
 							new DialogInterface.OnClickListener() {
 								public void onClick(DialogInterface dialog,
@@ -55,8 +55,7 @@ public class FilestorageAccountActivity extends Activity {
 									// createAccount();
 								}
 							})
-					.setNegativeButton(
-							android.R.string.no,
+					.setNegativeButton(android.R.string.no,
 							new DialogInterface.OnClickListener() {
 								public void onClick(DialogInterface dialog,
 										int which) {

@@ -15,6 +15,8 @@
  ******************************************************************************/
 package eu.trentorise.smartcampus.eb.custom;
 
+import it.smartcampuslab.eb.R;
+
 import java.util.List;
 
 import android.app.Activity;
@@ -23,7 +25,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.TextView;
-import eu.trentorise.smartcampus.eb.R;
 import eu.trentorise.smartcampus.eb.model.NearMeObject;
 
 public class NearMeAdapter extends ArrayAdapter<NearMeObject> {
@@ -36,7 +37,9 @@ public class NearMeAdapter extends ArrayAdapter<NearMeObject> {
 		this.context = context;
 		this.layoutResourceId = layoutResourceId;
 	}
-	public NearMeAdapter(Activity context, int layoutResourceId, List<NearMeObject> list) {
+
+	public NearMeAdapter(Activity context, int layoutResourceId,
+			List<NearMeObject> list) {
 		super(context, layoutResourceId, list);
 		this.context = context;
 		this.layoutResourceId = layoutResourceId;
@@ -54,9 +57,10 @@ public class NearMeAdapter extends ArrayAdapter<NearMeObject> {
 		}
 		tag = getItem(position);
 
-		((TextView)row.findViewById(R.id.nearme_name)).setText(tag.getTitle());
-		((TextView)row.findViewById(R.id.nearme_loc)).setText(tag.descriptionString());
+		((TextView) row.findViewById(R.id.nearme_name)).setText(tag.getTitle());
+		((TextView) row.findViewById(R.id.nearme_loc)).setText(tag
+				.descriptionString());
 		return row;
 	}
-	
+
 }

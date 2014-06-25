@@ -15,6 +15,8 @@
  ******************************************************************************/
 package eu.trentorise.smartcampus.eb.custom;
 
+import it.smartcampuslab.eb.R;
+
 import java.util.Date;
 import java.util.List;
 
@@ -29,7 +31,6 @@ import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 import eu.trentorise.smartcampus.eb.Constants;
-import eu.trentorise.smartcampus.eb.R;
 import eu.trentorise.smartcampus.eb.custom.data.EBHelper;
 import eu.trentorise.smartcampus.eb.model.Content;
 import eu.trentorise.smartcampus.eb.model.Experience;
@@ -82,8 +83,8 @@ public class ExperiencesListAdapter extends ArrayAdapter<Experience> {
 		if (previousExperience == null
 				|| ((long) (experience.getCreationTime() / (1000 * 60 * 60 * 24))) != ((long) (previousExperience
 						.getCreationTime() / (1000 * 60 * 60 * 24)))) {
-			String headerDateString = formatDateForHeader(
-					experience.getCreationTime());
+			String headerDateString = formatDateForHeader(experience
+					.getCreationTime());
 			((TextView) holder.separator.findViewById(R.id.separator_text))
 					.setText(headerDateString);
 			holder.separator.setVisibility(View.VISIBLE);
@@ -91,15 +92,15 @@ public class ExperiencesListAdapter extends ArrayAdapter<Experience> {
 			holder.separator.setVisibility(View.GONE);
 		}
 		String title = experience.getTitle();
-		if(title.length()>MAX_TITLE_LENGTH-1)
-			holder.title.setText(title.substring(0,MAX_TITLE_LENGTH)+"...");
+		if (title.length() > MAX_TITLE_LENGTH - 1)
+			holder.title.setText(title.substring(0, MAX_TITLE_LENGTH) + "...");
 		else
 			holder.title.setText(title);
-//		if (experience != null && experience.getDescription().length() > 0) {
-//			holder.description.setText(experience.getDescription());
-//		} else {
-//			holder.description.setVisibility(View.GONE);
-//		}
+		// if (experience != null && experience.getDescription().length() > 0) {
+		// holder.description.setText(experience.getDescription());
+		// } else {
+		// holder.description.setVisibility(View.GONE);
+		// }
 
 		String collectionsString = "";
 		if (EBHelper.getUserPreference() != null) {

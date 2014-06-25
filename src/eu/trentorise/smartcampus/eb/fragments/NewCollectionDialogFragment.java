@@ -15,6 +15,8 @@
  ******************************************************************************/
 package eu.trentorise.smartcampus.eb.fragments;
 
+import it.smartcampuslab.eb.R;
+
 import java.util.List;
 
 import android.app.Activity;
@@ -32,7 +34,6 @@ import com.actionbarsherlock.app.SherlockDialogFragment;
 
 import eu.trentorise.smartcampus.android.common.validation.ValidatorHelper;
 import eu.trentorise.smartcampus.eb.HomeActivity;
-import eu.trentorise.smartcampus.eb.R;
 import eu.trentorise.smartcampus.eb.custom.Utils;
 import eu.trentorise.smartcampus.eb.custom.data.EBHelper;
 import eu.trentorise.smartcampus.eb.model.ExpCollection;
@@ -41,7 +42,7 @@ import eu.trentorise.smartcampus.eb.model.UserPreference;
 public class NewCollectionDialogFragment extends SherlockDialogFragment {
 
 	private static final String ARG_COLL = "coll";
-	
+
 	@Override
 	public Dialog onCreateDialog(Bundle savedInstanceState) {
 		return saveCollectionDialog(getActivity());
@@ -56,30 +57,35 @@ public class NewCollectionDialogFragment extends SherlockDialogFragment {
 		b.putSerializable(ARG_COLL, coll);
 		return b;
 	}
-	
+
 	private Dialog saveCollectionDialog(final Activity ctx) {
 		AlertDialog.Builder builder = new AlertDialog.Builder(ctx);
-		final ExpCollection coll = getArguments() == null ? null : (ExpCollection)getArguments().getSerializable(ARG_COLL);
-		
+		final ExpCollection coll = getArguments() == null ? null
+				: (ExpCollection) getArguments().getSerializable(ARG_COLL);
+
 		if (coll != null) {
 			builder.setTitle(R.string.dialog_collection_edit);
 		} else {
 			builder.setTitle(R.string.dialog_collection_add);
 		}
-		builder.setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
-			@Override
-			public void onClick(DialogInterface dialog, int which) {
-				dialog.dismiss();
-			}
-		});
+		builder.setNegativeButton(android.R.string.cancel,
+				new DialogInterface.OnClickListener() {
+					@Override
+					public void onClick(DialogInterface dialog, int which) {
+						dialog.dismiss();
+					}
+				});
 
-		LayoutInflater inflater = (LayoutInflater) ctx.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+		LayoutInflater inflater = (LayoutInflater) ctx
+				.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 		View v = inflater.inflate(R.layout.newcollectiondialog, null);
-		final EditText newCollectionEditText = (EditText) v.findViewById(R.id.newCollectionEditText);
+		final EditText newCollectionEditText = (EditText) v
+				.findViewById(R.id.newCollectionEditText);
 		if (coll != null) {
 			newCollectionEditText.setText(coll.getName());
 		}
-		builder.setPositiveButton(coll == null ? R.string.dialog_create : R.string.dialog_save, new DialogInterface.OnClickListener() {
+		builder.setPositiveButton(coll == null ? R.string.dialog_create
+				: R.string.dialog_save, new DialogInterface.OnClickListener() {
 			@Override
 			public void onClick(DialogInterface dialog, int which) {
 			}
@@ -95,38 +101,47 @@ public class NewCollectionDialogFragment extends SherlockDialogFragment {
 				UserPreference uup = EBHelper.getUserPreference();
 				List<ExpCollection> tmpList = uup.getCollections();
 				ExpCollection updated = null;
-				
-				if (newCollectionEditText.getText() == null || newCollectionEditText.getText().toString().trim().equals("")) {
-					ValidatorHelper.highlight(getActivity(), newCollectionEditText, getString(R.string.alert_folder_name_required));
+
+				if (newCollectionEditText.getText() == null
+						|| newCollectionEditText.getText().toString().trim()
+								.equals("")) {
+					ValidatorHelper.highlight(getActivity(),
+							newCollectionEditText,
+							getString(R.string.alert_folder_name_required));
 					return;
 				}
-				
+
 				if (coll != null) {
 					for (ExpCollection ec : tmpList) {
 						if (ec.getId().equals(coll.getId())) {
-							ec.setName(newCollectionEditText.getText().toString());
+							ec.setName(newCollectionEditText.getText()
+									.toString());
 							updated = ec;
 							break;
 						}
 					}
 				} else {
-					ExpCollection newCollection = new ExpCollection(Utils.generateUID(), newCollectionEditText.getText().toString());
+					ExpCollection newCollection = new ExpCollection(
+							Utils.generateUID(), newCollectionEditText
+									.getText().toString());
 					tmpList.add(newCollection);
 					updated = newCollection;
 				}
 				uup.setCollections(tmpList);
 				boolean success = EBHelper.updateUserPreference(ctx, uup);
 				if (success) {
-					//CollectionSavedHandler c = ((DialogCallbackContainer)getActivity()).getCollectionSavedHandler();
-//					if (c != null) {
-//						c.onCollectionSaved(updated);
-//					}
-//					Fragment f = getFragmentManager().findFragmentById(getArguments().getInt(ARG_CONTAINER_ID));
-//					if (f instanceof CollectionSavedHandler) {
-//						((CollectionSavedHandler)f).onCollectionSaved(updated);
-//					}
-					if(ctx instanceof HomeActivity){
-						((HomeActivity)ctx).refreshMenuList();
+					// CollectionSavedHandler c =
+					// ((DialogCallbackContainer)getActivity()).getCollectionSavedHandler();
+					// if (c != null) {
+					// c.onCollectionSaved(updated);
+					// }
+					// Fragment f =
+					// getFragmentManager().findFragmentById(getArguments().getInt(ARG_CONTAINER_ID));
+					// if (f instanceof CollectionSavedHandler) {
+					// ((CollectionSavedHandler)f).onCollectionSaved(updated);
+					// }
+					if (ctx instanceof HomeActivity) {
+						((HomeActivity) ctx).refreshMenuList();
 					}
 					dialog.dismiss();
 				}
@@ -135,7 +150,8 @@ public class NewCollectionDialogFragment extends SherlockDialogFragment {
 		dialog.show();
 		EBHelper.applyScaleAnimationOnView(newCollectionEditText);
 		EBHelper.openKeyboard(getActivity(), newCollectionEditText);
-		dialog.getButton(DialogInterface.BUTTON_POSITIVE).setOnClickListener(onSaveBtnListener);
+		dialog.getButton(DialogInterface.BUTTON_POSITIVE).setOnClickListener(
+				onSaveBtnListener);
 		return dialog;
 	}
 }

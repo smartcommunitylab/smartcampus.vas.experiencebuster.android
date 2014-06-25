@@ -15,6 +15,7 @@
  ******************************************************************************/
 package eu.trentorise.smartcampus.eb;
 
+import it.smartcampuslab.eb.R;
 import android.accounts.AccountManager;
 import android.content.Intent;
 import android.content.pm.PackageManager.NameNotFoundException;
@@ -73,7 +74,7 @@ public class CatchActivity extends SherlockFragmentActivity implements
 
 	@Override
 	protected void onResume() {
-		if(EBHelper.getLocationHelper()!=null){
+		if (EBHelper.getLocationHelper() != null) {
 			try {
 				EBHelper.init(this.getApplicationContext());
 			} catch (NameNotFoundException e) {
@@ -188,7 +189,7 @@ public class CatchActivity extends SherlockFragmentActivity implements
 			((BackListener) currentFragment).onBack();
 		}
 		super.onBackPressed();
-		
+
 	}
 
 	@Override
