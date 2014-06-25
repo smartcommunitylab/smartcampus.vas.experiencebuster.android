@@ -15,7 +15,6 @@
  ******************************************************************************/
 package eu.trentorise.smartcampus.eb.syncadapter;
 
-import java.io.FileInputStream;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -191,13 +190,10 @@ public class FileSyncStorage extends SyncStorageWithPaging {
 													userAccountId, false, ctx);
 											Log.i(TAG, "Stored on dropbox");
 										} else {
-											meta = filestorage
-													.storeResourceByUser(
-															res.getResourcefile(),
-															new FileInputStream(
-																	res.getResourcefile()),
-															EBHelper.getAuthToken(),
-															userAccountId, true);
+											meta = filestorage.storeOnDropbox(
+													res.getResourcefile(),
+													EBHelper.getAuthToken(),
+													userAccountId, true, ctx);
 											Log.i(TAG,
 													"Stored through fs service");
 										}
